@@ -84,8 +84,9 @@ apiRouter.post('/menu', function(req, res) {
     var requestUrl = `${HOST}/${KEY}/${TYPE}/${SERVICE}/${START_INDEX}/${END_INDEX}`;
 
     var xmlToJson;
-    var response_menu;
+    var response_menu = 'init';
     var jsonData;
+    var isCrawlingFinished = false;
 
     request.get(requestUrl, (err, res, body) => {
         if (err) {
@@ -109,27 +110,46 @@ apiRouter.post('/menu', function(req, res) {
                 console.log(`response_menu 타입 => ${typeof response_menu}`);
 
                 console.log(`json 출력값 => ${JSON.stringify(response_menu)}`);
+
+                isCrawlingFinished = true;
             }
         }
     });
+console.log('1')
+    while (true) {
+        console.log('2')
 
-    setTimeout(function() {
-        console.log('===========');
-        console.log(`json 출력값 => ${JSON.stringify(response_menu)}`);
-        console.log('===========');
+        if (isCrawlingFinished= true) {
+            console.log('3')
 
-        const responseBody = {
-            version: '2.0',
-            data: {
-                msg: 'HI',
-                name: 'Ryan',
-                position: 'Senior Managing Director',
-                menu: response_menu
-            }
-        };
+            console.log('===========');
+            console.log(`json 출력값 => ${JSON.stringify(response_menu)}`);
+            console.log('===========');
 
-        res.status(200).send(responseBody);
-    }, 3000);
+            const responseBody = {
+                version: '2.0',
+                data: {
+                    msg: 'HI',
+                    name: 'Ryan',
+                    position: 'Senior Managing Director',
+                    menu: response_menu
+                }
+            };
+
+            res.status(200).send(responseBody);
+console.log('4')
+
+            break;
+            console.log('5')
+
+        }
+    }
+
+    console.log('***********끝끝끝끝끝끝끝끝끝끝끝끝끝');
+
+    // setTimeout(function() {
+
+    // }, 1000);
 });
 
 app.listen(3000, function() {
