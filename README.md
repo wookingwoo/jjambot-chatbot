@@ -50,4 +50,38 @@ $ nvm --version
 
 ---
 
+### nodejs 설치
 
+- nodejs 설치
+
+nvm의 설치 후 nodejs 설치 가능.
+
+lts(long term support) 버전으로 설치.
+
+
+```bash
+$ nvm install --lts
+```
+
+- node의 설치 확인
+node가 정상적으로 설치되었는지를 확인.
+
+```bash
+$ node -v
+```
+
+	예시: v10.13.0
+
+
+---
+
+
+
+
+
+
+
+
+## 참고자료
+
+https://i.kakao.com/docs/skill-build#%EC%98%88%EC%A0%9C-%EC%8A%A4%ED%82%AC-%EC%84%9C%EB%B2%84-%EB%A7%8C%EB%93%A4%EA%B8%B0
