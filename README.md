@@ -114,6 +114,14 @@ $ npm install --save xml-js
 ```
 
 
+- request
+
+
+
+```bash
+$ npm install request
+```
+
 
 ---
 
