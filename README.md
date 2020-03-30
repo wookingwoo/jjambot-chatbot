@@ -21,7 +21,7 @@ $ sudo apt-get install build-essential libssl-dev
 > - nvm 설치
 > curl을 이용하여 nvm을 설치 (0.35.3 버전 기준)
 > 
-> ```bash
+```bash
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 ```
 > 
@@ -33,7 +33,7 @@ curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
 > - bashrc를 통해 적용
 > bashrc를 업데이트 합니다.
 > 
-> ```bash
+```bash
 
 $ source ~/.bashrc
 ```
@@ -41,7 +41,7 @@ $ source ~/.bashrc
 > - nvm 설치 확인
 > nvm이 정상적으로 설치되었는지를 확인해보기 위해서, nvm version을 확인해 봅니다.
 > 
-> ```bash
+```bash
 $ nvm --version
 ```
 > 
