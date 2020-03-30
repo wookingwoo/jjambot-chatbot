@@ -77,6 +77,30 @@ $ node -v
 
 
 
+### expressjs 설치
+
+- expressjs 설치
+
+nodejs에서 제일 많이 사용되는 웹 프레임워크. 간단한 코드로 높은 성능을 내고 다양한 기능을 가진 웹 서버를 생성할 수 있음.
+
+
+```bash
+$ npm i --save express
+```
+
+- morgan, body-parser 라이브러리를 추가
+
+morgan은 로깅을 담당하고 body-parser는 http 요청의 body를 추출합니다.
+
+
+```bash
+$ npm i --save morgan body-parser
+```
+
+
+
+---
+
 
 
 
