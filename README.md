@@ -125,11 +125,29 @@ $ npm install request
 
 ---
 
+## python
 
+### 추가 모듈 설치
 
+- pip
 
+pip란 파이썬으로 작성된 다양한 패키지 라이브러리를 관리해주는 시스템이다.
 
+파이썬 관련 라이브러리인 numpy, beautifulsoup, scikit-learn 등을 설치하거나 제거하는 역할을 한다.
+
+```bash
+sudo apt-get install python3-pip 
+```
+
+- bs4
+
+```bash
+pip3 install beautifulsoup4
+```
 
 ## 참고자료
 
 https://i.kakao.com/docs/skill-build#%EC%98%88%EC%A0%9C-%EC%8A%A4%ED%82%AC-%EC%84%9C%EB%B2%84-%EB%A7%8C%EB%93%A4%EA%B8%B0
+
+
+https://www.fun-coding.org/data_collection_advanced5.html
