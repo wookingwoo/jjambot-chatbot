@@ -149,5 +149,3 @@ pip3 install beautifulsoup4
 
 https://i.kakao.com/docs/skill-build#%EC%98%88%EC%A0%9C-%EC%8A%A4%ED%82%AC-%EC%84%9C%EB%B2%84-%EB%A7%8C%EB%93%A4%EA%B8%B0
 
-
-https://www.fun-coding.org/data_collection_advanced5.html

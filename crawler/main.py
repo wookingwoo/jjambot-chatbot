@@ -1,5 +1,3 @@
-# 파이썬 메뉴 크롤러
-
 from api_key import *
 
 
@@ -17,5 +15,19 @@ soup = BeautifulSoup(response.content, 'html.parser')
 
 rows = soup.find_all('row')
 
+
 for row in rows:
-    print(row.find('dates').text, ":", row.find('brst').text)
+	if not (row.find('dates').text == ""):
+		date =row.find('dates').text
+		
+	if not (row.find('brst').text==""):
+		print(date, "(아침):", row.find('brst').text)
+		
+	if not (row.find('lunc').text==""):
+		print(date, "(점심):", row.find('lunc').text)
+		
+	if not (row.find('dinr').text==""):
+		print(date, "(저녁):", row.find('dinr').text)
+		
+	if not (row.find('adspcfd').text==""):
+		print(date, "(부식):", row.find('adspcfd').text)
