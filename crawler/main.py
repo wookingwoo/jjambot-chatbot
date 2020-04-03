@@ -1,4 +1,5 @@
 from api_key import *
+import unit_test
 
 from bs4 import BeautifulSoup
 import requests
@@ -63,8 +64,10 @@ for i in range(len(corps)):
 
         all_corps_menu[corps[i]] = menu
 
+
 print()
-
 print("all_corps_menu:", all_corps_menu)
-
+print()
+unit_test.IsBlankedCorps(all_corps_menu)
+print()
 print("끝.")
