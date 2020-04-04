@@ -4,7 +4,12 @@ import unit_test
 from bs4 import BeautifulSoup
 import requests
 
+import time
+
+startTime = time.time()  # 시작 시간 저장
+
 # headers = {'cnotent-type': 'application/json;charset=utf-8'}
+
 
 all_corps_menu = {}
 
@@ -19,6 +24,8 @@ for i in range(len(corps)):
         print("corps:", corps[i])
 
         response = requests.get(info_url[i])
+        print("2초 휴식.")
+        time.sleep(2)
         soup = BeautifulSoup(response.content, 'html.parser')
 
         menu = {}
@@ -66,10 +73,10 @@ for i in range(len(corps)):
 
         all_corps_menu[corps[i]] = menu
 
-
 print()
 print("all_corps_menu:", all_corps_menu)
 print()
 unit_test.IsBlankedCorps(all_corps_menu)
 print()
+print("WorkingTime: {} sec".format(time.time() - startTime))
 print("끝.")
