@@ -1,10 +1,10 @@
-from api_key import *
-import unit_test
-
 from bs4 import BeautifulSoup
 import requests
-
 import time
+
+from api_key import *
+import unit_test
+import write_menu_data
 
 startTime = time.time()  # 시작 시간 저장
 
@@ -24,9 +24,15 @@ for i in range(len(corps)):
         print("corps:", corps[i])
 
         response = requests.get(info_url[i])
-        print("2초 휴식.")
-        time.sleep(2)
+        print("1초 휴식.", end="")
+        time.sleep(1)
+        print("/")
+
         soup = BeautifulSoup(response.content, 'html.parser')
+
+        print("1초 휴식.", end="")
+        time.sleep(1)
+        print("/")
 
         menu = {}
         date = "init"
@@ -77,6 +83,7 @@ print()
 print("all_corps_menu:", all_corps_menu)
 print()
 unit_test.IsBlankedCorps(all_corps_menu)
+write_menu_data.writeAllCorpsMenu_TXT(all_corps_menu)
 print()
 print("WorkingTime: {} sec".format(time.time() - startTime))
 print("끝.")
