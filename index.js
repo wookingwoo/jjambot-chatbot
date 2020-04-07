@@ -156,23 +156,63 @@ apiRouter.post('/menu', function(req, res) {
 
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
         var response_menu = 'init';
+        var menu_breakfast = '';
+        var menu_lunch = '';
+        var menu_dinner = '';
+        var menu_specialFood = '';
+        var response_date = 'init';
 
         data = data.replace(/\'/gi, '"');
 
         var menuJson = JSON.parse(data);
 
-        response_menu = menuJson['ATC'];
+        response_menu = menuJson['5322']['20200407'];
 
         // console.log(response_menu);
+
+        for (var i = 0; i < response_menu['breakfast'].length; i++) {
+            menu_breakfast += response_menu['breakfast'][i];
+
+            if (i < response_menu['breakfast'].length - 1) {
+                menu_breakfast += ', ';
+            }
+        }
+		
+		        for (var i = 0; i < response_menu['lunch'].length; i++) {
+            menu_lunch += response_menu['lunch'][i];
+
+            if (i < response_menu['lunch'].length - 1) {
+                menu_lunch += ', ';
+            }
+        }
+		
+		        for (var i = 0; i < response_menu['dinner'].length; i++) {
+            menu_dinner += response_menu['dinner'][i];
+
+            if (i < response_menu['dinner'].length - 1) {
+                menu_dinner += ', ';
+            }
+        }
+		
+		        for (var i = 0; i < response_menu['specialFood'].length; i++) {
+            menu_specialFood += response_menu['specialFood'][i];
+
+            if (i < response_menu['specialFood'].length - 1) {
+                menu_specialFood += ', ';
+            }
+        }
+		
 
         const responseBody = {
             version: '2.0',
             data: {
-                msg: 'HI',
-                name: 'Ryan',
-                position: '안녕',
-                test: '안녕',
-                menu: response_menu
+                date: response_date,
+
+                // menu: response_menu,
+                breakfast: menu_breakfast,
+                lunch: menu_lunch,
+                dinner: menu_dinner,
+                specialFood: menu_specialFood
             }
         };
         res.status(200).send(responseBody);
