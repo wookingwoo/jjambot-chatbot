@@ -157,9 +157,11 @@ apiRouter.post('/menu', function(req, res) {
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
         var response_menu = 'init';
 
+        data = data.replace(/\'/gi, '"');
+
         var menuJson = JSON.parse(data);
 
-        response_menu = menuJson['5322'];
+        response_menu = menuJson['ATC'];
 
         // console.log(response_menu);
 
@@ -173,9 +175,8 @@ apiRouter.post('/menu', function(req, res) {
                 menu: response_menu
             }
         };
+        res.status(200).send(responseBody);
     });
-
-    res.status(200).send(responseBody);
 });
 
 app.listen(3000, function() {
