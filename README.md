@@ -125,6 +125,24 @@ $ npm install request
 
 ---
 
+
+### POST TEST
+
+- curl
+
+```bash
+$ curl https://domain/api/menu \
+-X POST \
+-H "Content-type: application/json" \
+-d '{"key1": "value1", "key2": "value2"}'
+```
+
+
+
+
+
+---
+
 ## python
 
 ### 추가 모듈 설치

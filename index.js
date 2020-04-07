@@ -155,6 +155,7 @@ apiRouter.post('/menu', function(req, res) {
     var fs = require('fs');
 
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
+		var request_date = "2020-04-07";
         var response_menu = 'init';
         var menu_breakfast = '';
         var menu_lunch = '';
@@ -165,8 +166,11 @@ apiRouter.post('/menu', function(req, res) {
         data = data.replace(/\'/gi, '"');
 
         var menuJson = JSON.parse(data);
+		
+		var date_code = request_date.replace(/-/gi, "");
+		console.log("date_code:", date_code);
 
-        response_menu = menuJson['5322']['20200407'];
+        response_menu = menuJson['5322'][date_code];
 
         // console.log(response_menu);
 
