@@ -66,7 +66,7 @@ apiRouter.post('/datatest', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/menu', function(req, res) {
+apiRouter.post('/crawling_test', function(req, res) {
     console.log(req.body);
 
     const convert = require('xml-js'); // npm install xml-js request
@@ -115,12 +115,12 @@ apiRouter.post('/menu', function(req, res) {
             }
         }
     });
-console.log('1')
+    console.log('1');
     while (true) {
-        console.log('2')
+        console.log('2');
 
-        if (isCrawlingFinished= true) {
-            console.log('3')
+        if ((isCrawlingFinished = true)) {
+            console.log('3');
 
             console.log('===========');
             console.log(`json 출력값 => ${JSON.stringify(response_menu)}`);
@@ -137,11 +137,10 @@ console.log('1')
             };
 
             res.status(200).send(responseBody);
-console.log('4')
+            console.log('4');
 
             break;
-            console.log('5')
-
+            console.log('5');
         }
     }
 
@@ -150,6 +149,33 @@ console.log('4')
     // setTimeout(function() {
 
     // }, 1000);
+});
+
+apiRouter.post('/menu', function(req, res) {
+    var fs = require('fs');
+
+    fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
+        var response_menu = 'init';
+
+        var menuJson = JSON.parse(data);
+
+        response_menu = menuJson['5322'];
+
+        // console.log(response_menu);
+
+        const responseBody = {
+            version: '2.0',
+            data: {
+                msg: 'HI',
+                name: 'Ryan',
+                position: '안녕',
+                test: '안녕',
+                menu: response_menu
+            }
+        };
+    });
+
+    res.status(200).send(responseBody);
 });
 
 app.listen(3000, function() {
