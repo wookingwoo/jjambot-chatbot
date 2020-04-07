@@ -155,22 +155,32 @@ apiRouter.post('/menu', function(req, res) {
     var fs = require('fs');
 
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
-		var request_date = "2020-04-07";
+        var request_date = '2020-04-07';
+        var request_corps = '5322';
+
         var response_menu = 'init';
         var menu_breakfast = '';
         var menu_lunch = '';
         var menu_dinner = '';
         var menu_specialFood = '';
         var response_date = 'init';
+		var msg = "ok"
+
+        var weekday = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+        var today_name = new Date(request_date).getDay();
+        var todayLabel = weekday[today_name];
+
+        response_date = request_date + '-' + todayLabel;
+        console.log('response_date:', response_date);
 
         data = data.replace(/\'/gi, '"');
 
         var menuJson = JSON.parse(data);
-		
-		var date_code = request_date.replace(/-/gi, "");
-		console.log("date_code:", date_code);
 
-        response_menu = menuJson['5322'][date_code];
+        var date_code = request_date.replace(/-/gi, '');
+        console.log('date_code:', date_code);
+
+        response_menu = menuJson[request_corps][date_code];
 
         // console.log(response_menu);
 
@@ -181,42 +191,40 @@ apiRouter.post('/menu', function(req, res) {
                 menu_breakfast += ', ';
             }
         }
-		
-		        for (var i = 0; i < response_menu['lunch'].length; i++) {
+
+        for (var i = 0; i < response_menu['lunch'].length; i++) {
             menu_lunch += response_menu['lunch'][i];
 
             if (i < response_menu['lunch'].length - 1) {
                 menu_lunch += ', ';
             }
         }
-		
-		        for (var i = 0; i < response_menu['dinner'].length; i++) {
+
+        for (var i = 0; i < response_menu['dinner'].length; i++) {
             menu_dinner += response_menu['dinner'][i];
 
             if (i < response_menu['dinner'].length - 1) {
                 menu_dinner += ', ';
             }
         }
-		
-		        for (var i = 0; i < response_menu['specialFood'].length; i++) {
+
+        for (var i = 0; i < response_menu['specialFood'].length; i++) {
             menu_specialFood += response_menu['specialFood'][i];
 
             if (i < response_menu['specialFood'].length - 1) {
                 menu_specialFood += ', ';
             }
         }
-		
 
         const responseBody = {
             version: '2.0',
             data: {
                 date: response_date,
-
-                // menu: response_menu,
                 breakfast: menu_breakfast,
                 lunch: menu_lunch,
                 dinner: menu_dinner,
-                specialFood: menu_specialFood
+                specialFood: menu_specialFood,
+				msg:msg
             }
         };
         res.status(200).send(responseBody);

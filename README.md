@@ -130,6 +130,8 @@ $ npm install request
 
 - curl
 
+curl 테스트
+
 ```bash
 $ curl https://domain/api/menu \
 -X POST \
