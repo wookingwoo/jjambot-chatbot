@@ -155,16 +155,12 @@ apiRouter.post('/menu', function(req, res) {
     var fs = require('fs');
 
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
-        var request_date = '2020-04-07';
+        var request_date = '2020-04-08';
         var request_corps = '5322';
 
         var response_menu = 'init';
-        var menu_breakfast = '';
-        var menu_lunch = '';
-        var menu_dinner = '';
-        var menu_specialFood = '';
         var response_date = 'init';
-		var msg = "ok"
+        var msg = 'ok';
 
         var weekday = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
         var today_name = new Date(request_date).getDay();
@@ -184,37 +180,23 @@ apiRouter.post('/menu', function(req, res) {
 
         // console.log(response_menu);
 
-        for (var i = 0; i < response_menu['breakfast'].length; i++) {
-            menu_breakfast += response_menu['breakfast'][i];
+        function listToString(dic, key) {
+            var str = '';
 
-            if (i < response_menu['breakfast'].length - 1) {
-                menu_breakfast += ', ';
+            for (var i = 0; i < dic[key].length; i++) {
+                str += dic[key][i];
+
+                if (i < dic[key].length - 1) {
+                    str += ', ';
+                }
             }
+            return str;
         }
 
-        for (var i = 0; i < response_menu['lunch'].length; i++) {
-            menu_lunch += response_menu['lunch'][i];
-
-            if (i < response_menu['lunch'].length - 1) {
-                menu_lunch += ', ';
-            }
-        }
-
-        for (var i = 0; i < response_menu['dinner'].length; i++) {
-            menu_dinner += response_menu['dinner'][i];
-
-            if (i < response_menu['dinner'].length - 1) {
-                menu_dinner += ', ';
-            }
-        }
-
-        for (var i = 0; i < response_menu['specialFood'].length; i++) {
-            menu_specialFood += response_menu['specialFood'][i];
-
-            if (i < response_menu['specialFood'].length - 1) {
-                menu_specialFood += ', ';
-            }
-        }
+        var menu_breakfast = listToString(response_menu, 'breakfast');
+        var menu_lunch = listToString(response_menu, 'lunch');
+        var menu_dinner = listToString(response_menu, 'dinner');
+        var menu_specialFood = listToString(response_menu, 'specialFood');
 
         const responseBody = {
             version: '2.0',
@@ -224,7 +206,7 @@ apiRouter.post('/menu', function(req, res) {
                 lunch: menu_lunch,
                 dinner: menu_dinner,
                 specialFood: menu_specialFood,
-				msg:msg
+                msg: msg
             }
         };
         res.status(200).send(responseBody);
