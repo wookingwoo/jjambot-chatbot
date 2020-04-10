@@ -155,8 +155,11 @@ apiRouter.post('/menu', function(req, res) {
     var fs = require('fs');
 
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
-        var request_date = '2020-04-08';
+        var request_date = '2020-04-10';
         var request_corps = '5322';
+        var allergyInfo = false;
+        var allergyList = ['1', '(2)', '(5)', '(6)', '(10)', '(16)'];
+        var infoList = ['(3~4월)', '(임가공)'];
 
         var response_menu = 'init';
         var response_date = 'init';
@@ -169,7 +172,16 @@ apiRouter.post('/menu', function(req, res) {
         response_date = request_date + '-' + todayLabel;
         console.log('response_date:', response_date);
 
-        data = data.replace(/\'/gi, '"');
+        data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+
+        // 알러지 정보표시가 비활성화되어있을경우 알러지정보 제거
+        if (allergyInfo == false) {
+            for (var i = 0; i < allergyList.length; i++) {
+                data = data.replace(/allergyList[i]/gi, '***');
+                console.log('allergyList[i]:', allergyList[i]);
+                console.log(`allergyList[i] 타입 => ${typeof allergyList[i]}`);
+            }
+        }
 
         var menuJson = JSON.parse(data);
 
@@ -187,7 +199,7 @@ apiRouter.post('/menu', function(req, res) {
                 str += dic[key][i];
 
                 if (i < dic[key].length - 1) {
-                    str += ', ';
+                    str += ', \n';
                 }
             }
             return str;

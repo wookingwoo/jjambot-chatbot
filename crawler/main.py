@@ -24,14 +24,14 @@ for i in range(len(corps)):
         print("corps:", corps[i])
 
         response = requests.get(info_url[i])
-        print("1초 휴식.", end="")
-        time.sleep(1)
+        print("0.5초 휴식.", end="")
+        time.sleep(0.5)
         print("/")
 
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        print("1초 휴식.", end="")
-        time.sleep(1)
+        print("0.5초 휴식.", end="")
+        time.sleep(0.5)
         print("/")
 
         menu = {}
