@@ -180,8 +180,7 @@ apiRouter.post('/menu', function(req, res) {
             request_date = today_date;
         }
 
-
-        console.log('>>>>>>>>>>>>', request_date);
+        console.log('request_date:', request_date);
         console.log(`request_date 타입 => ${typeof request_date}`);
 
         var request_corps = '5322';
@@ -228,14 +227,72 @@ apiRouter.post('/menu', function(req, res) {
             return str;
         }
 
-        var menu_breakfast = listToString(response_menu, 'breakfast');
-        var menu_lunch = listToString(response_menu, 'lunch');
-        var menu_dinner = listToString(response_menu, 'dinner');
-        var menu_specialFood = listToString(response_menu, 'specialFood');
+        var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
+        var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
+        var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
+        var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+
+        var request_meal_type_list = [];
+
+        if (req.body.action.params['meal_type0'] != undefined) {
+            request_meal_type_list.push(req.body.action.params['meal_type0']);
+        }
+
+        if (req.body.action.params['meal_type1'] != undefined) {
+            request_meal_type_list.push(req.body.action.params['meal_type1']);
+        }
+        if (req.body.action.params['meal_type2'] != undefined) {
+            request_meal_type_list.push(req.body.action.params['meal_type2']);
+        }
+        if (req.body.action.params['meal_type3'] != undefined) {
+            request_meal_type_list.push(req.body.action.params['meal_type3']);
+        }
+
+        console.log('request_meal_type_list:', request_meal_type_list);
+        console.log(`request_meal_type_list 타입 => ${typeof request_meal_type_list}`);
+        console.log('request_meal_type_list 갯수:', request_meal_type_list.length);
+
+        function contains(l, obj) {
+            for (var i = 0; i < l.length; i++) {
+                if (l[i] === obj) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        var response_meal = '오류가 발생하였습니다.[errorcode: nurm0411]\n상담원과의 대화를 통해 문의 바랍니다.';
+
+        if (JSON.stringify(request_meal_type_list) == JSON.stringify(['all'])) {
+            response_meal =
+                menu_breakfast +
+                '\n\n' +
+                menu_lunch +
+                '\n\n' +
+                menu_dinner +
+                '\n\n' +
+                menu_specialFood;
+        } else {
+            response_meal = '';
+            if (contains(request_meal_type_list, '아침')) {
+                response_meal += menu_breakfast;
+            }
+            if (contains(request_meal_type_list, '점심')) {
+                response_meal += '\n\n' + menu_lunch;
+            }
+            if (contains(request_meal_type_list, '저녁')) {
+                response_meal += '\n\n' + menu_dinner;
+            }
+            if (contains(request_meal_type_list, '부식')) {
+                response_meal += '\n\n' + menu_specialFood;
+            }
+        }
 
         const responseBody = {
             version: '2.0',
             data: {
+                meal: response_meal,
+
                 date: response_date,
                 breakfast: menu_breakfast,
                 lunch: menu_lunch,
