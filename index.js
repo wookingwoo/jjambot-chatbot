@@ -155,7 +155,7 @@ apiRouter.post('/menu', function(req, res) {
     var fs = require('fs');
 
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
-        var request_date = '2020-04-10';
+        var request_date = '2020-04-11';
         var request_corps = '5322';
         var allergyInfo = false;
 
@@ -173,10 +173,9 @@ apiRouter.post('/menu', function(req, res) {
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
         if (allergyInfo == false) {
-            data = data.replace(/\(\d\)/gi, ''); // (숫자)를 ""로 모두 전환
-            // 			\d for digit, as it is shorter than [0-9].
-
-            // data = data.replace(/\([0-9]\)/gi, '');
+            // 알러지 정보 표시가 false일때
+            data = data.replace(/\([0-9]\)/gi, ''); // (1자리수)를 공백으로 변환
+            data = data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
         }
 
         var menuJson = JSON.parse(data);
@@ -192,7 +191,7 @@ apiRouter.post('/menu', function(req, res) {
             var str = '';
 
             for (var i = 0; i < dic[key].length; i++) {
-                str += dic[key][i];
+                str += dic[key][i].trim(); //trim()을 이용해 앞뒤 공백 제거
 
                 if (i < dic[key].length - 1) {
                     str += ', \n';
