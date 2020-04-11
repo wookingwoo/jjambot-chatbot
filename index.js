@@ -158,14 +158,32 @@ apiRouter.post('/menu', function(req, res) {
     var fs = require('fs');
 
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
-        var str_body_date = JSON.parse(req.body.action.params.date).date;
-		
-		// 없을시 현재날짜로 변수 초기화하는 에러처리 추가하기.
-		
-        console.log('>>>>>>>>>>>>', str_body_date);
-        console.log(`str_body_date 타입 => ${typeof str_body_date}`);
+        var today_date = new Date();
+        var dd = today_date.getDate();
+        var mm = today_date.getMonth() + 1; //January is 0!
+        var yyyy = today_date.getFullYear();
 
-        var request_date = '2020-04-11';
+        if (dd < 10) {
+            dd = '0' + dd;
+        }
+
+        if (mm < 10) {
+            mm = '0' + mm;
+        }
+
+        today_date = yyyy + '-' + mm + '-' + dd;
+        console.log('today_date:', today_date);
+
+        var request_date = JSON.parse(req.body.action.params.sys_date).date;
+
+        if (request_date == 'null') {
+            request_date = today_date;
+        }
+
+
+        console.log('>>>>>>>>>>>>', request_date);
+        console.log(`request_date 타입 => ${typeof request_date}`);
+
         var request_corps = '5322';
         var allergyInfo = false;
 
