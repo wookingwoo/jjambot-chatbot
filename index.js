@@ -152,9 +152,19 @@ apiRouter.post('/crawling_test', function(req, res) {
 });
 
 apiRouter.post('/menu', function(req, res) {
+    console.log('\n<req.body 출력> ');
+    console.log(req.body);
+
     var fs = require('fs');
 
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, data) {
+        var str_body_date = JSON.parse(req.body.action.params.date).date;
+		
+		// 없을시 현재날짜로 변수 초기화하는 에러처리 추가하기.
+		
+        console.log('>>>>>>>>>>>>', str_body_date);
+        console.log(`str_body_date 타입 => ${typeof str_body_date}`);
+
         var request_date = '2020-04-11';
         var request_corps = '5322';
         var allergyInfo = false;
