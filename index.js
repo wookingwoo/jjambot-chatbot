@@ -284,6 +284,8 @@ apiRouter.post('/menu', function(req, res) {
                 response_meal += '\n\n' + menu_dinner;
             }
             if (contains(request_meal_type_list, '부식')) {
+                response_meal += menu_specialFood;
+            } else {
                 response_meal += '\n\n' + menu_specialFood;
             }
         }
@@ -303,6 +305,68 @@ apiRouter.post('/menu', function(req, res) {
         };
         res.status(200).send(responseBody);
     });
+});
+
+apiRouter.post('/allergy/onoff', function(req, res) {
+    const responseBody = {
+        version: '2.0',
+        template: {
+            outputs: [
+                {
+                    simpleText: {
+                        text: '알러지 정보 켜기/끄기'
+                    },
+
+                    buttons: [
+                        {
+                            action: 'message',
+                            label: '열어보기',
+                            messageText: '짜잔! 우리가 찾던 보물입니다'
+                        },
+                        {
+                            action: 'webLink',
+                            label: '구경하기',
+                            webLinkUrl: 'https://e.kakao.com/t/hello-ryan'
+                        }
+                    ]
+                }
+            ]
+        }
+    };
+
+    var test = {
+        version: '2.0',
+        template: {
+            outputs: [
+                {
+                    carousel: {
+                        type: 'basicCard',
+                        items: [
+                            {
+                                title: '알러지 정보를 숨겼습니다.',
+                                description: '메뉴에 알러지 정보를 설정/해제 할 수 있습니다.',
+                                thumbnail: {
+                                    imageUrl:
+                                        'http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg'
+                                },
+                                buttons: [
+                                    {
+                                        action: 'message',
+                                        label: '알러지 정보 보기',
+                                        messageText: '알러지 정보 보기'
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    };
+
+
+
+    res.status(200).send(test);
 });
 
 app.listen(3000, function() {
