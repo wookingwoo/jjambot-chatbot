@@ -308,7 +308,24 @@ apiRouter.post('/menu', function(req, res) {
 });
 
 apiRouter.post('/allergy/onoff', function(req, res) {
-    const responseBody = {
+    console.log(req.body);
+
+    var allergy_show = req.body.action.params['onoff'];
+
+    console.log('allergy_show:', allergy_show);
+    console.log(`allergy_show 타입 => ${typeof allergy_show}`);
+
+    // 	사용자 정보에 알러지 셋팅 값을 allergy_show로 저장/갱신
+
+    if (allergy_show == 'on') {
+        var title = '알러지 정보를 나타냈습니다.';
+        var description = '이제부터 메뉴에 알러지 정보가 표시됩니다.';
+    } else if (allergy_show == 'off') {
+        var title = '알러지 정보를 숨겼습니다.';
+        var description = '메뉴에 더 이상 알러지 정보가 표시되지 않습니다.';
+    }
+
+    const button_test = {
         version: '2.0',
         template: {
             outputs: [
@@ -334,7 +351,7 @@ apiRouter.post('/allergy/onoff', function(req, res) {
         }
     };
 
-    var test = {
+    var responseBody = {
         version: '2.0',
         template: {
             outputs: [
@@ -343,11 +360,12 @@ apiRouter.post('/allergy/onoff', function(req, res) {
                         type: 'basicCard',
                         items: [
                             {
-                                title: '알러지 정보를 숨겼습니다.',
-                                description: '메뉴에 알러지 정보를 설정/해제 할 수 있습니다.',
+                                title: title,
+                                description: description,
                                 thumbnail: {
+                                    // 'http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg'
                                     imageUrl:
-                                        'http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg'
+                                        'https://cdn.pixabay.com/photo/2016/06/26/18/00/icon-1480925_960_720.png'
                                 },
                                 buttons: [
                                     {
@@ -364,9 +382,7 @@ apiRouter.post('/allergy/onoff', function(req, res) {
         }
     };
 
-
-
-    res.status(200).send(test);
+    res.status(200).send(responseBody);
 });
 
 app.listen(3000, function() {
