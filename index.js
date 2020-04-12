@@ -310,46 +310,51 @@ apiRouter.post('/menu', function(req, res) {
 apiRouter.post('/allergy/onoff', function(req, res) {
     console.log(req.body);
 
+    var user_id = req.body.userRequest.user.id;
+    console.log('user_id:', user_id);
+    console.log(`user_id 타입 => ${typeof user_id}`);
+
     var allergy_show = req.body.action.params['onoff'];
 
     console.log('allergy_show:', allergy_show);
     console.log(`allergy_show 타입 => ${typeof allergy_show}`);
+
+    var fs = require('fs');
+    fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
+        data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+
+        var json_data = JSON.parse(data);
+
+        console.log('기존 json_data:', json_data);
+        console.log(`기존 data 타입 => ${typeof json_data}`);
+
+        console.log('json_data[user_id]["allergy_show"]:', json_data[user_id]['allergy_show']);
+        console.log(
+            `json_data[user_id]["allergy_show"] 타입 => ${typeof json_data[user_id]['allergy_show']}`
+        );
+
+        json_data[user_id]['allergy_show'] = allergy_show;
+
+        console.log('바꾼 JSON.stringify(json_data):', JSON.stringify(json_data));
+        console.log(`바꾼 JSON.stringify(json_data) 타입 => ${typeof JSON.stringify(json_data)}`);
+
+        var fs = require('fs');
+        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
+            console.log('비동기적 파일 쓰기 완료');
+        });
+    });
 
     // 	사용자 정보에 알러지 셋팅 값을 allergy_show로 저장/갱신
 
     if (allergy_show == 'on') {
         var title = '알러지 정보를 나타냈습니다.';
         var description = '이제부터 메뉴에 알러지 정보가 표시됩니다.';
+        var imageUrl = 'https://cdn.pixabay.com/photo/2015/03/22/17/45/on-684987_960_720.jpg';
     } else if (allergy_show == 'off') {
         var title = '알러지 정보를 숨겼습니다.';
         var description = '메뉴에 더 이상 알러지 정보가 표시되지 않습니다.';
+        var imageUrl = 'https://cdn.pixabay.com/photo/2016/06/26/18/00/icon-1480925_960_720.png';
     }
-
-    const button_test = {
-        version: '2.0',
-        template: {
-            outputs: [
-                {
-                    simpleText: {
-                        text: '알러지 정보 켜기/끄기'
-                    },
-
-                    buttons: [
-                        {
-                            action: 'message',
-                            label: '열어보기',
-                            messageText: '짜잔! 우리가 찾던 보물입니다'
-                        },
-                        {
-                            action: 'webLink',
-                            label: '구경하기',
-                            webLinkUrl: 'https://e.kakao.com/t/hello-ryan'
-                        }
-                    ]
-                }
-            ]
-        }
-    };
 
     var responseBody = {
         version: '2.0',
@@ -363,9 +368,7 @@ apiRouter.post('/allergy/onoff', function(req, res) {
                                 title: title,
                                 description: description,
                                 thumbnail: {
-                                    // 'http://k.kakaocdn.net/dn/83BvP/bl20duRC1Q1/lj3JUcmrzC53YIjNDkqbWK/i_6piz1p.jpg'
-                                    imageUrl:
-                                        'https://cdn.pixabay.com/photo/2016/06/26/18/00/icon-1480925_960_720.png'
+                                    imageUrl: imageUrl
                                 },
                                 buttons: [
                                     {

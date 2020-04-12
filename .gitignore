@@ -2,3 +2,4 @@ api_key.js
 crawler/api_key.py
 crawler/__pycache__/
 crawler/crawling_data/
+user_data/

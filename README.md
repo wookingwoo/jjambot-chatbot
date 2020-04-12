@@ -165,6 +165,41 @@ sudo apt-get install python3-pip
 pip3 install beautifulsoup4
 ```
 
+
+---
+
+## Data
+
+### 형식
+
+- user_data.txt
+
+부대 정보나 알러지 정보를 저장하는 DB로 JSON형식으로 저장됩니다.
+
+
+```
+{
+
+"sample_id":{
+
+"alias": "sample",
+
+"corps": "5322",
+
+"allergy_show":"on"},
+
+
+...
+
+
+}
+
+```
+
+
+
+
+
 ## 참고자료
 
 https://i.kakao.com/docs/skill-build#%EC%98%88%EC%A0%9C-%EC%8A%A4%ED%82%AC-%EC%84%9C%EB%B2%84-%EB%A7%8C%EB%93%A4%EA%B8%B0
