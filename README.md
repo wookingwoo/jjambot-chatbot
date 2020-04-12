@@ -102,7 +102,7 @@ $ npm i --save morgan body-parser
 ---
 
 
-### 추가 모듈 설치
+### JS 추가 모듈 설치
 
 - xml-js
 
@@ -145,9 +145,7 @@ $ curl https://domain/api/menu \
 
 ---
 
-## python
-
-### 추가 모듈 설치
+### python 추가 모듈 설치
 
 - pip
 

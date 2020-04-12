@@ -183,8 +183,21 @@ apiRouter.post('/menu', function(req, res) {
         console.log('request_date:', request_date);
         console.log(`request_date 타입 => ${typeof request_date}`);
 
-        var request_corps = '5322';
-        var allergyInfo = false;
+        var user_id = req.body.userRequest.user.id;
+
+        var fs = require('fs');
+        var data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
+
+        data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+        var json_data = JSON.parse(data);
+        var allergyInfo = json_data[user_id]['allergy_show'];
+        var request_corps = json_data[user_id]['corps'];
+
+        console.log('allergyInfo:', allergyInfo);
+        console.log(`allergyInfo 타입 => ${typeof allergyInfo}`);
+
+        console.log('request_corps:', request_corps);
+        console.log(`request_corps 타입 => ${typeof request_corps}`);
 
         var response_menu = 'init';
         var response_date = 'init';
@@ -199,8 +212,8 @@ apiRouter.post('/menu', function(req, res) {
 
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
-        if (allergyInfo == false) {
-            // 알러지 정보 표시가 false일때
+        if (allergyInfo == 'off') {
+            // 알러지 정보 표시가 "off" 일때
             data = data.replace(/\([0-9]\)/gi, ''); // (1자리수)를 공백으로 변환
             data = data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
         }
@@ -325,22 +338,13 @@ apiRouter.post('/allergy/onoff', function(req, res) {
 
         var json_data = JSON.parse(data);
 
-        console.log('기존 json_data:', json_data);
-        console.log(`기존 data 타입 => ${typeof json_data}`);
-
-        console.log('json_data[user_id]["allergy_show"]:', json_data[user_id]['allergy_show']);
-        console.log(
-            `json_data[user_id]["allergy_show"] 타입 => ${typeof json_data[user_id]['allergy_show']}`
-        );
-
         json_data[user_id]['allergy_show'] = allergy_show;
 
-        console.log('바꾼 JSON.stringify(json_data):', JSON.stringify(json_data));
-        console.log(`바꾼 JSON.stringify(json_data) 타입 => ${typeof JSON.stringify(json_data)}`);
+        console.log('(변경한 사용자 셋팅):', json_data[user_id]);
 
         var fs = require('fs');
         fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
-            console.log('비동기적 파일 쓰기 완료');
+            console.log('user_data.txt 비동기적 파일 쓰기 완료');
         });
     });
 
