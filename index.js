@@ -186,12 +186,12 @@ apiRouter.post('/menu', function(req, res) {
         var user_id = req.body.userRequest.user.id;
 
         var fs = require('fs');
-        var data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
+        var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
 
-        data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
-        var json_data = JSON.parse(data);
-        var allergyInfo = json_data[user_id]['allergy_show'];
-        var request_corps = json_data[user_id]['corps'];
+        user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+        var json_user_data = JSON.parse(user_data);
+        var allergyInfo = json_user_data[user_id]['allergy_show'];
+        var request_corps = json_user_data[user_id]['corps'];
 
         console.log('allergyInfo:', allergyInfo);
         console.log(`allergyInfo 타입 => ${typeof allergyInfo}`);
