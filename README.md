@@ -194,6 +194,19 @@ pip3 install beautifulsoup4
 
 ```
 
+- allCorpsMenu.txt
+
+크롤링된 데이터는 아래와같은 JSON형식의 txt로 저장됩니다.
+
+```
+{
+'부대': {'날짜': {'breakfast': ['메뉴1', '메뉴2'], 'lunch': ['메뉴1', '메뉴2'], 'dinner':['메뉴1', '메뉴2'], 'specialFood': ['메뉴1', '메뉴2']},    ...   }
+
+...
+
+}
+
+```
 
 
 
