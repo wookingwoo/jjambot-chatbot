@@ -438,11 +438,9 @@ apiRouter.post('/all_corps_menu', function(req, res) {
 
         menu_data = menu_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
-        if (allergyInfo == 'off' || allergyInfo == '') {
-            // 알러지 정보 표시가 "off"이거나 ""일때
+            // 알러지 정보 감추기
             menu_data = menu_data.replace(/\([0-9]\)/gi, ''); // (1자리수)를 공백으로 변환
             menu_data = menu_data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
-        }
 
         var menuJson = JSON.parse(menu_data);
 
@@ -483,7 +481,7 @@ apiRouter.post('/all_corps_menu', function(req, res) {
                     str += dic[key][i].trim(); //trim()을 이용해 앞뒤 공백 제거
 
                     if (i < dic[key].length - 1) {
-                        str += ', \n';
+                        str += ', ';
                     }
                 }
                 return str;
@@ -503,24 +501,25 @@ apiRouter.post('/all_corps_menu', function(req, res) {
             }
 
             var response_meal =
-                menu_breakfast +
-                '\n\n' +
-                menu_lunch +
-                '\n\n' +
-                menu_dinner +
-                '\n\n' +
-                menu_specialFood;
+				 menu_lunch;
+                // menu_breakfast +
+                // '\n\n' +
+                // menu_lunch +
+                // '\n\n' +
+                // menu_dinner +
+                // '\n\n' +
+                // menu_specialFood;
 
             var response_corps;
             if (request_corps == '3foodServiceUnit') {
                 response_corps = '3군수지원사령부';
             } else if (request_corps == 'ATC') {
-                response_corps = '육훈소';
+                response_corps = '육군훈련소';
             } else {
                 response_corps = request_corps + '부대';
             }
 
-            var response_string = response_date + response_corps + ' 식단' + '\n' + response_meal;
+            var response_string = response_date +" ("+ response_corps +  ')\n' + response_meal;
             response_string_dic[i + 1] = response_string;
         }
 
@@ -529,11 +528,8 @@ apiRouter.post('/all_corps_menu', function(req, res) {
             data: response_string_dic
         };
 
-        console.log('**********=*=*=======*');
-        console.log('response_string_dic');
+        console.log('<response_string_dic>');
         console.log(response_string_dic);
-
-        console.log('**********=*=*=======*');
 
         res.status(200).send(responseBody);
     });
