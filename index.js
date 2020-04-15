@@ -229,7 +229,7 @@ apiRouter.post('/menu', function(req, res) {
 
             var response_menu = 'init';
             var response_date = 'init';
-            var msg = 'ok';
+            var msg = '';
 
             var weekday = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
             var today_name = new Date(request_date).getDay();
@@ -267,11 +267,19 @@ apiRouter.post('/menu', function(req, res) {
                 }
                 return str;
             }
-
+  try {
             var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
             var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
             var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
             var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+	  
+	   } catch (e) {
+                var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
+                var menu_lunch = '[점심]\n' + '식단 정보가 등록되지 않았습니다.';
+                var menu_dinner = '[저녁]\n' + '식단 정보가 등록되지 않았습니다.';
+                var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
+                console.log(e); // pass exception object to error handler
+            }
 
             var request_meal_type_list = [];
 
@@ -370,7 +378,7 @@ apiRouter.post('/menu', function(req, res) {
             const responseBody = {
                 version: '2.0',
                 data: {
-                    msg: '식단을 호출하기 전에 우선 부대 설정을 해주세요.'
+                    msg: '식단을 호출하기 전에 우선 부대 설정을 해주세요.\n\n짬봇에게 \"부대 설정하기\"라고 입력해주세요~'
                 }
             };
             res.status(200).send(responseBody);
@@ -497,11 +505,10 @@ apiRouter.post('/all_corps_menu', function(req, res) {
                 var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
                 var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
             } catch (e) {
-                // try catch문 /menu스킬에도 적용하기.
-                var menu_breakfast = '[아침]\n' + '정보가 등록되지 않았습니다.';
-                var menu_lunch = '[점심]\n' + '정보가 등록되지 않았습니다.';
-                var menu_dinner = '[저녁]\n' + '정보가 등록되지 않았습니다.';
-                var menu_specialFood = '[부식]\n' + '정보가 등록되지 않았습니다.';
+                var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
+                var menu_lunch = '[점심]\n' + '식단 정보가 등록되지 않았습니다.';
+                var menu_dinner = '[저녁]\n' + '식단 정보가 등록되지 않았습니다.';
+                var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
                 console.log(e); // pass exception object to error handler
             }
 
