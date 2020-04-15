@@ -438,9 +438,14 @@ apiRouter.post('/all_corps_menu', function(req, res) {
 
         menu_data = menu_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
-            // 알러지 정보 감추기
-            menu_data = menu_data.replace(/\([0-9]\)/gi, ''); // (1자리수)를 공백으로 변환
-            menu_data = menu_data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
+        // 알러지 정보 감추기
+        menu_data = menu_data.replace(/\([0-9]\)/gi, ''); // (1자리수)를 공백으로 변환
+        menu_data = menu_data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
+
+        // 		배추김치(3~4월)에서 (3~4월)제거하기
+        menu_data = menu_data.replace(/\(3~4월\)/gi, '');
+        menu_data = menu_data.replace(/\(10~11월\)/gi, '');
+        menu_data = menu_data.replace(/\(임가공\)/gi, '');
 
         var menuJson = JSON.parse(menu_data);
 
@@ -500,15 +505,14 @@ apiRouter.post('/all_corps_menu', function(req, res) {
                 console.log(e); // pass exception object to error handler
             }
 
-            var response_meal =
-				 menu_lunch;
-                // menu_breakfast +
-                // '\n\n' +
-                // menu_lunch +
-                // '\n\n' +
-                // menu_dinner +
-                // '\n\n' +
-                // menu_specialFood;
+            var response_meal = menu_lunch;
+            // menu_breakfast +
+            // '\n\n' +
+            // menu_lunch +
+            // '\n\n' +
+            // menu_dinner +
+            // '\n\n' +
+            // menu_specialFood;
 
             var response_corps;
             if (request_corps == '3foodServiceUnit') {
@@ -519,7 +523,7 @@ apiRouter.post('/all_corps_menu', function(req, res) {
                 response_corps = request_corps + '부대';
             }
 
-            var response_string = response_date +" ("+ response_corps +  ')\n' + response_meal;
+            var response_string = response_date + ' (' + response_corps + ')\n' + response_meal;
             response_string_dic[i + 1] = response_string;
         }
 
@@ -600,6 +604,48 @@ apiRouter.post('/allergy/onoff', function(req, res) {
                     }
                 }
             ]
+        }
+    };
+
+    res.status(200).send(responseBody);
+});
+
+apiRouter.post('/corps/change', function(req, res) {
+    console.log(req.body);
+
+    var user_id = req.body.userRequest.user.id;
+    console.log('user_id:', user_id);
+    console.log(`user_id 타입 => ${typeof user_id}`);
+
+    var corps = req.body.action.params['corps_list'];
+
+    console.log('corps:', corps);
+    console.log(`corps 타입 => ${typeof corps}`);
+
+    var fs = require('fs');
+    fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
+        data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+
+        var json_data = JSON.parse(data);
+
+        json_data[user_id]['corps'] = corps;
+        console.log('(변경한 사용자 셋팅):', json_data[user_id]);
+
+        var fs = require('fs'); // 	사용자 정보에 사용자 부대를 저장/갱신
+        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
+            console.log('user_data.txt 비동기적 파일 쓰기 완료');
+        });
+    });
+
+    if (corps == 'null') {
+        var msg = '해당 부대를 찾지 못했습니다.\n"부대 찾아보기"를 입력해 본인의 부대를 찾아보세요.';
+    } else {
+        var msg = '부대를 정상적으로 설정하였습니다.\n\n[설정한 부대: ' + corps + ']';
+    }
+    const responseBody = {
+        version: '2.0',
+        data: {
+            msg: msg
         }
     };
 
