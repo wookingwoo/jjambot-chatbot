@@ -24,15 +24,13 @@ def IsBlankedCorps(dic):
         print()
         print("갯수:", len(blankedCorps))
         print("******************************")
+    else:
+        print("UnitTest(메뉴가 빈 부대 확인): 없음. 성공!")
 
 
 def IsMenuCorrect(dic):
     right = 0
     wrong = 0
-
-    print()
-    print("************")
-    print("데이터 비교 테스트")
 
     if dic["ATC"]["20200322"] == {'breakfast': ['떡만둣국 (1)(5)(6)(10)(16)', '쇠고기호박볶음 (5)(6)(9)(16)', '배추김치(3~4월)'],
                                   'lunch': ['밥', '감자국 (5)', '돼지고기고추장볶음 (5)(6)(10)', '양배추쌈/쌈장 (5)(6)', '배추김치(3~4월)'],
@@ -53,6 +51,14 @@ def IsMenuCorrect(dic):
         wrong += 1
         print("5322부대(1급양대) 20200416 데이터 오류.")
 
-    print()
-    print("성공 횟수: {}/{}".format(right, right + wrong))
-    print("************")
+    if dic["3foodServiceUnit"]["20180715"] == {
+        'breakfast': ['밥1', '생선묵국 (5)(6)(9)', '소시지야채볶음 (10)', '맛김', '배추김치(7~9월)'],
+        'lunch': ['돼지고기부추덮밥 (1)(5)(6)(10)', '콩나물김치국 (5)', '오이무침 (5)(6)', '총각김치'],
+        'dinner': ['밥', '버섯된장찌개 (5)(6)(9)', '돼지고기가지볶음 (5)(6)(10)', '감자조림 (5)(6)', '배추김치(7~9월)']}:
+        right += 1
+    else:
+        wrong += 1
+        print("3foodServiceUnit 부대 20180715 데이터 오류.")
+
+    print("UnitTest(데이터 비교 테스트)", end='')
+    print("[성공 횟수: {}/{}]".format(right, right + wrong))
