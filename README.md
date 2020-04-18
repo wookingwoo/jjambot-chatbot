@@ -123,6 +123,22 @@ $ npm install request
 ```
 
 
+- moment
+
+국외 서버를 구축하는 경우, new date()로 설정 시 한국 시간이 표시되지 않는 현상이 있다. 이를 해결하기 위해 moment를 이용하였습니다.
+
+
+
+```bash
+$ npm install moment
+```
+
+
+```bash
+$ npm install moment-timezone
+```
+
+
 ---
 
 
@@ -207,7 +223,9 @@ can use the /usr/bin/tzselect command in shell scripts:
 
 - Timezone 변경하기 2
 
-아래는 Asia/Seoul로 변경하는 방법입니다.
+아래는 Timezone을 직접 변경하는 법입니다.
+
+아래 나온 설정 지역 예시는 Asia/Seoul입니다.
 ```bash
 $ sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 ```

@@ -2,6 +2,10 @@ const express = require('express');
 const app = express();
 const logger = require('morgan');
 const bodyParser = require('body-parser');
+var moment = require('moment');
+require('moment-timezone');
+
+moment.tz.setDefault('Asia/Seoul');
 
 const apiRouter = express.Router();
 
@@ -154,25 +158,14 @@ apiRouter.post('/crawling_test', function(req, res) {
 apiRouter.post('/menu', function(req, res) {
     console.log('\n<req.body 출력> ');
     console.log(req.body);
+    console.log('moment:', moment().format('YYYY-MM-DD HH:mm:ss'));
 
     var fs = require('fs');
 
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, menu_data) {
-        var today_date = new Date();
-        var dd = today_date.getDate();
-        var mm = today_date.getMonth() + 1; //January is 0!
-        var yyyy = today_date.getFullYear();
-
-        if (dd < 10) {
-            dd = '0' + dd;
-        }
-
-        if (mm < 10) {
-            mm = '0' + mm;
-        }
-
-        today_date = yyyy + '-' + mm + '-' + dd;
+        var today_date = moment().format('YYYY-MM-DD');
         console.log('today_date:', today_date);
+        console.log(`today_date 타입 => ${typeof today_date}`);
 
         var request_date = JSON.parse(req.body.action.params.sys_date).date;
 
@@ -184,8 +177,8 @@ apiRouter.post('/menu', function(req, res) {
         console.log(`request_date 타입 => ${typeof request_date}`);
 
         var user_id = req.body.userRequest.user.id;
-		
-		      console.log('user_id:', user_id);
+
+        console.log('user_id:', user_id);
         console.log(`user_id 타입 => ${typeof user_id}`);
 
         var fs = require('fs');
@@ -196,19 +189,16 @@ apiRouter.post('/menu', function(req, res) {
 
         if (json_user_data[user_id] == undefined) {
             // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가해서 다시 읽기
-            console.log('사용자 정보가 없어 추가합니다. (사용자 아이디:', user_id+")");
+            console.log('사용자 정보가 없어 추가합니다. (사용자 아이디:', user_id + ')');
 
             var fs = require('fs');
-			
 
             json_user_data[user_id] = {
                 alias: '',
                 corps: '',
                 allergy_show: '',
-				add_full_date: new Date(),
-				add_date: today_date,
-				usage_count:''
-				
+                join_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                usage_count: 0
             };
 
             var new_user_data = json_user_data;
@@ -275,13 +265,12 @@ apiRouter.post('/menu', function(req, res) {
                 }
                 return str;
             }
-  try {
-            var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
-            var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
-            var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
-            var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
-	  
-	   } catch (e) {
+            try {
+                var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
+                var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
+                var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
+                var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+            } catch (e) {
                 var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
                 var menu_lunch = '[점심]\n' + '식단 정보가 등록되지 않았습니다.';
                 var menu_dinner = '[저녁]\n' + '식단 정보가 등록되지 않았습니다.';
@@ -386,7 +375,7 @@ apiRouter.post('/menu', function(req, res) {
             const responseBody = {
                 version: '2.0',
                 data: {
-                    msg: '식단을 호출하기 전에 우선 부대 설정을 해주세요.\n\n짬봇에게 \"부대 설정하기\"라고 입력해주세요~'
+                    msg: '식단을 호출하기 전에 우선 부대 설정을 해주세요.\n\n짬봇에게 "부대 설정하기"라고 입력해주세요~'
                 }
             };
             res.status(200).send(responseBody);
@@ -443,7 +432,15 @@ apiRouter.post('/all_corps_menu', function(req, res) {
             json_user_data[user_id] = {
                 alias: '',
                 corps: '',
-                allergy_show: ''
+                allergy_show: '',
+                join_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+                usage_count: {
+                    total: 0,
+                    menu_api: 0,
+                    all_corps_menu_api: 0,
+                    allergy_onoff_api: 0,
+                    change_corps_api: 0
+                }
             };
 
             var new_user_data = json_user_data;
