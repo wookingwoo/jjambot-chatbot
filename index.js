@@ -4,6 +4,7 @@ const logger = require('morgan');
 const bodyParser = require('body-parser');
 var moment = require('moment');
 require('moment-timezone');
+var fs = require('fs');
 
 moment.tz.setDefault('Asia/Seoul');
 
@@ -18,6 +19,29 @@ app.use(
 );
 
 app.use('/api', apiRouter);
+
+function MakeNewUserData(json_user_data, user_id) {
+    console.log('사용자 정보가 없어 추가합니다.');
+
+    json_user_data[user_id] = {
+        alias: '',
+        corps: '',
+        allergy_show: '',
+        join_date: moment().format('YYYY-MM-DD HH:mm:ss'),
+        usage_count: {
+            total: 0,
+            menu_api: 0,
+            all_corps_menu_api: 0,
+            allergy_onoff_api: 0,
+            change_corps_api: 0
+        }
+    };
+
+    var new_user_data = json_user_data;
+
+    fs.writeFileSync('./user_data/user_data.txt', JSON.stringify(new_user_data), 'utf8'); // 동기적 파일 쓰기
+    console.log('(동기적 파일 쓰기 완료) 새로운 사용자를 user_data.txt에 추가하였습니다.');
+}
 
 apiRouter.post('/sayHello', function(req, res) {
     const responseBody = {
@@ -189,28 +213,7 @@ apiRouter.post('/menu', function(req, res) {
 
         if (json_user_data[user_id] == undefined) {
             // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가해서 다시 읽기
-            console.log('사용자 정보가 없어 추가합니다. (사용자 아이디:', user_id + ')');
-
-            var fs = require('fs');
-
-            json_user_data[user_id] = {
-                alias: '',
-                corps: '',
-                allergy_show: '',
-                join_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                usage_count: 0
-            };
-
-            var new_user_data = json_user_data;
-
-            fs.writeFileSync('./user_data/user_data.txt', JSON.stringify(new_user_data), 'utf8'); // 동기적 파일 쓰기
-            console.log('new user data 동기적 파일 쓰기 완료');
-
-            var fs = require('fs');
-            var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
-
-            user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
-            var json_user_data = JSON.parse(user_data);
+            MakeNewUserData(json_user_data, user_id);
         }
 
         var request_corps = json_user_data[user_id]['corps'];
@@ -425,28 +428,7 @@ apiRouter.post('/all_corps_menu', function(req, res) {
 
         if (json_user_data[user_id] == undefined) {
             // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가하기(폼만 추가, 데이터는 없음.)
-            console.log('사용자 정보가 없어 추가합니다.');
-
-            var fs = require('fs');
-
-            json_user_data[user_id] = {
-                alias: '',
-                corps: '',
-                allergy_show: '',
-                join_date: moment().format('YYYY-MM-DD HH:mm:ss'),
-                usage_count: {
-                    total: 0,
-                    menu_api: 0,
-                    all_corps_menu_api: 0,
-                    allergy_onoff_api: 0,
-                    change_corps_api: 0
-                }
-            };
-
-            var new_user_data = json_user_data;
-
-            fs.writeFileSync('./user_data/user_data.txt', JSON.stringify(new_user_data), 'utf8'); // 동기적 파일 쓰기
-            console.log('new user data 동기적 파일 쓰기 완료');
+            MakeNewUserData(json_user_data, user_id);
         }
 
         menu_data = menu_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
