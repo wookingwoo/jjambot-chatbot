@@ -184,8 +184,6 @@ apiRouter.post('/menu', function(req, res) {
     console.log(req.body);
     console.log('moment:', moment().format('YYYY-MM-DD HH:mm:ss'));
 
-    var fs = require('fs');
-
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, menu_data) {
         var today_date = moment().format('YYYY-MM-DD');
         console.log('today_date:', today_date);
@@ -205,7 +203,6 @@ apiRouter.post('/menu', function(req, res) {
         console.log('user_id:', user_id);
         console.log(`user_id 타입 => ${typeof user_id}`);
 
-        var fs = require('fs');
         var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
 
         user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
@@ -390,8 +387,6 @@ apiRouter.post('/all_corps_menu', function(req, res) {
     console.log('\n<req.body 출력> ');
     console.log(req.body);
 
-    var fs = require('fs');
-
     fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, menu_data) {
         var today_date = new Date();
         var dd = today_date.getDate();
@@ -420,7 +415,6 @@ apiRouter.post('/all_corps_menu', function(req, res) {
 
         var user_id = req.body.userRequest.user.id;
 
-        var fs = require('fs');
         var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
 
         user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
@@ -545,7 +539,6 @@ apiRouter.post('/allergy/onoff', function(req, res) {
     console.log('allergy_show:', allergy_show);
     console.log(`allergy_show 타입 => ${typeof allergy_show}`);
 
-    var fs = require('fs');
     fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
@@ -554,7 +547,6 @@ apiRouter.post('/allergy/onoff', function(req, res) {
         json_data[user_id]['allergy_show'] = allergy_show;
         console.log('(변경한 사용자 셋팅):', json_data[user_id]);
 
-        var fs = require('fs');
         fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
             console.log('user_data.txt 비동기적 파일 쓰기 완료');
         });
@@ -616,7 +608,6 @@ apiRouter.post('/corps/change', function(req, res) {
     console.log('corps:', corps);
     console.log(`corps 타입 => ${typeof corps}`);
 
-    var fs = require('fs');
     fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
@@ -625,7 +616,7 @@ apiRouter.post('/corps/change', function(req, res) {
         json_data[user_id]['corps'] = corps;
         console.log('(변경한 사용자 셋팅):', json_data[user_id]);
 
-        var fs = require('fs'); // 	사용자 정보에 사용자 부대를 저장/갱신
+        // 	사용자 정보에 사용자 부대를 저장/갱신
         fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
             console.log('user_data.txt 비동기적 파일 쓰기 완료');
         });
