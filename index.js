@@ -184,6 +184,9 @@ apiRouter.post('/menu', function(req, res) {
         console.log(`request_date 타입 => ${typeof request_date}`);
 
         var user_id = req.body.userRequest.user.id;
+		
+		      console.log('user_id:', user_id);
+        console.log(`user_id 타입 => ${typeof user_id}`);
 
         var fs = require('fs');
         var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
@@ -193,14 +196,19 @@ apiRouter.post('/menu', function(req, res) {
 
         if (json_user_data[user_id] == undefined) {
             // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가해서 다시 읽기
-            console.log('사용자 정보가 없어 추가합니다.');
+            console.log('사용자 정보가 없어 추가합니다. (사용자 아이디:', user_id+")");
 
             var fs = require('fs');
+			
 
             json_user_data[user_id] = {
                 alias: '',
                 corps: '',
-                allergy_show: ''
+                allergy_show: '',
+				add_full_date: new Date(),
+				add_date: today_date,
+				usage_count:''
+				
             };
 
             var new_user_data = json_user_data;
@@ -374,7 +382,7 @@ apiRouter.post('/menu', function(req, res) {
             };
             res.status(200).send(responseBody);
         } else {
-            console.log('부대 설징이 되어있지 않아 부대 설정 안내 메시지를 전송했습니다.');
+            console.log('부대 설정이 되어있지 않아 부대 설정 안내 메시지를 전송했습니다.');
             const responseBody = {
                 version: '2.0',
                 data: {

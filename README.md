@@ -166,6 +166,58 @@ pip3 install beautifulsoup4
 
 ---
 
+
+## Linux Setting
+
+### TimeZone
+
+
+ubuntu 기준으로 설명.
+한국 시간대로 변경하는법.
+정확한 현재 날짜와 시간을 구하기 위해 필수적으로 수정해야함.
+(user가 원하는 날짜의 메뉴와 다른 날의 메뉴를 출력할 수 있음.)
+
+
+
+- Timezone 변경하기 1
+
+
+현재 시간을 확인하는 명령어로 우분투 시스템에서 사용하는 표준 시간을 보여줍니다.
+
+```bash
+$ date
+```
+
+다음 명령어를 입력 후 원하는 시간대 국가를 선택하세요.
+```bash
+$ tzselect
+```
+
+아래와 같이 오류가 난다면 직접 추가해야합니다. (Timezone 변경하기 2 참고.)
+
+```
+You can make this change permanent for yourself by appending the line
+        TZ='Asia/Seoul'; export TZ
+to the file '.profile' in your home directory; then log out and log in again.
+
+Here is that TZ value again, this time on standard output so that you
+can use the /usr/bin/tzselect command in shell scripts:
+```
+
+
+- Timezone 변경하기 2
+
+아래는 Asia/Seoul로 변경하는 방법입니다.
+```bash
+$ sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
+```
+
+
+
+---
+
+
+
 ## Data
 
 ### 형식
