@@ -363,15 +363,6 @@ apiRouter.post('/menu', function(req, res) {
                 response_corps = request_corps + '부대';
             }
 
-            // 			console.log(menu_breakfast)
-
-            // 			console.log(menu_lunch)
-
-            // 			console.log(menu_dinner)
-            // console.log(menu_specialFood)
-
-            // console.log(response_meal)
-
             const responseBody = {
                 version: '2.0',
                 data: {
