@@ -1,3 +1,6 @@
+import os
+
+
 def writeAllCorpsMenu_TXT(dic_parsing_menu):
     import copy
     import datetime
@@ -24,22 +27,33 @@ def writeAllCorpsMenu_TXT(dic_parsing_menu):
     else:
         print("\n***********기존 DB(allCorpsMenu.txt)가 새롭게 변경되었습니다!!!***********")
         keys = "(업데이트메뉴) 차집합 (기존메뉴) [keys]: >>" + str(set(dic_all_menu_file.keys()) - set(dic_all_menu_old.keys()))
-        values = "(업데이트메뉴) 차집합 (기존메뉴) [values]: >>" + str(
-            set(dic_all_menu_file.values()) - set(dic_all_menu_old.values()))
+        # values = "(업데이트메뉴) 차집합 (기존메뉴) [values]: >>" + str(set(dic_all_menu_file.values()) - set(dic_all_menu_old.values()))
         print(keys)
-        print(values + "\n********************************************\n")
+        # print(values)
+        print("********************************************\n")
+
+        # 경로가 존재하지 않으면 새로 생성
+        if not os.path.isdir("./log_data"):
+            os.mkdir("./log_data")
+            print("./log_data" + " 경로가 없어 새로 생성 했습니다.")
+
+        # 파일이 존재하지 않을 경우 빈 파일 생성
+        # if not os.path.exists("./log_data/change_log.txt"):
+        #     f = open("./log_data/change_log.txt", 'w')
+        #     f.write("")
+        #     f.close()
+        #     print("./log_data/change_log.txt" + " 파일이 없어 새로 생성합니다.")
 
         file_change_DB_log = open("./log_data/change_log.txt", 'a')
         file_change_DB_log.writelines(str(datetime.datetime.now()) + ": " + "기존 DB가 새롭게 변경되었습니다." + "\n")
         file_change_DB_log.writelines(keys + "\n")
-        file_change_DB_log.writelines(values + "\n" + "\n")
+        # file_change_DB_log.writelines(values + "\n" + "\n")
         file_change_DB_log.close()
 
         print("\'{}\'에 DB의 변동사항을 기록했습니다.".format("./log_data/change_log.txt"))
 
 
 def writeMenuAsDate_TXT(dic):
-    import os
     import pickle
 
     # {

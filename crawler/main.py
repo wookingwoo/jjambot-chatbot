@@ -15,6 +15,7 @@ try:
 except Exception as ex:  # 에러 종류
     print('unit_test.IsMenuCorrect_유닛 테스트중 에러가 발생 했습니다', ex)  # ex는 발생한 에러의 이름을 받아오는 변수
 write_menu_data.writeAllCorpsMenu_TXT(all_corps_menu) # 전부대 전메뉴를 allCorpsMenu.txt에 저장
+write_menu_data.writeMenuAsDate_TXT(all_corps_menu)# 전부대 전메뉴를 부대별, 날짜별로 분류하여 각각 디렉토리별로 저장.
 print()
 print("WorkingTime: {} sec".format(time.time() - startTime)) # 크롤링 시간 계산 후 출력
 print("끝.")
