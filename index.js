@@ -342,9 +342,7 @@ apiRouter.post('/menu', function(req, res) {
             }
 
             var response_corps;
-            if (request_corps == '3foodServiceUnit') {
-                response_corps = '3군수지원사령부';
-            } else if (request_corps == 'ATC') {
+            if (request_corps == 'ATC') {
                 response_corps = '육훈소';
             } else {
                 response_corps = request_corps + '부대';
@@ -499,9 +497,7 @@ apiRouter.post('/all_corps_menu', function(req, res) {
             // menu_specialFood;
 
             var response_corps;
-            if (request_corps == '3foodServiceUnit') {
-                response_corps = '3군수지원사령부';
-            } else if (request_corps == 'ATC') {
+            if (request_corps == 'ATC') {
                 response_corps = '육군훈련소';
             } else {
                 response_corps = request_corps + '부대';

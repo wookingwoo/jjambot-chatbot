@@ -22,10 +22,16 @@ def writeMenuAsDate_TXT(dic):
     for y in sorted(dic):
 
         for z in sorted(dic[y]):
-            path_classify_dir_year = './crawling_data/classify_dates/year_{}'.format(z[0:4])
-            path_classify_dir_month = './crawling_data/classify_dates/year_{}/month_{}'.format(z[0:4], z[4:6])
-            path_classify = './crawling_data/classify_dates/year_{}/month_{}/{}_menu.dat'.format(z[0:4], z[4:6],
-                                                                                  z[0:4] + "_" + z[4:6])
+            path_classify_dir = './crawling_data/sort_menuData'
+            path_classify_dir_year = './crawling_data/sort_menuData/year_{}'.format(z[0:4])
+            path_classify_dir_month = './crawling_data/sort_menuData/year_{}/month_{}'.format(z[0:4], z[4:6])
+            path_classify = './crawling_data/sort_menuData/year_{}/month_{}/{}_menu.dat'.format(z[0:4], z[4:6],
+                                                                                                z[0:4] + "_" + z[4:6])
+
+            #                   경로가 존재하지 않으면 새로 생성
+            if not os.path.isdir(path_classify_dir):
+                os.mkdir(path_classify_dir)
+                print(path_classify_dir + "경로가 없어 새로 생성 했습니다.")
 
             #                   경로가 존재하지 않으면 새로 생성
             if not os.path.isdir(path_classify_dir_year):
@@ -70,4 +76,4 @@ if __name__ == "__main__":
     print("dic 타입:", type(dic))
     print("dic:", dic)
 
-dic = writeMenuAsDate_TXT(dic)
+    dic = writeMenuAsDate_TXT(dic)

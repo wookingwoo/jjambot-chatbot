@@ -1,6 +1,15 @@
 # jjambot (짬봇)
 
 
+## 카카오톡 챗봇 안내
+
+카카오톡 채널 이름: [짬봇 (군대 식단 알림봇)](http://pf.kakao.com/_xlVKrxb)
+
+카카오톡 아이디: [jjambot](http://pf.kakao.com/_xlVKrxb)
+
+홈 URL: http://pf.kakao.com/_xlVKrxb
+
+
 ## 설치 안내 (Installation Process)
 
 ### nvm 설치
