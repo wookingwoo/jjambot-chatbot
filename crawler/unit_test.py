@@ -1,3 +1,5 @@
+from write_log import *
+
 def IsBlankedCorps(dic):
     ifAnyoneBlanked = False
     blankedCorps = []
@@ -10,22 +12,22 @@ def IsBlankedCorps(dic):
             blankedCorps.append(key)
 
     if ifAnyoneBlanked:
-        print()
-        print("************ 오류 ************")
-        print("아래의 값이 비었습니다.")
+        write_all_log("")
+        write_all_log("************ 오류 ************")
+        write_all_log("아래의 값이 비었습니다.")
         for i in range(len(blankedCorps)):
 
             if blankedCorps[i] == "3296":
-                print(blankedCorps[i], end='')
-                print(" (api 준비중인 부대)")
+                write_all_log(blankedCorps[i], end='')
+                write_all_log(" (api 준비중인 부대)")
             else:
-                print(blankedCorps[i])
+                write_all_log(blankedCorps[i])
 
-        print()
-        print("갯수:", len(blankedCorps))
-        print("******************************")
+        write_all_log()
+        write_all_log("갯수:", len(blankedCorps))
+        write_all_log("******************************")
     else:
-        print("UnitTest(메뉴가 빈 부대 확인): 없음. 성공!")
+        write_all_log("UnitTest(메뉴가 빈 부대 확인): 없음. 성공!")
 
 
 def IsMenuCorrect(dic):
@@ -46,7 +48,7 @@ def IsMenuCorrect(dic):
         right += 1
     else:
         wrong += 1
-        print("육훈소 20200322 데이터 오류.")
+        write_all_log("육훈소 20200322 데이터 오류.")
 
     if dic["5322"]["20200416"] == {'breakfast': ['밥1', '생선묵국 (5)(6)(9)', '돼지고기김치볶음 (6)(10)', '맛김'],
                                    'lunch': ['잡곡밥', '북어채국 (1)(5)(9)(18)', '오징어볶음 (5)(6)(17)', '깐풍기 (1)(5)(6)(15)',
@@ -56,7 +58,7 @@ def IsMenuCorrect(dic):
         right += 1
     else:
         wrong += 1
-        print("5322부대(1급양대) 20200416 데이터 오류.")
+        write_all_log("5322부대(1급양대) 20200416 데이터 오류.")
 
     if dic["3lsc"]["20180715"] == {
         'breakfast': ['밥1', '생선묵국 (5)(6)(9)', '소시지야채볶음 (10)', '맛김', '배추김치(7~9월)'],
@@ -65,7 +67,7 @@ def IsMenuCorrect(dic):
         right += 1
     else:
         wrong += 1
-        print("3lsc 부대 20180715 데이터 오류.")
+        write_all_log("3lsc 부대 20180715 데이터 오류.")
 
-    print("UnitTest(데이터 비교 테스트)", end='')
-    print("[성공 횟수: {}/{}]".format(right, right + wrong))
+    write_all_log("UnitTest(데이터 비교 테스트)", end='')
+    write_all_log("[성공 횟수: {}/{}]".format(right, right + wrong))

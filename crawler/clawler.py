@@ -3,6 +3,8 @@ import requests
 import time
 
 from api_key import *
+from write_log import *
+
 
 
 def MenuClawler():
@@ -11,19 +13,20 @@ def MenuClawler():
     all_corps_menu = {}
 
     for i in range(len(corps)):
+        t = 0.5
 
         print()
-        print("corps:", corps[i])
+        write_all_log("corps: "+ corps[i])
 
         response = requests.get(info_url[i])
-        print("0.5초 휴식.", end="")
-        time.sleep(0.5)
+        print("{}초 휴식.".format(t))
+        time.sleep(t)
         print("/")
 
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        print("0.5초 휴식.", end="")
-        time.sleep(0.5)
+        print("{}초 휴식.".format(t))
+        time.sleep(t)
         print("/")
 
         menu = {}

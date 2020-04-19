@@ -5,6 +5,19 @@ def writeAllCorpsMenu_TXT(dic_parsing_menu):
     import copy
     import datetime
 
+    # 경로가 존재하지 않으면 새로 생성
+    if not os.path.isdir("./crawling_data"):
+        os.mkdir("./crawling_data")
+        print("./crawling_data" + "경로가 없어 새로 생성 했습니다.")
+
+    # 파일이 존재하지 않을 경우 빈 파일 생성
+    if not os.path.exists("./crawling_data/allCorpsMenu.txt"):
+        blank_dic = {}
+        f = open("./crawling_data/allCorpsMenu.txt", 'w')
+        f.write(str(blank_dic))
+        f.close()
+        print("./crawling_data/allCorpsMenu.txt" + "파일이 없어 새로 생성합니다.")
+
     # 기존 메뉴 불러오기
     f = open("./crawling_data/allCorpsMenu.txt", 'r')
     dic_all_menu_file = eval(f.read())
@@ -37,13 +50,6 @@ def writeAllCorpsMenu_TXT(dic_parsing_menu):
             os.mkdir("./log_data")
             print("./log_data" + " 경로가 없어 새로 생성 했습니다.")
 
-        # 파일이 존재하지 않을 경우 빈 파일 생성
-        # if not os.path.exists("./log_data/change_log.txt"):
-        #     f = open("./log_data/change_log.txt", 'w')
-        #     f.write("")
-        #     f.close()
-        #     print("./log_data/change_log.txt" + " 파일이 없어 새로 생성합니다.")
-
         file_change_DB_log = open("./log_data/change_log.txt", 'a')
         file_change_DB_log.writelines(str(datetime.datetime.now()) + ": " + "기존 DB가 새롭게 변경되었습니다." + "\n")
         file_change_DB_log.writelines(keys + "\n")
@@ -51,6 +57,8 @@ def writeAllCorpsMenu_TXT(dic_parsing_menu):
         file_change_DB_log.close()
 
         print("\'{}\'에 DB의 변동사항을 기록했습니다.".format("./log_data/change_log.txt"))
+
+    return dic_all_menu_file  # 기존 파일에 크롤링한 메뉴를 추가한 dic을 return
 
 
 def writeMenuAsDate_TXT(dic):
