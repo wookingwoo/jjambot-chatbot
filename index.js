@@ -189,44 +189,59 @@ apiRouter.post('/menu', function(req, res) {
     console.log(req.body);
     console.log('moment:', moment().format('YYYY-MM-DD HH:mm:ss'));
 
-    fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, menu_data) {
-        var today_date = moment().format('YYYY-MM-DD');
-        console.log('today_date:', today_date);
-        console.log(`today_date 타입 => ${typeof today_date}`);
+    var today_date = moment().format('YYYY-MM-DD');
+    console.log('today_date:', today_date);
+    console.log(`today_date 타입 => ${typeof today_date}`);
 
-        var request_date = JSON.parse(req.body.action.params.sys_date).date;
+    var request_date = JSON.parse(req.body.action.params.sys_date).date;
 
-        if (request_date == 'null') {
-            request_date = today_date;
-        }
+    if (request_date == 'null') {
+        request_date = today_date;
+    }
 
-        console.log('request_date:', request_date);
-        console.log(`request_date 타입 => ${typeof request_date}`);
+    console.log('request_date:', request_date);
+    console.log(`request_date 타입 => ${typeof request_date}`);
 
-        var user_id = req.body.userRequest.user.id;
+    var user_id = req.body.userRequest.user.id;
 
-        console.log('user_id:', user_id);
-        console.log(`user_id 타입 => ${typeof user_id}`);
+    console.log('user_id:', user_id);
+    console.log(`user_id 타입 => ${typeof user_id}`);
 
-        var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
+    var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
 
-        user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
-        var json_user_data = JSON.parse(user_data);
+    user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+    var json_user_data = JSON.parse(user_data);
 
-        if (json_user_data[user_id] == undefined) {
-            // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가해서 다시 읽기
-            MakeNewUserData(json_user_data, user_id);
-        }
+    if (json_user_data[user_id] == undefined) {
+        // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가해서 다시 읽기
+        MakeNewUserData(json_user_data, user_id);
+    }
 
-        var request_corps = json_user_data[user_id]['corps'];
-        var allergyInfo = json_user_data[user_id]['allergy_show'];
+    var request_corps = json_user_data[user_id]['corps'];
+    var allergyInfo = json_user_data[user_id]['allergy_show'];
 
-        console.log('request_corps:', request_corps);
-        console.log(`request_corps 타입 => ${typeof request_corps}`);
+    console.log('request_corps:', request_corps);
+    console.log(`request_corps 타입 => ${typeof request_corps}`);
 
-        console.log('allergyInfo:', allergyInfo);
-        console.log(`allergyInfo 타입 => ${typeof allergyInfo}`);
+    console.log('allergyInfo:', allergyInfo);
+    console.log(`allergyInfo 타입 => ${typeof allergyInfo}`);
 
+    var fileDi =
+        './crawler/crawling_data/sort_menuData/' +
+        request_corps +
+        '/year_' +
+        request_date.substring(0, 4) +
+        '/month_' +
+        request_date.substring(5, 7) +
+        '/' +
+        request_date.substring(0, 4) +
+        '_' +
+        request_date.substring(5, 7) +
+        '_menu.txt';
+    console.log('fileDi:', fileDi);
+    console.log(`fileDi 타입 => ${typeof fileDi}`);
+
+    fs.readFile(fileDi, 'utf8', function(err, menu_data) {
         if (request_corps != '') {
             // 급양대가 등록되어있을때
 
