@@ -341,7 +341,17 @@ $ forever --help
 
 ### crawler server
 
+- nohup
 
+```bash
+$ nohup run_server.py &
+```
+
+nohup으로 작업할 파일은 755 이상의 권한이 필요합니다.
+
+```bash
+$ chmod 755 shell.sh
+```
 
 
 

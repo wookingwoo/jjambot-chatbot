@@ -3,4 +3,5 @@ crawler/api_key.py
 crawler/__pycache__/
 crawler/crawling_data/
 crawler/log_data/
+crawler/nohup.out
 user_data/
