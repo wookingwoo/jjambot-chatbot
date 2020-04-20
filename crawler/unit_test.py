@@ -18,8 +18,8 @@ def IsBlankedCorps(dic):
         for i in range(len(blankedCorps)):
 
             if blankedCorps[i] == "3296":
-                write_all_log(blankedCorps[i], end='')
-                write_all_log(" (api 준비중인 부대)")
+                write_all_log(blankedCorps[i])
+                write_all_log(": (api 준비중인 부대)")
             else:
                 write_all_log(blankedCorps[i])
 
@@ -69,5 +69,5 @@ def IsMenuCorrect(dic):
         wrong += 1
         write_all_log("3lsc 부대 20180715 데이터 오류.")
 
-    write_all_log("UnitTest(데이터 비교 테스트)", end='')
+    write_all_log("UnitTest(데이터 비교 테스트)")
     write_all_log("[성공 횟수: {}/{}]".format(right, right + wrong))
