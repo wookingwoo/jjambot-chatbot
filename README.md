@@ -302,7 +302,7 @@ forever 시작 방법입니다.
 -w란 watch의 약자이며, 소스코드의 변경이 감지되면 자동으로 node 서버를 재시작 해줍니다.
 
 ```bash
-$ forever start -w index.js
+$ forever start index.js
 ```
 
 
