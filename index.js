@@ -48,7 +48,7 @@ function UsageCount(json_user_data, user_id, api_name) {
     console.log('(동기적 파일 쓰기 완료) usage_count를 +1 하였습니다.');
 }
 
-apiRouter.post('/sayHello', function(req, res) {
+apiRouter.post('/sayHello', function (req, res) {
     const responseBody = {
         version: '2.0',
         template: {
@@ -65,7 +65,7 @@ apiRouter.post('/sayHello', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/showHello', function(req, res) {
+apiRouter.post('/showHello', function (req, res) {
     console.log(req.body);
 
     const responseBody = {
@@ -86,7 +86,7 @@ apiRouter.post('/showHello', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/datatest', function(req, res) {
+apiRouter.post('/datatest', function (req, res) {
     const responseBody = {
         version: '2.0',
         data: {
@@ -99,7 +99,7 @@ apiRouter.post('/datatest', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/crawling_test', function(req, res) {
+apiRouter.post('/crawling_test', function (req, res) {
     console.log(req.body);
 
     const convert = require('xml-js'); // npm install xml-js request
@@ -130,7 +130,7 @@ apiRouter.post('/crawling_test', function(req, res) {
 
                 // console.log(`body data => ${result}`)
 
-                xmlToJson = convert.xml2json(result, { compact: true, spaces: 4 }); // compact(데이터 간소화 여부), spaces(들여쓰기 포인트)
+                xmlToJson = convert.xml2json(result, {compact: true, spaces: 4}); // compact(데이터 간소화 여부), spaces(들여쓰기 포인트)
 
                 console.log(`xmlToJson 타입 => ${typeof xmlToJson}`);
 
@@ -184,7 +184,7 @@ apiRouter.post('/crawling_test', function(req, res) {
     // }, 1000);
 });
 
-apiRouter.post('/menu', function(req, res) {
+apiRouter.post('/menu', function (req, res) {
     console.log('\n<req.body 출력> ');
     console.log(req.body);
     console.log('moment:', moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -241,7 +241,7 @@ apiRouter.post('/menu', function(req, res) {
     console.log('fileDi:', fileDi);
     console.log(`fileDi 타입 => ${typeof fileDi}`);
 
-    fs.readFile(fileDi, 'utf8', function(err, menu_data) {
+    fs.readFile(fileDi, 'utf8', function (err, menu_data) {
         if (request_corps != '') {
             // 급양대가 등록되어있을때
 
@@ -285,6 +285,7 @@ apiRouter.post('/menu', function(req, res) {
                 }
                 return str;
             }
+
             try {
                 var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
                 var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
@@ -388,18 +389,20 @@ apiRouter.post('/menu', function(req, res) {
                 }
             };
 
-            UsageCount(json_user_data, user_id, 'menu_api');
 
             res.status(200).send(responseBody);
         }
+
+        UsageCount(json_user_data, user_id, 'menu_api');
+
     });
 });
 
-apiRouter.post('/all_corps_menu', function(req, res) {
+apiRouter.post('/all_corps_menu', function (req, res) {
     console.log('\n<req.body 출력> ');
     console.log(req.body);
 
-    fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, menu_data) {
+    fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function (err, menu_data) {
         var today_date = moment().format('YYYY-MM-DD');
         console.log('today_date:', today_date);
         console.log(`today_date 타입 => ${typeof today_date}`);
@@ -480,6 +483,7 @@ apiRouter.post('/all_corps_menu', function(req, res) {
                 }
                 return str;
             }
+
             try {
                 var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
                 var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
@@ -527,7 +531,7 @@ apiRouter.post('/all_corps_menu', function(req, res) {
     });
 });
 
-apiRouter.post('/allergy/onoff', function(req, res) {
+apiRouter.post('/allergy/onoff', function (req, res) {
     console.log(req.body);
 
     var user_id = req.body.userRequest.user.id;
@@ -548,7 +552,7 @@ apiRouter.post('/allergy/onoff', function(req, res) {
         MakeNewUserData(json_user_data, user_id);
     }
 
-    fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
+    fs.readFile('./user_data/user_data.txt', 'utf8', function (err, data) {
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
         var json_data = JSON.parse(data);
@@ -558,7 +562,7 @@ apiRouter.post('/allergy/onoff', function(req, res) {
         json_data[user_id]['allergy_show'] = allergy_show;
         console.log('(변경한 사용자 셋팅):', json_data[user_id]);
 
-        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
+        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function (err) {
             console.log('(비동기적 파일 쓰기) user_data.txt에 알러지 정보 업데이트 완료, usage_count +1 완료.');
         });
     });
@@ -607,7 +611,7 @@ apiRouter.post('/allergy/onoff', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/corps/change', function(req, res) {
+apiRouter.post('/corps/change', function (req, res) {
     console.log(req.body);
 
     var user_id = req.body.userRequest.user.id;
@@ -628,7 +632,7 @@ apiRouter.post('/corps/change', function(req, res) {
         MakeNewUserData(json_user_data, user_id);
     }
 
-    fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
+    fs.readFile('./user_data/user_data.txt', 'utf8', function (err, data) {
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
         var json_data = JSON.parse(data);
@@ -639,7 +643,7 @@ apiRouter.post('/corps/change', function(req, res) {
         console.log('(변경한 사용자 셋팅):', json_data[user_id]);
 
         // 	사용자 정보에 사용자 부대를 저장/갱신
-        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
+        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function (err) {
             console.log('(비동기적 파일 쓰기) 부대 변경 완료, usage_count +1 완료.');
         });
     });
@@ -659,6 +663,6 @@ apiRouter.post('/corps/change', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-app.listen(3000, function() {
+app.listen(3000, function () {
     console.log('jjambot menu skill server listening on port 3000!');
 });
