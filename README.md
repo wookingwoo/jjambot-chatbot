@@ -277,6 +277,12 @@ $ sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 ### chatbot server (node.js)
 
+index.js를 실행시키는 방법입니다.
+
+```bash
+$ node index.js
+```
+
 - forever
 
 node.js는 한번 오류가 생기면 서버가 종료되어집니다. forever 명령어를 사용하게 되면 에러 발생 시 서버가 중지되지 않고 프로그램을 자동으로 다시 실행시켜줍니다.
