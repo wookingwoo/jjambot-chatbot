@@ -13,7 +13,7 @@ while (True):
 
         main.main()  # main.py 실행
 
-        write_all_log("테스트 위해 3초만 휴식..")
+        # write_all_log("테스트 위해 3초만 휴식..")
         # time.sleep(3)
         write_all_log("1시간 휴식..")
         time.sleep(60 * 60)
