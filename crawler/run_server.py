@@ -13,13 +13,34 @@ while (True):
 
         main.main()  # main.py 실행
 
-        write_all_log("1시간 휴식..")
-        # time.sleep(3)
-        time.sleep(60 * 60)
+        write_all_log("테스트 위해 3초만 휴식..")
+        time.sleep(3)
+        # write_all_log("1시간 휴식..")
+        # time.sleep(60 * 60)
         write_all_log("/")
 
-        random_time_sleep = random.randrange(60 * 60)
-        # random_time_sleep = 3
+        now = time.localtime()
+        print("현재 시각: %04d/%02d/%02d %02d:%02d:%02d" % (
+            now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec))
+
+        print("=====테스트=======")
+        print(now.tm_hour)
+        print(type(now.tm_hour))
+        print("=====테스트 끝====")
+
+        if now.tm_hour == (6 or 7 or 10 or 11 or 16 or 17):
+            print("pick time 입니다.")
+            print("최대 30분 이내에 크롤링을 새로 실시합니다.")
+
+            # random_time_sleep = random.randrange(60 * 30)
+            random_time_sleep = 3
+            write_all_log("테스트 위해 3초만 휴식..")
+
+        else:
+
+            # random_time_sleep = random.randrange(60 * 60)
+            random_time_sleep = 3
+            write_all_log("테스트 위해 3초만 휴식..")
 
         if random_time_sleep < 60:
             print(str(random_time_sleep) + "초 추가로 휴식.. (랜덤 결과)")
