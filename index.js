@@ -36,6 +36,7 @@ function MakeNewUserData(json_user_data, user_id) {
             allergy_onoff_api: 0,
             change_corps_api: 0,
             change_join_army_date: 0,
+            change_discharge_date: 0,
             calculate_date: 0
         }
     };
@@ -710,6 +711,54 @@ apiRouter.post('/date_to_join_the_army/change', function(req, res) {
         version: '2.0',
         data: {
             msg: '입대일을 ' + join_army_date + '로 설정[변경]하였습니다.'
+        }
+    };
+
+    res.status(200).send(responseBody);
+});
+
+apiRouter.post('/discharge_date/change', function(req, res) {
+// 	나중에 수정사항: 전역일 설정과 입대일 설정을 합치기 (매개변수를 전역일,입대일로 설정하여 조건 분류.)
+    console.log(req.body);
+
+    var user_id = req.body.userRequest.user.id;
+    console.log('user_id:', user_id);
+    console.log(`user_id 타입 => ${typeof user_id}`);
+
+    var discharge_date = JSON.parse(req.body.action.params.sys_date).date; // 사용자가 입력한 전역일
+
+    console.log('discharge_date:', discharge_date);
+    console.log(`discharge_date 타입 => ${typeof discharge_date}`);
+
+    var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
+    user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+    var json_user_data = JSON.parse(user_data);
+
+    if (json_user_data[user_id] == undefined) {
+        // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가하기
+        MakeNewUserData(json_user_data, user_id);
+
+        // 		새로 추가한 user_data.txt를 다시 불러오기
+        var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
+        user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+        var json_user_data = JSON.parse(user_data);
+    }
+
+    json_user_data[user_id]['usage_count']['total']++;
+    json_user_data[user_id]['usage_count']['change_discharge_date']++;
+    json_user_data[user_id]['discharge_date'] = discharge_date;
+    console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
+
+    fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+        err
+    ) {
+        console.log('(비동기적 파일 쓰기) user_data.txt에 전역일 설정[변경] 완료, usage_count +1 완료.');
+    });
+
+    const responseBody = {
+        version: '2.0',
+        data: {
+            msg: '전역일을 ' + discharge_date + '로 설정[변경]하였습니다.'
         }
     };
 
