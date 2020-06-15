@@ -36,6 +36,7 @@ function MakeNewUserData(json_user_data, user_id) {
             allergy_onoff_api: 0,
             change_corps_api: 0,
             change_join_army_date: 0,
+            calculate_date: 0
         }
     };
 
@@ -668,13 +669,6 @@ apiRouter.post('/corps/change', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-
-
-
-
-
-
-
 apiRouter.post('/date_to_join_the_army/change', function(req, res) {
     console.log(req.body);
 
@@ -694,28 +688,91 @@ apiRouter.post('/date_to_join_the_army/change', function(req, res) {
     if (json_user_data[user_id] == undefined) {
         // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가하기
         MakeNewUserData(json_user_data, user_id);
-		
-// 		새로 추가한 user_data.txt를 다시 불러오기
-		var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
-    user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
-    var json_user_data = JSON.parse(user_data);
+
+        // 		새로 추가한 user_data.txt를 다시 불러오기
+        var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
+        user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+        var json_user_data = JSON.parse(user_data);
     }
 
- 
+    json_user_data[user_id]['usage_count']['total']++;
+    json_user_data[user_id]['usage_count']['change_join_army_date']++;
+    json_user_data[user_id]['date_to_join_the_army'] = join_army_date;
+    console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
 
-        json_user_data[user_id]['usage_count']['total']++;
-        json_user_data[user_id]['usage_count']['change_join_army_date']++;
-        json_user_data[user_id]['date_to_join_the_army'] = join_army_date;
-        console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
-
-        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(err) {
-            console.log('(비동기적 파일 쓰기) user_data.txt에 입대일 설정[변경] 완료, usage_count +1 완료.');
-        });
+    fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+        err
+    ) {
+        console.log('(비동기적 파일 쓰기) user_data.txt에 입대일 설정[변경] 완료, usage_count +1 완료.');
+    });
 
     const responseBody = {
         version: '2.0',
         data: {
             msg: '입대일을 ' + join_army_date + '로 설정[변경]하였습니다.'
+        }
+    };
+
+    res.status(200).send(responseBody);
+});
+
+apiRouter.post('/calculate_date', function(req, res) {
+    console.log(req.body);
+
+    var user_id = req.body.userRequest.user.id;
+    console.log('user_id:', user_id);
+    console.log(`user_id 타입 => ${typeof user_id}`);
+
+    var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
+    user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+    var json_user_data = JSON.parse(user_data);
+
+    if (json_user_data[user_id] == undefined) {
+        // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가하기
+        MakeNewUserData(json_user_data, user_id);
+
+        // 		새로 추가한 user_data.txt를 다시 불러오기
+        var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
+        user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+        var json_user_data = JSON.parse(user_data);
+    }
+
+    json_user_data[user_id]['usage_count']['total']++;
+    json_user_data[user_id]['usage_count']['calculate_date']++;
+    console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
+
+    fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+        err
+    ) {
+        console.log('(비동기적 파일 쓰기) usage_count +1 완료.(calculate_date)');
+    });
+
+    var user_date_to_join_the_army = json_user_data[user_id]['date_to_join_the_army']; // 사용자가 설정했던 입대일 불러오기
+    var user_discharge_date = json_user_data[user_id]['discharge_date']; // 사용자가 설정했던 전역일 불러오기
+
+    if (user_date_to_join_the_army == '') {
+        var date_to_join_the_army_msg = '입대일을 설정하지 않았습니다.\n입대일 설정을 입력하거나 아래 버튼을 통해 입대일을 먼저 설정하세요.';
+        var calculate_date_simple = "입대일을 설정하지 않았습니다.\n'입대일 설정'을 입력하여 입대일을 먼저 설정하세요.";
+        var calculate_date_detail = "입대일을 설정하지 않았습니다.\n'입대일 설정'을 입력하여 입대일을 먼저 설정하세요.";
+    } else {
+        var date_to_join_the_army_msg = '설정된 입대일은 ' + user_date_to_join_the_army + '입니다.';
+
+        if (user_discharge_date == '') {
+            var calculate_date_simple = "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
+            var calculate_date_detail = "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
+        } else {
+            var calculate_date_simple = '전역: D-57 복무 비율: 90% 전역일: 2020.7.27';
+            var calculate_date_detail =
+                '전역: D-57 복무 비율: 90% 현재 복무일수: D+000 총 복무일수: 000일 전역일: 2020.7.27 입대일: ';
+        }
+    }
+
+    const responseBody = {
+        version: '2.0',
+        data: {
+            date_to_join_the_army_msg: date_to_join_the_army_msg,
+            calculate_date_simple: calculate_date_simple,
+            calculate_date_detail: calculate_date_detail
         }
     };
 
