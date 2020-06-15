@@ -21,8 +21,6 @@ app.use(
 app.use('/api', apiRouter);
 
 function MakeNewUserData(json_user_data, user_id) {
-    console.log('사용자 정보가 없어 추가합니다.');
-
     json_user_data[user_id] = {
         alias: '',
         corps: '',
@@ -40,6 +38,11 @@ function MakeNewUserData(json_user_data, user_id) {
             change_join_army_date: 0,
         }
     };
+
+    var new_user_data = json_user_data;
+
+    fs.writeFileSync('./user_data/user_data.txt', JSON.stringify(new_user_data), 'utf8'); // 동기적 파일 쓰기
+    console.log('(동기적 파일 쓰기 완료) 사용자 정보가 없어 새로 추가하였습니다.');
 }
 
 function UsageCount(json_user_data, user_id, api_name) {
@@ -665,6 +668,13 @@ apiRouter.post('/corps/change', function(req, res) {
     res.status(200).send(responseBody);
 });
 
+
+
+
+
+
+
+
 apiRouter.post('/date_to_join_the_army/change', function(req, res) {
     console.log(req.body);
 
@@ -673,7 +683,6 @@ apiRouter.post('/date_to_join_the_army/change', function(req, res) {
     console.log(`user_id 타입 => ${typeof user_id}`);
 
     var join_army_date = JSON.parse(req.body.action.params.sys_date).date; // 사용자가 입력한 입대일
-
 
     console.log('join_army_date:', join_army_date);
     console.log(`join_army_date 타입 => ${typeof join_army_date}`);
@@ -685,25 +694,23 @@ apiRouter.post('/date_to_join_the_army/change', function(req, res) {
     if (json_user_data[user_id] == undefined) {
         // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가하기
         MakeNewUserData(json_user_data, user_id);
+		
+// 		새로 추가한 user_data.txt를 다시 불러오기
+		var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
+    user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+    var json_user_data = JSON.parse(user_data);
     }
 
-    fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
-        data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
-
-        var json_data = JSON.parse(data);
+ 
 
         json_user_data[user_id]['usage_count']['total']++;
         json_user_data[user_id]['usage_count']['change_join_army_date']++;
-        json_data[user_id]['date_to_join_the_army'] = join_army_date;
-        console.log('(변경한 사용자 셋팅):', json_data[user_id]);
+        json_user_data[user_id]['date_to_join_the_army'] = join_army_date;
+        console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
 
-        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
+        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(err) {
             console.log('(비동기적 파일 쓰기) user_data.txt에 입대일 설정[변경] 완료, usage_count +1 완료.');
         });
-    });
-
-
-
 
     const responseBody = {
         version: '2.0',
@@ -714,8 +721,6 @@ apiRouter.post('/date_to_join_the_army/change', function(req, res) {
 
     res.status(200).send(responseBody);
 });
-
-
 
 app.listen(3000, function() {
     console.log('jjambot menu skill server listening on port 3000!');
