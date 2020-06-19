@@ -5,8 +5,7 @@ const bodyParser = require('body-parser');
 var moment = require('moment');
 require('moment-timezone');
 var fs = require('fs');
-var sf = require("sf");
-
+var sf = require('sf');
 
 moment.tz.setDefault('Asia/Seoul');
 
@@ -720,7 +719,7 @@ apiRouter.post('/date_to_join_the_army/change', function(req, res) {
 });
 
 apiRouter.post('/discharge_date/change', function(req, res) {
-// 	나중에 수정사항: 전역일 설정과 입대일 설정을 합치기 (매개변수를 전역일,입대일로 설정하여 조건 분류.)
+    // 	나중에 수정사항: 전역일 설정과 입대일 설정을 합치기 (매개변수를 전역일,입대일로 설정하여 조건 분류.)
     console.log(req.body);
 
     var user_id = req.body.userRequest.user.id;
@@ -812,34 +811,31 @@ apiRouter.post('/calculate_date', function(req, res) {
             var calculate_date_simple = "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
             var calculate_date_detail = "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
         } else {
-			
-			
+            var nowday = new Date();
+            user_discharge_date = new Date(user_discharge_date); //전역일
+            var d_day = user_discharge_date.getTime() - nowday.getTime();
 
+            if (d_day <= 0) {
+                //당일넘어섰을때, dday로 변경
+                d_day = 'D-day';
+            } else {
+                d_day = Math.floor(d_day / (1000 * 60 * 60 * 24));
 
-    var dday = new Date(user_discharge_date).getTime();
-    var nowday = new Date();//현재
-    nowday = nowday.getTime();//밀리세컨드 단위변환
-    var distance = dday - nowday;//디데이에서 현재까지 뺀다.
+                d_day = sf('D - {d}일', { d: d_day });
+            }
 
-    var d = Math.floor(distance / (1000 * 60 * 60 * 24));//일
+            user_date_to_join_the_army = new Date(user_date_to_join_the_army); // 전역일
+            var p_day = nowday.getTime() - user_date_to_join_the_army.getTime();
+            p_day = Math.floor(p_day / (1000 * 60 * 60 * 24));
+            p_day = sf('D + {p}일', { p: p_day });
 
-    var h = Math.floor((distance / (1000*60*60)) % 24);//시간
-    var m = Math.floor((distance / (1000*60)) % 60);//분
-    var s = Math.floor((distance / 1000) % 60);//초
-
-    if (distance <= 0) {//당일넘어섰을때, dday로 변경
-							var d_day = "D-day";
-    } else {
- 
-var d_day = sf("D - {day}일 {hour}시간 {min}분", { day: d, hour: h, min: m,sec:s});
-
-    }
-
-
-			
             var calculate_date_simple = '전역 D-57 복무 비율: 90% 전역일: 2020.7.27';
             var calculate_date_detail =
-                 '전역: '+d_day +'\n복무 비율: 90%\n현재 복무일수: D+000\n총 복무일수: 000일\n전역일: 2020.7.27\n입대일: ';
+                '전역: ' +
+                d_day +
+                '\n현재 복무일수 :' +
+                p_day +
+                '\n복무 비율: 90%\n총 복무일수: 000일\n전역일: 2020.7.27\n입대일: ';
         }
     }
 
