@@ -126,7 +126,7 @@ $ npm install request
 
 - moment
 
-해외 서버를 구축하는 경우, new date()로 시간 설정 시 한국 시간이 표시되지 않는 현상이 있습니다다. 이를 해결하기 위해 moment를 이용하였습니다.
+해외 서버를 구축하는 경우, new date()로 시간 설정 시 한국 시간이 표시되지 않는 현상이 있습니다. 이를 대비해 moment를 이용하였습니다.
 
 
 
@@ -138,6 +138,19 @@ $ npm install moment
 ```bash
 $ npm install moment-timezone
 ```
+
+
+
+- sf
+
+String formatting library for node.js. [개발문서](https://www.npmjs.com/package/sf)
+
+
+
+```bash
+$ npm install sf
+```
+
 
 
 ---

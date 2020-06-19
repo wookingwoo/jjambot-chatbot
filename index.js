@@ -5,6 +5,8 @@ const bodyParser = require('body-parser');
 var moment = require('moment');
 require('moment-timezone');
 var fs = require('fs');
+var sf = require("sf");
+
 
 moment.tz.setDefault('Asia/Seoul');
 
@@ -810,9 +812,34 @@ apiRouter.post('/calculate_date', function(req, res) {
             var calculate_date_simple = "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
             var calculate_date_detail = "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
         } else {
-            var calculate_date_simple = '전역: D-57 복무 비율: 90% 전역일: 2020.7.27';
+			
+			
+
+
+    var dday = new Date(user_discharge_date).getTime();
+    var nowday = new Date();//현재
+    nowday = nowday.getTime();//밀리세컨드 단위변환
+    var distance = dday - nowday;//디데이에서 현재까지 뺀다.
+
+    var d = Math.floor(distance / (1000 * 60 * 60 * 24));//일
+
+    var h = Math.floor((distance / (1000*60*60)) % 24);//시간
+    var m = Math.floor((distance / (1000*60)) % 60);//분
+    var s = Math.floor((distance / 1000) % 60);//초
+
+    if (distance <= 0) {//당일넘어섰을때, dday로 변경
+							var d_day = "D-day";
+    } else {
+ 
+var d_day = sf("D - {day}일 {hour}시간 {min}분", { day: d, hour: h, min: m,sec:s});
+
+    }
+
+
+			
+            var calculate_date_simple = '전역 D-57 복무 비율: 90% 전역일: 2020.7.27';
             var calculate_date_detail =
-                '전역: D-57 복무 비율: 90% 현재 복무일수: D+000 총 복무일수: 000일 전역일: 2020.7.27 입대일: ';
+                 '전역: '+d_day +'\n복무 비율: 90%\n현재 복무일수: D+000\n총 복무일수: 000일\n전역일: 2020.7.27\n입대일: ';
         }
     }
 
