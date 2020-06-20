@@ -272,6 +272,11 @@ apiRouter.post('/menu', function(req, res) {
                 // 알러지 정보 표시가 "off"이거나 ""일때
                 menu_data = menu_data.replace(/\([0-9]\)/gi, ''); // (1자리수)를 공백으로 변환
                 menu_data = menu_data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
+
+                // 		배추김치(3~4월)에서 (3~4월)제거하기
+                menu_data = menu_data.replace(/\([0-9]~[0-9]월\)/gi, '');
+                menu_data = menu_data.replace(/\([0-9]~[0-9][0-9]월\)/gi, '');
+                menu_data = menu_data.replace(/\([0-9][0-9]~[0-9][0-9]월\)/gi, '');
             }
 
             var menuJson = JSON.parse(menu_data);
@@ -443,8 +448,10 @@ apiRouter.post('/all_corps_menu', function(req, res) {
         menu_data = menu_data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
 
         // 		배추김치(3~4월)에서 (3~4월)제거하기
-        menu_data = menu_data.replace(/\(3~4월\)/gi, '');
-        menu_data = menu_data.replace(/\(10~11월\)/gi, '');
+        menu_data = menu_data.replace(/\([0-9]~[0-9]월\)/gi, '');
+        menu_data = menu_data.replace(/\([0-9]~[0-9][0-9]월\)/gi, '');
+        menu_data = menu_data.replace(/\([0-9][0-9]~[0-9][0-9]월\)/gi, '');
+
         menu_data = menu_data.replace(/\(임가공\)/gi, '');
 
         var menuJson = JSON.parse(menu_data);
