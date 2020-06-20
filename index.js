@@ -290,7 +290,7 @@ apiRouter.post('/menu', function(req, res) {
                     str += dic[key][i].trim(); //trim()을 이용해 앞뒤 공백 제거
 
                     if (i < dic[key].length - 1) {
-                        str += ', \n';
+                        str += ', ';
                     }
                 }
                 return str;
@@ -352,18 +352,18 @@ apiRouter.post('/menu', function(req, res) {
             } else {
                 response_meal = '';
                 if (contains(request_meal_type_list, '아침')) {
-                    response_meal += menu_breakfast;
+                    response_meal += menu_breakfast + '\n';
                 }
                 if (contains(request_meal_type_list, '점심')) {
-                    response_meal += '\n\n' + menu_lunch;
+                    response_meal += '\n' + menu_lunch + '\n';
                 }
                 if (contains(request_meal_type_list, '저녁')) {
-                    response_meal += '\n\n' + menu_dinner;
+                    response_meal += '\n' + menu_dinner + '\n';
                 }
                 if (contains(request_meal_type_list, '부식')) {
-                    response_meal += menu_specialFood;
+                    response_meal += '\n' + menu_specialFood;
                 } else {
-                    response_meal += '\n\n' + menu_specialFood;
+                    response_meal += '\n' + menu_specialFood;
                 }
             }
 
@@ -380,7 +380,7 @@ apiRouter.post('/menu', function(req, res) {
                     meal: response_meal,
 
                     date: response_date,
-                    corps: response_corps + ' 식단',
+                    corps: '(' + response_corps + ' 식단)',
 
                     breakfast: menu_breakfast,
                     lunch: menu_lunch,
@@ -839,7 +839,7 @@ apiRouter.post('/calculate_date', function(req, res) {
                 sf('전역: D{d}일', { d: d_day }) +
                 sf('\n\n복무 비율: {per}%', { per: p_day / total_day * 100 }) +
                 sf('\n\n전역일: {d}', { d: user_discharge_date });
-			
+
             var calculate_date_detail =
                 sf('전역: D{d}일', { d: d_day }) +
                 sf('\n현재 복무일수: D{p}일', { p: p_day }) +

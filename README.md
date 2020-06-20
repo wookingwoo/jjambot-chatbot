@@ -250,7 +250,7 @@ $ sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 - user_data.txt
 
-부대 정보, 알러지 정보등 사용자 데이터를 저장하는 DB로 JSON형식으로 저장됩니다.
+부대 정보, 알러지 정보, 전역일등 사용자 데이터를 저장하는 DB로 JSON형식으로 저장됩니다.
 
 
 ```
