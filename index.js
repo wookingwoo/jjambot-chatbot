@@ -812,30 +812,41 @@ apiRouter.post('/calculate_date', function(req, res) {
             var calculate_date_detail = "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
         } else {
             var nowday = new Date();
-            user_discharge_date = new Date(user_discharge_date); //전역일
-            var d_day = user_discharge_date.getTime() - nowday.getTime();
+            var d_discharge_date = new Date(user_discharge_date); //전역일, Date로 표현하면 09시가 됨. 나중에 00시로 수정
+            var d_day = d_discharge_date.getTime() - nowday.getTime();
 
-            if (d_day <= 0) {
-                //당일넘어섰을때, dday로 변경
-                d_day = 'D-day';
-            } else {
-                d_day = Math.floor(d_day / (1000 * 60 * 60 * 24));
+            d_day = Math.ceil(d_day / (1000 * 60 * 60 * 24)) * -1; // Math.ceil은 소수부분을 올림함.
 
-                d_day = sf('D - {d}일', { d: d_day });
+            if (d_day == 0) {
+                //당일일때 , D-day로 변경
+                d_day = '-day';
+            } else if (d_day > 0) {
+                d_day = '+' + d_day;
             }
 
-            user_date_to_join_the_army = new Date(user_date_to_join_the_army); // 전역일
-            var p_day = nowday.getTime() - user_date_to_join_the_army.getTime();
+            var d_date_to_join_the_army = new Date(user_date_to_join_the_army); // 입대일
+            var p_day = nowday.getTime() - d_date_to_join_the_army.getTime();
             p_day = Math.floor(p_day / (1000 * 60 * 60 * 24));
-            p_day = sf('D + {p}일', { p: p_day });
 
-            var calculate_date_simple = '전역 D-57 복무 비율: 90% 전역일: 2020.7.27';
+            if (p_day >= 0) {
+                p_day = '+' + p_day;
+            }
+
+            var total_day = d_discharge_date.getTime() - d_date_to_join_the_army.getTime(); // 총복무일 = 전역일 - 입대일
+            total_day = Math.floor(total_day / (1000 * 60 * 60 * 24));
+
+            var calculate_date_simple =
+                sf('전역: D{d}일', { d: d_day }) +
+                sf('\n\n복무 비율: {per}%', { per: p_day / total_day * 100 }) +
+                sf('\n\n전역일: {d}', { d: user_discharge_date });
+			
             var calculate_date_detail =
-                '전역: ' +
-                d_day +
-                '\n현재 복무일수 :' +
-                p_day +
-                '\n복무 비율: 90%\n총 복무일수: 000일\n전역일: 2020.7.27\n입대일: ';
+                sf('전역: D{d}일', { d: d_day }) +
+                sf('\n현재 복무일수: D{p}일', { p: p_day }) +
+                sf('\n총 복무일수: {p}일', { p: total_day }) +
+                sf('\n복무 비율: {per}%', { per: (p_day / total_day * 100).toFixed(1) }) +
+                sf('\n입대일: {d}', { d: user_date_to_join_the_army }) +
+                sf('\n전역일: {d}', { d: user_discharge_date });
         }
     }
 

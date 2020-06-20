@@ -250,7 +250,7 @@ $ sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 - user_data.txt
 
-부대 정보나 알러지 정보등 사용자 데이터를 저장하는 DB로 JSON형식으로 저장됩니다.
+부대 정보, 알러지 정보등 사용자 데이터를 저장하는 DB로 JSON형식으로 저장됩니다.
 
 
 ```
@@ -259,8 +259,10 @@ $ sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 "alias":"sample",
 "corps":"5322",
 "allergy_show":"on",
-"join_date":"2020-04-18 23:27:39",
-"usage_count":{"total":3,"menu_api":2,"all_corps_menu_api":1,"allergy_onoff_api":0,"change_corps_api":0}},
+"date_to_join_the_army":"2018-12-17",
+"discharge_date":"2020-07-27",
+"jjambot_join_date":"2020-06-20 15:39:37",
+"usage_count":{"total":47,"menu_api":5,"all_corps_menu_api":1,"allergy_onoff_api":1,"change_corps_api":1,"change_join_army_date":6,"change_discharge_date":5,"calculate_date":28}},
 
 ...
 
