@@ -255,7 +255,7 @@ $ sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 
 ```
 {
-"sample_id":{
+"":{
 "alias":"sample",
 "corps":"5322",
 "allergy_show":"on",
@@ -269,6 +269,18 @@ $ sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
 }
 
 ```
+
+각 정보는 아래 표와 같이 이용됩니다.
+
+|번호|JSON key|설명|이용 목적|
+|:----:|:-----|:-----:|:-----:|
+|1|alias|별칭|사용자 구분에 이용|
+|2|corps|부대정보|식단 알림에 이용|
+|3|date_to_join_the_army|입대일|전역일 계산에 이용|
+|4|discharge_date|전역일|전역일 계산에 이용|
+|5|jjambot_join_date|짬봇 가입일|AI 통계 분석|
+|6|usage_count|사용 통계|AI 통계 분석|
+
 
 - allCorpsMenu.txt
 
