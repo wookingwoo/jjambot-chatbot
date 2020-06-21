@@ -109,7 +109,8 @@ apiRouter.post('/datatest', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/crawling_test', function(req, res) { // 사용자 발화 즉시 크롤링 하는 방법
+apiRouter.post('/crawling_test', function(req, res) {
+    // 사용자 발화 즉시 크롤링 하는 방법
     console.log(req.body);
 
     const convert = require('xml-js'); // npm install xml-js request
@@ -186,7 +187,6 @@ apiRouter.post('/crawling_test', function(req, res) { // 사용자 발화 즉시
             console.log('5');
         }
     }
-
 
     // setTimeout(function() {
 
@@ -566,14 +566,16 @@ apiRouter.post('/allergy/onoff', function(req, res) {
     fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
-        var json_data = JSON.parse(data);
+        var json_user_data = JSON.parse(data);
 
         json_user_data[user_id]['usage_count']['total']++;
         json_user_data[user_id]['usage_count']['allergy_onoff_api']++;
-        json_data[user_id]['allergy_show'] = allergy_show;
-        console.log('(변경한 사용자 셋팅):', json_data[user_id]);
+        json_user_data[user_id]['allergy_show'] = allergy_show;
+        console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
 
-        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
+        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+            err
+        ) {
             console.log('(비동기적 파일 쓰기) user_data.txt에 알러지 정보 업데이트 완료, usage_count +1 완료.');
         });
     });
@@ -646,15 +648,17 @@ apiRouter.post('/corps/change', function(req, res) {
     fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
-        var json_data = JSON.parse(data);
+        var json_user_data = JSON.parse(data);
 
         json_user_data[user_id]['usage_count']['total']++;
         json_user_data[user_id]['usage_count']['change_corps_api']++;
-        json_data[user_id]['corps'] = corps;
-        console.log('(변경한 사용자 셋팅):', json_data[user_id]);
+        json_user_data[user_id]['corps'] = corps;
+        console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
 
         // 	사용자 정보에 사용자 부대를 저장/갱신
-        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_data), 'utf8', function(err) {
+        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+            err
+        ) {
             console.log('(비동기적 파일 쓰기) 부대 변경 완료, usage_count +1 완료.');
         });
     });
@@ -868,6 +872,6 @@ apiRouter.post('/calculate_date', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-app.listen(3000, function() {
-    console.log('jjambot menu skill server listening on port 3000!');
+app.listen(5500, function() {
+    console.log('jjambot menu skill server listening on port 5500!');
 });

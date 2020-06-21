@@ -13,7 +13,7 @@ def MenuClawler():
     all_corps_menu = {}
 
     for i in range(len(corps)):
-        t = 0.5
+        t = 3
 
         print()
         write_all_log("corps: "+ corps[i])
