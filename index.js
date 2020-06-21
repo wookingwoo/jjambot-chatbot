@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 var moment = require('moment');
 require('moment-timezone');
 var fs = require('fs');
-var sf = require('sf');
+var sf = require('sf'); // String formatting library for node.js
 
 moment.tz.setDefault('Asia/Seoul');
 
@@ -109,7 +109,7 @@ apiRouter.post('/datatest', function(req, res) {
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/crawling_test', function(req, res) {
+apiRouter.post('/crawling_test', function(req, res) { // 사용자 발화 즉시 크롤링 하는 방법
     console.log(req.body);
 
     const convert = require('xml-js'); // npm install xml-js request
@@ -187,7 +187,6 @@ apiRouter.post('/crawling_test', function(req, res) {
         }
     }
 
-    console.log('***********끝끝끝끝끝끝끝끝끝끝끝끝끝');
 
     // setTimeout(function() {
 
@@ -447,7 +446,7 @@ apiRouter.post('/all_corps_menu', function(req, res) {
         menu_data = menu_data.replace(/\([0-9]\)/gi, ''); // (1자리수)를 공백으로 변환
         menu_data = menu_data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
 
-        // 		배추김치(3~4월)에서 (3~4월)제거하기
+        // 배추김치(3~4월)에서 (3~4월)제거하기
         menu_data = menu_data.replace(/\([0-9]~[0-9]월\)/gi, '');
         menu_data = menu_data.replace(/\([0-9]~[0-9][0-9]월\)/gi, '');
         menu_data = menu_data.replace(/\([0-9][0-9]~[0-9][0-9]월\)/gi, '');
@@ -455,11 +454,8 @@ apiRouter.post('/all_corps_menu', function(req, res) {
         menu_data = menu_data.replace(/\(임가공\)/gi, '');
 
         var menuJson = JSON.parse(menu_data);
-
         var allergyInfo = 'off';
-
         var corps_list = Object.keys(menuJson);
-
         var response_string_dic = {};
 
         for (var i = 0; i < corps_list.length; i++) {
@@ -678,6 +674,7 @@ apiRouter.post('/corps/change', function(req, res) {
     res.status(200).send(responseBody);
 });
 
+// 입대일 변경 시 호출
 apiRouter.post('/date_to_join_the_army/change', function(req, res) {
     console.log(req.body);
 
@@ -698,7 +695,7 @@ apiRouter.post('/date_to_join_the_army/change', function(req, res) {
         // user_data.txt에 해당 사용자의 정보가 없으면 새로 추가하기
         MakeNewUserData(json_user_data, user_id);
 
-        // 		새로 추가한 user_data.txt를 다시 불러오기
+        // 새로 추가한 user_data.txt를 다시 불러오기
         var user_data = fs.readFileSync('./user_data/user_data.txt', 'utf8'); //동기식 파일 읽기
         user_data = user_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
         var json_user_data = JSON.parse(user_data);
@@ -725,6 +722,7 @@ apiRouter.post('/date_to_join_the_army/change', function(req, res) {
     res.status(200).send(responseBody);
 });
 
+// 전역일 변경 시 호출
 apiRouter.post('/discharge_date/change', function(req, res) {
     // 	나중에 수정사항: 전역일 설정과 입대일 설정을 합치기 (매개변수를 전역일,입대일로 설정하여 조건 분류.)
     console.log(req.body);
@@ -773,6 +771,7 @@ apiRouter.post('/discharge_date/change', function(req, res) {
     res.status(200).send(responseBody);
 });
 
+// 전역일 계산 시 호출
 apiRouter.post('/calculate_date', function(req, res) {
     console.log(req.body);
 

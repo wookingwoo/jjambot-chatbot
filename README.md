@@ -395,6 +395,30 @@ $ ps -ef | grep [스트립트 / 또는 명령어]
 $ kill -9 [PID]
 ```
 
+---
+
+
+## 코드 구조
+
+### HTTP POST 응답 (json형식)
+
+- index.js
+
+
+|번호|파라미터|호출 상황|
+|:----:|:-----|:-----:|
+|1|/menu|메뉴 질문 시 호출|
+|2|/all_corps_menu|부대 조회 시 호출|
+|3|/allergy/onoff|알러지 설정 시 호출|
+|4|/corps/change|부대 변경 시 호출|
+|5|/date_to_join_the_army/change|입대일 변경 시 호출|
+|6|/discharge_date/change|전역일 변경 시 호출|
+|7|/calculate_date|전역일 계산 시 호출|
+
+
+
+
+
 
 ## 참고자료
 
