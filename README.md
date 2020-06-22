@@ -1,15 +1,16 @@
 # jjambot (짬봇)
 
 
+
 짬봇은 군대 식단, 전역일 계산, 각종 군생활 정보등을 카카오톡 챗봇으로 알려주는 서비스입니다.
 
----
 
 
 ## 사용 안내
 
 [짬봇 카카오톡 채널 링크](http://pf.kakao.com/_xlVKrxb): http://pf.kakao.com/_xlVKrxb
 카카오톡 검색용 아이디: jjambot
+
 
 
 ## 설치 안내 (Installation Process)
