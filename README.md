@@ -9,6 +9,7 @@
 ## 사용 안내
 
 [짬봇 카카오톡 채널 링크](http://pf.kakao.com/_xlVKrxb): http://pf.kakao.com/_xlVKrxb
+
 카카오톡 검색용 아이디: jjambot
 
 
