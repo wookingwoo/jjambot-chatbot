@@ -15,7 +15,7 @@ app.use(logger('dev', {}));
 app.use(bodyParser.json());
 app.use(
     bodyParser.urlencoded({
-        extended: true
+        extended: true,
     })
 );
 
@@ -38,8 +38,8 @@ function MakeNewUserData(json_user_data, user_id) {
             change_corps_api: 0,
             change_join_army_date: 0,
             change_discharge_date: 0,
-            calculate_date: 0
-        }
+            calculate_date: 0,
+        },
     };
 
     var new_user_data = json_user_data;
@@ -58,24 +58,24 @@ function UsageCount(json_user_data, user_id, api_name) {
     console.log('(동기적 파일 쓰기 완료) usage_count를 +1 하였습니다.');
 }
 
-apiRouter.post('/sayHello', function(req, res) {
+apiRouter.post('/sayHello', function (req, res) {
     const responseBody = {
         version: '2.0',
         template: {
             outputs: [
                 {
                     simpleText: {
-                        text: "hello I'm Ryan"
-                    }
-                }
-            ]
-        }
+                        text: "hello I'm Ryan",
+                    },
+                },
+            ],
+        },
     };
 
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/showHello', function(req, res) {
+apiRouter.post('/showHello', function (req, res) {
     console.log(req.body);
 
     const responseBody = {
@@ -86,30 +86,30 @@ apiRouter.post('/showHello', function(req, res) {
                     simpleImage: {
                         imageUrl:
                             'https://t1.daumcdn.net/friends/prod/category/M001_friends_ryan2.jpg',
-                        altText: "hello I'm Ryan"
-                    }
-                }
-            ]
-        }
+                        altText: "hello I'm Ryan",
+                    },
+                },
+            ],
+        },
     };
 
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/datatest', function(req, res) {
+apiRouter.post('/datatest', function (req, res) {
     const responseBody = {
         version: '2.0',
         data: {
             msg: 'HI',
             name: 'Ryan',
-            position: 'Senior Managing Director'
-        }
+            position: 'Senior Managing Director',
+        },
     };
 
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/crawling_test', function(req, res) {
+apiRouter.post('/crawling_test', function (req, res) {
     // 사용자 발화 즉시 크롤링 하는 방법
     console.log(req.body);
 
@@ -176,8 +176,8 @@ apiRouter.post('/crawling_test', function(req, res) {
                     msg: 'HI',
                     name: 'Ryan',
                     position: 'Senior Managing Director',
-                    menu: response_menu
-                }
+                    menu: response_menu,
+                },
             };
 
             res.status(200).send(responseBody);
@@ -193,7 +193,7 @@ apiRouter.post('/crawling_test', function(req, res) {
     // }, 1000);
 });
 
-apiRouter.post('/menu', function(req, res) {
+apiRouter.post('/menu', function (req, res) {
     console.log('\n<req.body 출력> ');
     console.log(req.body);
     console.log('moment:', moment().format('YYYY-MM-DD HH:mm:ss'));
@@ -250,7 +250,7 @@ apiRouter.post('/menu', function(req, res) {
     console.log('fileDi:', fileDi);
     console.log(`fileDi 타입 => ${typeof fileDi}`);
 
-    fs.readFile(fileDi, 'utf8', function(err, menu_data) {
+    fs.readFile(fileDi, 'utf8', function (err, menu_data) {
         if (request_corps != '') {
             // 급양대가 등록되어있을때
 
@@ -258,58 +258,76 @@ apiRouter.post('/menu', function(req, res) {
             var response_date = 'init';
             var msg = '';
 
-            var weekday = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+            var weekday = new Array(
+                '일요일',
+                '월요일',
+                '화요일',
+                '수요일',
+                '목요일',
+                '금요일',
+                '토요일'
+            );
             var today_name = new Date(request_date).getDay();
             var todayLabel = weekday[today_name];
 
             response_date = request_date + '-' + todayLabel;
             console.log('response_date:', response_date);
 
-            menu_data = menu_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
-
-            if (allergyInfo == 'off' || allergyInfo == '') {
-                // 알러지 정보 표시가 "off"이거나 ""일때
-                menu_data = menu_data.replace(/\([0-9]\)/gi, ''); // (1자리수)를 공백으로 변환
-                menu_data = menu_data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
-
-                // 		배추김치(3~4월)에서 (3~4월)제거하기
-                menu_data = menu_data.replace(/\([0-9]~[0-9]월\)/gi, '');
-                menu_data = menu_data.replace(/\([0-9]~[0-9][0-9]월\)/gi, '');
-                menu_data = menu_data.replace(/\([0-9][0-9]~[0-9][0-9]월\)/gi, '');
-            }
-
-            var menuJson = JSON.parse(menu_data);
-
-            var date_code = request_date.replace(/-/gi, '');
-            console.log('date_code:', date_code);
-
-            response_menu = menuJson[request_corps][date_code];
-
-            // console.log(response_menu);
-
-            function listToString(dic, key) {
-                var str = '';
-
-                for (var i = 0; i < dic[key].length; i++) {
-                    str += dic[key][i].trim(); //trim()을 이용해 앞뒤 공백 제거
-
-                    if (i < dic[key].length - 1) {
-                        str += ', ';
-                    }
-                }
-                return str;
-            }
-
             try {
-                var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
-                var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
-                var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
-                var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+                menu_data = menu_data.replace(/\'/gi, '"'); // '를 "로 모두 전환
+
+                if (allergyInfo == 'off' || allergyInfo == '') {
+                    // 알러지 정보 표시가 "off"이거나 ""일때
+                    menu_data = menu_data.replace(/\([0-9]\)/gi, ''); // (1자리수)를 공백으로 변환
+                    menu_data = menu_data.replace(/\([0-9][0-9]\)/gi, ''); // (2자리수)를 공백으로 변환
+
+                    // 		배추김치(3~4월)에서 (3~4월)제거하기
+                    menu_data = menu_data.replace(/\([0-9]~[0-9]월\)/gi, '');
+                    menu_data = menu_data.replace(/\([0-9]~[0-9][0-9]월\)/gi, '');
+                    menu_data = menu_data.replace(/\([0-9][0-9]~[0-9][0-9]월\)/gi, '');
+                }
+
+                var menuJson = JSON.parse(menu_data);
+
+                var date_code = request_date.replace(/-/gi, '');
+                console.log('date_code:', date_code);
+
+                response_menu = menuJson[request_corps][date_code];
+
+                // console.log(response_menu);
+
+                function listToString(dic, key) {
+                    var str = '';
+
+                    for (var i = 0; i < dic[key].length; i++) {
+                        str += dic[key][i].trim(); //trim()을 이용해 앞뒤 공백 제거
+
+                        if (i < dic[key].length - 1) {
+                            str += ', ';
+                        }
+                    }
+                    return str;
+                }
+
+                try {
+                    var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
+                    var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
+                    var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
+                    var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+                } catch (e) {
+                    var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
+                    var menu_lunch = '[점심]\n' + '식단 정보가 등록되지 않았습니다.';
+                    var menu_dinner = '[저녁]\n' + '식단 정보가 등록되지 않았습니다.';
+                    var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
+                    console.log(e); // pass exception object to error handler
+                }
             } catch (e) {
                 var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
                 var menu_lunch = '[점심]\n' + '식단 정보가 등록되지 않았습니다.';
                 var menu_dinner = '[저녁]\n' + '식단 정보가 등록되지 않았습니다.';
                 var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
+                msg = '\n\n국방부에서 식단 등록을 하지 않은 경우 이용에 제한이 있을 수 있습니다.';
+                console.log('에러 처리2'); // pass exception object to error handler
                 console.log(e); // pass exception object to error handler
             }
 
@@ -342,7 +360,8 @@ apiRouter.post('/menu', function(req, res) {
                 return false;
             }
 
-            var response_meal = '오류가 발생하였습니다.[errorcode: nurm0411]\n상담원과의 대화를 통해 문의 바랍니다.';
+            var response_meal =
+                '오류가 발생하였습니다.[errorcode: nurm0411]\n상담원과의 대화를 통해 문의 바랍니다.';
 
             if (JSON.stringify(request_meal_type_list) == JSON.stringify(['all'])) {
                 response_meal =
@@ -390,8 +409,8 @@ apiRouter.post('/menu', function(req, res) {
                     lunch: menu_lunch,
                     dinner: menu_dinner,
                     specialFood: menu_specialFood,
-                    msg: msg
-                }
+                    msg: msg,
+                },
             };
             res.status(200).send(responseBody);
         } else {
@@ -399,8 +418,9 @@ apiRouter.post('/menu', function(req, res) {
             const responseBody = {
                 version: '2.0',
                 data: {
-                    msg: '식단을 호출하기 전에 우선 부대 설정을 해주세요.\n\n짬봇에게 "부대 설정하기"라고 입력해주세요~'
-                }
+                    msg:
+                        '식단을 호출하기 전에 우선 부대 설정을 해주세요.\n\n짬봇에게 "부대 설정하기"라고 입력해주세요~',
+                },
             };
 
             res.status(200).send(responseBody);
@@ -410,11 +430,11 @@ apiRouter.post('/menu', function(req, res) {
     });
 });
 
-apiRouter.post('/all_corps_menu', function(req, res) {
+apiRouter.post('/all_corps_menu', function (req, res) {
     console.log('\n<req.body 출력> ');
     console.log(req.body);
 
-    fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function(err, menu_data) {
+    fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function (err, menu_data) {
         var today_date = moment().format('YYYY-MM-DD');
         console.log('today_date:', today_date);
         console.log(`today_date 타입 => ${typeof today_date}`);
@@ -468,7 +488,15 @@ apiRouter.post('/all_corps_menu', function(req, res) {
             var response_date = 'init';
             var msg = 'ok';
 
-            var weekday = new Array('일요일', '월요일', '화요일', '수요일', '목요일', '금요일', '토요일');
+            var weekday = new Array(
+                '일요일',
+                '월요일',
+                '화요일',
+                '수요일',
+                '목요일',
+                '금요일',
+                '토요일'
+            );
             var today_name = new Date(request_date).getDay();
             var todayLabel = weekday[today_name];
 
@@ -530,7 +558,7 @@ apiRouter.post('/all_corps_menu', function(req, res) {
 
         const responseBody = {
             version: '2.0',
-            data: response_string_dic
+            data: response_string_dic,
         };
 
         console.log('<response_string_dic>');
@@ -542,7 +570,7 @@ apiRouter.post('/all_corps_menu', function(req, res) {
     });
 });
 
-apiRouter.post('/allergy/onoff', function(req, res) {
+apiRouter.post('/allergy/onoff', function (req, res) {
     console.log(req.body);
 
     var user_id = req.body.userRequest.user.id;
@@ -563,7 +591,7 @@ apiRouter.post('/allergy/onoff', function(req, res) {
         MakeNewUserData(json_user_data, user_id);
     }
 
-    fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
+    fs.readFile('./user_data/user_data.txt', 'utf8', function (err, data) {
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
         var json_user_data = JSON.parse(data);
@@ -573,10 +601,12 @@ apiRouter.post('/allergy/onoff', function(req, res) {
         json_user_data[user_id]['allergy_show'] = allergy_show;
         console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
 
-        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function (
             err
         ) {
-            console.log('(비동기적 파일 쓰기) user_data.txt에 알러지 정보 업데이트 완료, usage_count +1 완료.');
+            console.log(
+                '(비동기적 파일 쓰기) user_data.txt에 알러지 정보 업데이트 완료, usage_count +1 완료.'
+            );
         });
     });
 
@@ -604,27 +634,27 @@ apiRouter.post('/allergy/onoff', function(req, res) {
                                 title: title,
                                 description: description,
                                 thumbnail: {
-                                    imageUrl: imageUrl
+                                    imageUrl: imageUrl,
                                 },
                                 buttons: [
                                     {
                                         action: 'message',
                                         label: '알러지 정보 보기',
-                                        messageText: '알러지 정보 보기'
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                }
-            ]
-        }
+                                        messageText: '알러지 정보 보기',
+                                    },
+                                ],
+                            },
+                        ],
+                    },
+                },
+            ],
+        },
     };
 
     res.status(200).send(responseBody);
 });
 
-apiRouter.post('/corps/change', function(req, res) {
+apiRouter.post('/corps/change', function (req, res) {
     console.log(req.body);
 
     var user_id = req.body.userRequest.user.id;
@@ -645,7 +675,7 @@ apiRouter.post('/corps/change', function(req, res) {
         MakeNewUserData(json_user_data, user_id);
     }
 
-    fs.readFile('./user_data/user_data.txt', 'utf8', function(err, data) {
+    fs.readFile('./user_data/user_data.txt', 'utf8', function (err, data) {
         data = data.replace(/\'/gi, '"'); // '를 "로 모두 전환
 
         var json_user_data = JSON.parse(data);
@@ -656,7 +686,7 @@ apiRouter.post('/corps/change', function(req, res) {
         console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
 
         // 	사용자 정보에 사용자 부대를 저장/갱신
-        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+        fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function (
             err
         ) {
             console.log('(비동기적 파일 쓰기) 부대 변경 완료, usage_count +1 완료.');
@@ -664,22 +694,23 @@ apiRouter.post('/corps/change', function(req, res) {
     });
 
     if (corps == 'null') {
-        var msg = '해당 부대를 찾지 못했습니다.\n"부대 찾아보기"를 입력해 본인의 부대를 찾아보세요.';
+        var msg =
+            '해당 부대를 찾지 못했습니다.\n"부대 찾아보기"를 입력해 본인의 부대를 찾아보세요.';
     } else {
         var msg = '부대를 정상적으로 설정하였습니다.\n\n[설정한 부대: ' + corps + ']';
     }
     const responseBody = {
         version: '2.0',
         data: {
-            msg: msg
-        }
+            msg: msg,
+        },
     };
 
     res.status(200).send(responseBody);
 });
 
 // 입대일 변경 시 호출
-apiRouter.post('/date_to_join_the_army/change', function(req, res) {
+apiRouter.post('/date_to_join_the_army/change', function (req, res) {
     console.log(req.body);
 
     var user_id = req.body.userRequest.user.id;
@@ -710,24 +741,26 @@ apiRouter.post('/date_to_join_the_army/change', function(req, res) {
     json_user_data[user_id]['date_to_join_the_army'] = join_army_date;
     console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
 
-    fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+    fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function (
         err
     ) {
-        console.log('(비동기적 파일 쓰기) user_data.txt에 입대일 설정[변경] 완료, usage_count +1 완료.');
+        console.log(
+            '(비동기적 파일 쓰기) user_data.txt에 입대일 설정[변경] 완료, usage_count +1 완료.'
+        );
     });
 
     const responseBody = {
         version: '2.0',
         data: {
-            msg: '입대일을 ' + join_army_date + '로 설정[변경]하였습니다.'
-        }
+            msg: '입대일을 ' + join_army_date + '로 설정[변경]하였습니다.',
+        },
     };
 
     res.status(200).send(responseBody);
 });
 
 // 전역일 변경 시 호출
-apiRouter.post('/discharge_date/change', function(req, res) {
+apiRouter.post('/discharge_date/change', function (req, res) {
     // 	나중에 수정사항: 전역일 설정과 입대일 설정을 합치기 (매개변수를 전역일,입대일로 설정하여 조건 분류.)
     console.log(req.body);
 
@@ -759,24 +792,26 @@ apiRouter.post('/discharge_date/change', function(req, res) {
     json_user_data[user_id]['discharge_date'] = discharge_date;
     console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
 
-    fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+    fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function (
         err
     ) {
-        console.log('(비동기적 파일 쓰기) user_data.txt에 전역일 설정[변경] 완료, usage_count +1 완료.');
+        console.log(
+            '(비동기적 파일 쓰기) user_data.txt에 전역일 설정[변경] 완료, usage_count +1 완료.'
+        );
     });
 
     const responseBody = {
         version: '2.0',
         data: {
-            msg: '전역일을 ' + discharge_date + '로 설정[변경]하였습니다.'
-        }
+            msg: '전역일을 ' + discharge_date + '로 설정[변경]하였습니다.',
+        },
     };
 
     res.status(200).send(responseBody);
 });
 
 // 전역일 계산 시 호출
-apiRouter.post('/calculate_date', function(req, res) {
+apiRouter.post('/calculate_date', function (req, res) {
     console.log(req.body);
 
     var user_id = req.body.userRequest.user.id;
@@ -801,7 +836,7 @@ apiRouter.post('/calculate_date', function(req, res) {
     json_user_data[user_id]['usage_count']['calculate_date']++;
     console.log('(변경한 사용자 셋팅):', json_user_data[user_id]);
 
-    fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function(
+    fs.writeFile('./user_data/user_data.txt', JSON.stringify(json_user_data), 'utf8', function (
         err
     ) {
         console.log('(비동기적 파일 쓰기) usage_count +1 완료.(calculate_date)');
@@ -811,15 +846,20 @@ apiRouter.post('/calculate_date', function(req, res) {
     var user_discharge_date = json_user_data[user_id]['discharge_date']; // 사용자가 설정했던 전역일 불러오기
 
     if (user_date_to_join_the_army == '') {
-        var date_to_join_the_army_msg = '입대일을 설정하지 않았습니다.\n입대일 설정을 입력하거나 아래 버튼을 통해 입대일을 먼저 설정하세요.';
-        var calculate_date_simple = "입대일을 설정하지 않았습니다.\n'입대일 설정'을 입력하여 입대일을 먼저 설정하세요.";
-        var calculate_date_detail = "입대일을 설정하지 않았습니다.\n'입대일 설정'을 입력하여 입대일을 먼저 설정하세요.";
+        var date_to_join_the_army_msg =
+            '입대일을 설정하지 않았습니다.\n입대일 설정을 입력하거나 아래 버튼을 통해 입대일을 먼저 설정하세요.';
+        var calculate_date_simple =
+            "입대일을 설정하지 않았습니다.\n'입대일 설정'을 입력하여 입대일을 먼저 설정하세요.";
+        var calculate_date_detail =
+            "입대일을 설정하지 않았습니다.\n'입대일 설정'을 입력하여 입대일을 먼저 설정하세요.";
     } else {
         var date_to_join_the_army_msg = '설정된 입대일은 ' + user_date_to_join_the_army + '입니다.';
 
         if (user_discharge_date == '') {
-            var calculate_date_simple = "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
-            var calculate_date_detail = "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
+            var calculate_date_simple =
+                "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
+            var calculate_date_detail =
+                "전역일을 설정하지 않았습니다.\n'전역일 설정'을 입력하여 전역일을 먼저 설정하세요.";
         } else {
             var nowday = new Date();
             var d_discharge_date = new Date(user_discharge_date); //전역일, Date로 표현하면 09시가 됨. 나중에 00시로 수정
@@ -847,14 +887,14 @@ apiRouter.post('/calculate_date', function(req, res) {
 
             var calculate_date_simple =
                 sf('전역: D{d}일', { d: d_day }) +
-                sf('\n\n복무 비율: {per}%', { per: p_day / total_day * 100 }) +
+                sf('\n\n복무 비율: {per}%', { per: (p_day / total_day) * 100 }) +
                 sf('\n\n전역일: {d}', { d: user_discharge_date });
 
             var calculate_date_detail =
                 sf('전역: D{d}일', { d: d_day }) +
                 sf('\n현재 복무일수: D{p}일', { p: p_day }) +
                 sf('\n총 복무일수: {p}일', { p: total_day }) +
-                sf('\n복무 비율: {per}%', { per: (p_day / total_day * 100).toFixed(1) }) +
+                sf('\n복무 비율: {per}%', { per: ((p_day / total_day) * 100).toFixed(1) }) +
                 sf('\n입대일: {d}', { d: user_date_to_join_the_army }) +
                 sf('\n전역일: {d}', { d: user_discharge_date });
         }
@@ -865,13 +905,13 @@ apiRouter.post('/calculate_date', function(req, res) {
         data: {
             date_to_join_the_army_msg: date_to_join_the_army_msg,
             calculate_date_simple: calculate_date_simple,
-            calculate_date_detail: calculate_date_detail
-        }
+            calculate_date_detail: calculate_date_detail,
+        },
     };
 
     res.status(200).send(responseBody);
 });
 
-app.listen(5500, function() {
-    console.log('jjambot menu skill server listening on port 5500!');
+app.listen(5000, function () {
+    console.log('jjambot menu skill server listening on port 5000!');
 });
