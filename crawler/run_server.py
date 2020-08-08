@@ -28,15 +28,15 @@ while (True):
 
         if now.tm_hour in peak_time_list:
             print("peak time 입니다.")
-            print("최대 30분 이내에 크롤링을 새로 실시합니다.")
+            print("최대 15시간 이내에 크롤링을 새로 실시합니다.")
 
-            random_time_sleep = random.randrange(60 * 30)
+            random_time_sleep = random.randrange(60 * 60 *15)
             # random_time_sleep = 3
             # write_all_log("테스트 위해 3초만 휴식..")
 
         else:
-            print("peak time이 아니므로 최대 1시간 이내로 크롤링을 다시 시작합니다.")
-            random_time_sleep = random.randrange(60 * 60)
+            print("peak time이 아니므로 최대 24시간 이내로 크롤링을 다시 시작합니다.")
+            random_time_sleep = random.randrange(60 * 60 * 24)
             # random_time_sleep = 3
             # write_all_log("테스트 위해 3초만 휴식..")
 
@@ -57,7 +57,7 @@ while (True):
         write_all_log("\n\n\t***에러가 발생하였습니다ㅠㅠ")
         write_all_log(error + "\n")
 
-        random_time_sleep = random.randrange(60 * 30)
+        random_time_sleep = random.randrange(60 * 60 * 15)
         if random_time_sleep < 60:
             write_all_log(str(random_time_sleep) + "초 추가로 휴식.. (랜덤 결과) - 에러 휴식")
         else:
