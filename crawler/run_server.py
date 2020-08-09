@@ -42,8 +42,11 @@ while (True):
 
         if random_time_sleep < 60:
             print(str(random_time_sleep) + "초 추가로 휴식.. (랜덤 결과)")
-        else:
+        elifrandom_time_sleep < 60*60:
             print(str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)")
+        else:
+            print(str(random_time_sleep // (60*60)) + "시간 " + str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)")
+            
 
         time.sleep(random_time_sleep)
         write_all_log("/")
@@ -59,10 +62,12 @@ while (True):
 
         random_time_sleep = random.randrange(60 * 60 * 15)
         if random_time_sleep < 60:
-            write_all_log(str(random_time_sleep) + "초 추가로 휴식.. (랜덤 결과) - 에러 휴식")
+            print(str(random_time_sleep) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
+        elifrandom_time_sleep < 60*60:
+            print(str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
         else:
-            write_all_log(
-                str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과) - 에러 휴식")
+            print(str(random_time_sleep // (60*60)) + "시간 " + str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
+            
 
         time.sleep(random_time_sleep)
         write_all_log("/")
