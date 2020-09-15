@@ -6,7 +6,6 @@ from api_key import *
 from write_log import *
 
 
-
 def MenuClawler():
     # headers = {'cnotent-type': 'application/json;charset=utf-8'}
 
@@ -16,7 +15,7 @@ def MenuClawler():
         t = 5
 
         print()
-        write_all_log("corps: "+ corps[i])
+        write_all_log("corps: " + corps[i])
 
         response = requests.get(info_url[i])
         print("{}초 휴식.".format(t))
@@ -69,8 +68,25 @@ def MenuClawler():
                 if not (row.find('dates').text == ""):
 
                     if not (date == "init"):
-                        menu[date] = {"breakfast": breakfast, "lunch": lunch, "dinner": dinner,
-                                      "specialFood": specialFood}
+                        print("날짜 있음")
+
+                        if (len(date) == 10) and (date[4] == "-") and (date[7] == "-") and (
+                                int(date[0:4]) >= 2000) and (
+                                int(date[0:4]) <= 3000) and (int(date[5:7]) >= 1) and (
+                                int(date[5:7]) <= 12) and (int(date[8:10]) >= 1) and (int(date[8:10]) <= 31):
+                            print("YYYY-DD-MM 날짜 구조 (신 날짜 구조, 2020년 9월 이후)")
+                            date = date[0:4] + date[5:7] + date[8:10]
+                            menu[date] = {"breakfast": breakfast, "lunch": lunch, "dinner": dinner,
+                                          "specialFood": specialFood}
+
+                        elif (len(str(date)) == 8) and (int(date[0:4]) >= 2000) and (
+                                int(date[0:4]) <= 3000) and (int(date[5:7]) >= 1) and (
+                                int(date[5:7]) <= 12) and (int(date[8:10]) >= 1) and (int(date[8:10]) <= 31):
+                            print("YYYYDDMM 날짜 구조 (구 날짜 구조, 2020년 9월 이전)")
+
+                        else:
+                            print("날짜 해석 불가")
+                    
                     # menu = {날짜:{아침:[], 점심:[], 저녁:[], 부식[]}}
 
                     date = row.find('dates').text
