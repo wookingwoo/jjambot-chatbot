@@ -26,7 +26,7 @@ def IsBlankedCorps(dic):
 
         write_all_log("")
         write_all_log("갯수: ")
-        write_all_log(str(len(blankedCorps))
+        write_all_log(str(len(blankedCorps)))
         write_all_log("******************************")
     else:
         write_all_log("UnitTest(메뉴가 빈 부대 확인): 없음. 성공!")
