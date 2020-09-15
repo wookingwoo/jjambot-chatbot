@@ -70,23 +70,26 @@ def MenuClawler():
                     if not (date == "init"):
                         print("날짜 있음")
 
-                        if (len(date) == 10) and (date[4] == "-") and (date[7] == "-") and (
-                                int(date[0:4]) >= 2000) and (
-                                int(date[0:4]) <= 3000) and (int(date[5:7]) >= 1) and (
-                                int(date[5:7]) <= 12) and (int(date[8:10]) >= 1) and (int(date[8:10]) <= 31):
-                            print("YYYY-DD-MM 날짜 구조 (신 날짜 구조, 2020년 9월 이후)")
-                            date = date[0:4] + date[5:7] + date[8:10]
-                            menu[date] = {"breakfast": breakfast, "lunch": lunch, "dinner": dinner,
-                                          "specialFood": specialFood}
+                        try:
+                            if (len(date) == 10) and (date[4] == "-") and (date[7] == "-") and (
+                                    int(date[0:4]) >= 2000) and (
+                                    int(date[0:4]) <= 3000) and (int(date[5:7]) >= 1) and (
+                                    int(date[5:7]) <= 12) and (int(date[8:10]) >= 1) and (int(date[8:10]) <= 31):
+                                print("YYYY-DD-MM 날짜 구조 (신 날짜 구조, 2020년 9월 이후)")
+                                date = date[0:4] + date[5:7] + date[8:10]
+                                menu[date] = {"breakfast": breakfast, "lunch": lunch, "dinner": dinner,
+                                              "specialFood": specialFood}
 
-                        elif (len(str(date)) == 8) and (int(date[0:4]) >= 2000) and (
-                                int(date[0:4]) <= 3000) and (int(date[5:7]) >= 1) and (
-                                int(date[5:7]) <= 12) and (int(date[8:10]) >= 1) and (int(date[8:10]) <= 31):
-                            print("YYYYDDMM 날짜 구조 (구 날짜 구조, 2020년 9월 이전)")
+                            elif (len(str(date)) == 8) and (int(date[0:4]) >= 2000) and (
+                                    int(date[0:4]) <= 3000) and (int(date[4:6]) >= 1) and (
+                                    int(date[4:6]) <= 12) and (int(date[6:8]) >= 1) and (int(date[6:8]) <= 31):
+                                print("YYYYDDMM 날짜 구조 (구 날짜 구조, 2020년 9월 이전)")
 
-                        else:
-                            print("날짜 해석 불가")
-                    
+                            else:
+                                print("날짜 해석 불가")
+                        except Exception as e:
+                            print('날짜 해석 중 에러가 발생 했습니다:', e)
+
                     # menu = {날짜:{아침:[], 점심:[], 저녁:[], 부식[]}}
 
                     date = row.find('dates').text
