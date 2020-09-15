@@ -23,7 +23,7 @@ def IsBlankedCorps(dic):
             else:
                 write_all_log(blankedCorps[i])
 
-        write_all_log()
+        write_all_log("")
         write_all_log("갯수:", len(blankedCorps))
         write_all_log("******************************")
     else:
