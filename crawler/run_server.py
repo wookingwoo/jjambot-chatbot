@@ -63,7 +63,7 @@ while (True):
         random_time_sleep = random.randrange(60 * 60 * 15)
         if random_time_sleep < 60:
             print(str(random_time_sleep) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
-        elifrandom_time_sleep < 60*60:
+        elif random_time_sleep < 60*60:
             print(str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
         else:
             print(str(random_time_sleep // (60*60)) + "시간 " + str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
