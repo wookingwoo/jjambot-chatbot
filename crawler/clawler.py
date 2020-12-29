@@ -16,8 +16,17 @@ def MenuClawler():
 
         print()
         write_all_log("corps: " + corps[i])
+        
+        requests.packages.urllib3.disable_warnings()
+        requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
+        
+        try:
+            requests.packages.urllib3.contrib.pyopenssl.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
+        except AttributeError:
+            # no pyopenssl support used / needed / available
+            pass
 
-        response = requests.get(info_url[i])
+        response = requests.get(info_url[i], verify=False)
         print("{}초 휴식.".format(t))
         time.sleep(t)
         print("/")
