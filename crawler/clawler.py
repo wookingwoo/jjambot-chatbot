@@ -16,10 +16,10 @@ def MenuClawler():
 
         print()
         write_all_log("corps: " + corps[i])
-        
+
         requests.packages.urllib3.disable_warnings()
         requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
-        
+
         try:
             requests.packages.urllib3.contrib.pyopenssl.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
         except AttributeError:
@@ -132,3 +132,5 @@ def MenuClawler():
     print()
     print("all_corps_menu:", all_corps_menu)
     return all_corps_menu
+
+# {'5322': {'20180712': {'breakfast': ['콩나물국 (5)', '생선묵볶음 (5)(6)', '배추김치(7~9월)', '감자밥'], 'lunch': ['북어채국 (1)(5)(9)', '두부김치 (5)(10)', '오징어야채무침 (5)(6)(17)', '총각김치', '밥'], 'dinner': ['감자양파찌개 (5)(6)(10)', '파닭(파채닭튀김) (1)(5)(6)(15)', '무초절이', '배추김치(7~9월)', '잡곡밥']}, '20180713': {'breakfast': ['밥1', ...
