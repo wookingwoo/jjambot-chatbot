@@ -23,14 +23,13 @@ while (True):
         print("현재 시각: %04d/%02d/%02d %02d:%02d:%02d" % (
             now.tm_year, now.tm_mon, now.tm_mday, now.tm_hour, now.tm_min, now.tm_sec))
 
-
         peak_time_list = [6, 7, 10, 11, 16, 17]
 
         if now.tm_hour in peak_time_list:
             print("peak time 입니다.")
             print("최대 15시간 이내에 크롤링을 새로 실시합니다.")
 
-            random_time_sleep = random.randrange(60 * 60 *15)
+            random_time_sleep = random.randrange(60 * 60 * 15)
             # random_time_sleep = 3
             # write_all_log("테스트 위해 3초만 휴식..")
 
@@ -42,11 +41,11 @@ while (True):
 
         if random_time_sleep < 60:
             print(str(random_time_sleep) + "초 추가로 휴식.. (랜덤 결과)")
-        elif random_time_sleep < 60*60:
+        elif random_time_sleep < 60 * 60:
             print(str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)")
         else:
-            print(str(random_time_sleep // (60*60)) + "시간 " + str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)")
-            
+            print(str(random_time_sleep // (60 * 60)) + "시간 " + str(random_time_sleep // 60) + "분 " + str(
+                random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)")
 
         time.sleep(random_time_sleep)
         write_all_log("/")
@@ -63,11 +62,11 @@ while (True):
         random_time_sleep = random.randrange(60 * 60 * 15)
         if random_time_sleep < 60:
             print(str(random_time_sleep) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
-        elif random_time_sleep < 60*60:
+        elif random_time_sleep < 60 * 60:
             print(str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
         else:
-            print(str(random_time_sleep // (60*60)) + "시간 " + str(random_time_sleep // 60) + "분 " + str(random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
-            
+            print(str(random_time_sleep // (60 * 60)) + "시간 " + str(random_time_sleep // 60) + "분 " + str(
+                random_time_sleep % 60) + "초 추가로 휴식.. (랜덤 결과)-에러휴식")
 
         time.sleep(random_time_sleep)
         write_all_log("/")

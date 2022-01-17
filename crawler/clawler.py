@@ -9,7 +9,7 @@ from write_log import write_all_log
 def menu_crawler():
     # headers = {'cnotent-type': 'application/json;charset=utf-8'}
 
-    t = 2
+    t = 5
     all_corps_menu = {}
 
     for _corps in corps:
@@ -91,21 +91,31 @@ def menu_crawler():
 
                         print("-----", date, "-----")
 
-                        if not (row.find('brst').text == ""):
-                            print(date, "(아침):", row.find('brst').text)
-                            menu[my_date_code]["breakfast"].append(row.find('brst').text)
+                        if row.find('brst') is not None:
+                            if not (row.find('brst').text == ""):
+                                print(date, "(아침):", row.find('brst').text)
+                                menu[my_date_code]["breakfast"].append(row.find('brst').text)
 
-                        if not (row.find('lunc').text == ""):
-                            print(date, "(점심):", row.find('lunc').text)
-                            menu[my_date_code]["lunch"].append(row.find('lunc').text)
+                        if row.find('lunc') is not None:
+                            if not (row.find('lunc').text == ""):
+                                print(date, "(점심):", row.find('lunc').text)
+                                menu[my_date_code]["lunch"].append(row.find('lunc').text)
 
-                        if not (row.find('dinr').text == ""):
-                            print(date, "(저녁):", row.find('dinr').text)
-                            menu[my_date_code]["dinner"].append(row.find('dinr').text)
+                        if row.find('dinr') is not None:
+                            if not (row.find('dinr').text == ""):
+                                print(date, "(저녁):", row.find('dinr').text)
+                                menu[my_date_code]["dinner"].append(row.find('dinr').text)
 
-                        if not (row.find('adspcfd').text == ""):
-                            print(date, "(부식):", row.find('adspcfd').text)
-                            menu[my_date_code]["special_food"].append(row.find('adspcfd').text)
+                        try:
+                            if row.find('adspcfd') is not None:
+                                if not (row.find('adspcfd').text == ""):
+                                    print(date, "(부식):", row.find('adspcfd').text)
+                                    menu[my_date_code]["special_food"].append(row.find('adspcfd').text)
+
+                        except Exception as e:
+                            error = str(e)
+                            write_all_log("\n\n\t***부식 크롤링 중 에러 발생")
+                            write_all_log(error + "\n")
 
         print()
         print("menu:", menu)
