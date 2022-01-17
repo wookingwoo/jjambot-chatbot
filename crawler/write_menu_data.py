@@ -6,20 +6,25 @@ def writeAllCorpsMenu_TXT(dic_parsing_menu):
     import datetime
 
     # 경로가 존재하지 않으면 새로 생성
-    if not os.path.isdir("./crawling_data"):
-        os.mkdir("./crawling_data")
-        print("./crawling_data" + "경로가 없어 새로 생성 했습니다.")
+    if not os.path.isdir("./data"):
+        os.mkdir("./data")
+        print("./data" + "경로가 없어 새로 생성 했습니다.")
+
+    # 경로가 존재하지 않으면 새로 생성
+    if not os.path.isdir("./data/crawling_data"):
+        os.mkdir("./data/crawling_data")
+        print("./data/crawling_data" + "경로가 없어 새로 생성 했습니다.")
 
     # 파일이 존재하지 않을 경우 빈 파일 생성
-    if not os.path.exists("./crawling_data/allCorpsMenu.txt"):
+    if not os.path.exists("./data/crawling_data/allCorpsMenu.txt"):
         blank_dic = {}
-        f = open("./crawling_data/allCorpsMenu.txt", 'w')
+        f = open("./data/crawling_data/allCorpsMenu.txt", 'w')
         f.write(str(blank_dic))
         f.close()
-        print("./crawling_data/allCorpsMenu.txt" + "파일이 없어 새로 생성합니다.")
+        print("./data/crawling_data/allCorpsMenu.txt" + "파일이 없어 새로 생성합니다.")
 
     # 기존 메뉴 불러오기
-    f = open("./crawling_data/allCorpsMenu.txt", 'r')
+    f = open("./data/crawling_data/allCorpsMenu.txt", 'r')
     dic_all_menu_file = eval(f.read())
     f.close()
 
@@ -29,10 +34,10 @@ def writeAllCorpsMenu_TXT(dic_parsing_menu):
     # 크롤링한 메뉴를 기존 메뉴에 추가해 새로 파일 쓰기
     dic_all_menu_file.update(dic_parsing_menu)
     print("크롤링한 데이터를 업데이트 했습니다.")
-    f = open("./crawling_data/allCorpsMenu.txt", 'w')
+    f = open("./data/crawling_data/allCorpsMenu.txt", 'w')
     f.write(str(dic_all_menu_file))
     f.close()
-    print("./crawling_data/allCorpsMenu.txt에 파일 쓰기 완료.")
+    print("./data/crawling_data/allCorpsMenu.txt에 파일 쓰기 완료.")
 
     # 변동사항 로그 기록.
     if dic_all_menu_file == dic_all_menu_old:
@@ -46,17 +51,17 @@ def writeAllCorpsMenu_TXT(dic_parsing_menu):
         print("********************************************\n")
 
         # 경로가 존재하지 않으면 새로 생성
-        if not os.path.isdir("./log_data"):
-            os.mkdir("./log_data")
-            print("./log_data" + " 경로가 없어 새로 생성 했습니다.")
+        if not os.path.isdir("./data/log_data"):
+            os.mkdir("./data/log_data")
+            print("./data/log_data" + " 경로가 없어 새로 생성 했습니다.")
 
-        file_change_DB_log = open("./log_data/change_log.txt", 'a')
+        file_change_DB_log = open("./data/log_data/change_log.txt", 'a')
         file_change_DB_log.writelines(str(datetime.datetime.now()) + ": " + "기존 DB가 새롭게 변경되었습니다." + "\n")
         file_change_DB_log.writelines(keys + "\n")
         # file_change_DB_log.writelines(values + "\n" + "\n")
         file_change_DB_log.close()
 
-        print("\'{}\'에 DB의 변동사항을 기록했습니다.".format("./log_data/change_log.txt"))
+        print("\'{}\'에 DB의 변동사항을 기록했습니다.".format("./data/log_data/change_log.txt"))
 
     return dic_all_menu_file  # 기존 파일에 크롤링한 메뉴를 추가한 dic을 return
 
@@ -77,13 +82,15 @@ def writeMenuAsDate_TXT(dic):
     for y in sorted(dic):
 
         for z in sorted(dic[y]):
-            path_classify_dir = './crawling_data/sort_menuData'
-            path_classify_corps = './crawling_data/sort_menuData/{}'.format(y)
-            path_classify_dir_year = './crawling_data/sort_menuData/{}/year_{}'.format(y, z[0:4])
-            path_classify_dir_month = './crawling_data/sort_menuData/{}/year_{}/month_{}'.format(y, z[0:4], z[4:6])
-            path_classify = './crawling_data/sort_menuData/{}/year_{}/month_{}/{}_menu.txt'.format(y, z[0:4], z[4:6],
-                                                                                                   z[0:4] + "_" + z[
-                                                                                                                  4:6])
+            path_classify_dir = './data/crawling_data/sort_menuData'
+            path_classify_corps = './data/crawling_data/sort_menuData/{}'.format(y)
+            path_classify_dir_year = './data/crawling_data/sort_menuData/{}/year_{}'.format(y, z[0:4])
+            path_classify_dir_month = './data/crawling_data/sort_menuData/{}/year_{}/month_{}'.format(y, z[0:4], z[4:6])
+            path_classify = './data/crawling_data/sort_menuData/{}/year_{}/month_{}/{}_menu.txt'.format(y, z[0:4],
+                                                                                                        z[4:6],
+                                                                                                        z[
+                                                                                                        0:4] + "_" + z[
+                                                                                                                     4:6])
 
             # 경로가 존재하지 않으면 새로 생성
             if not os.path.isdir(path_classify_dir):
@@ -137,7 +144,7 @@ def writeMenuAsDate_TXT(dic):
 if __name__ == "__main__":
     # dic = {"test": "test_value"}
 
-    f = open("./crawling_data/allCorpsMenu.txt", 'r')
+    f = open("./data/crawling_data/allCorpsMenu.txt", 'r')
     data = f.read()
     f.close()
     dic = eval(data)

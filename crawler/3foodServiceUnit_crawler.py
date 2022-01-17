@@ -2,7 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 import time
 
-from api_key import *
+from data.api_key import *
 import unit_test
 import write_menu_data
 

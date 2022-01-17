@@ -17,11 +17,11 @@ def write_all_log(s):
     else:
         day = str(now.day)
 
-    d1 = "./log_data"
-    d2 = './log_data/sort_log'
-    d3 = './log_data/sort_log/year_{}'.format(year)
-    d4 = './log_data/sort_log/year_{}/month_{}'.format(year, month)
-    d5 = './log_data/sort_log/year_{}/month_{}/{}_all_log.txt'.format(year, month, year + month + day)
+    d1 = "./data/log_data"
+    d2 = './data/log_data/sort_log'
+    d3 = './data/log_data/sort_log/year_{}'.format(year)
+    d4 = './data/log_data/sort_log/year_{}/month_{}'.format(year, month)
+    d5 = './data/log_data/sort_log/year_{}/month_{}/{}_all_log.txt'.format(year, month, year + month + day)
     # 경로가 존재하지 않으면 새로 생성
     if not os.path.isdir(d1):
         os.mkdir(d1)
