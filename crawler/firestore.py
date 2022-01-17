@@ -1,3 +1,5 @@
+import datetime
+
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
@@ -24,15 +26,27 @@ fb_db = firestore.client()
 
 
 # firestore에 식단 저장
-def store_menu_firestore(all_corps_menu):
+def store_menu_firestore(corps_menu, start_date_interval=31 * 2):
+    now = datetime.datetime.now()
+    # print("현재 :", now)  # 현재 : 2022-01-17 20:49:01.115544
+
+    day_before = now - datetime.timedelta(days=start_date_interval)
+    # print(f"{start_date_interval}일 전 :", day_before)  # 31*3일 전 : 2021-10-16 20:49:01.115544
+
+    str_start_date = day_before.strftime("%Y%m%d")
+    print(f"str_start_date: {str_start_date}")
+    # print(type(str_start_date))
+
     try:
 
-        for corps in all_corps_menu:
+        for corps in corps_menu:
 
-            for date_code in all_corps_menu[corps]:
-                fb_ref_menu = fb_db.collection('menu').document(corps).collection(
-                    f'year_{date_code[0:4]}').document(f'month_{date_code[4:6]}')
-                fb_ref_menu.set({date_code: all_corps_menu[corps][date_code]}, merge=True)
+            for date_code in corps_menu[corps]:
+
+                if int(date_code) >= int(str_start_date):
+                    fb_ref_menu = fb_db.collection('menu').document(corps).collection(
+                        f'year_{date_code[0:4]}').document(f'month_{date_code[4:6]}')
+                    fb_ref_menu.set({date_code: corps_menu[corps][date_code]}, merge=True)
 
     except Exception as e:
         error = str(e)
@@ -51,4 +65,4 @@ if __name__ == "__main__":
             'lunch': ['영양밥(05)(06)(16)', '버섯된장찌개(05)(06)', '꽈리고추멸치볶음', '김장김치(12~2월)(09)', '유산균 발효 음료(02)'],
             'dinner': ['잡채볶음밥(05)(06)(10)', '계란국(01)(05)', '치킨너겟(01)(05)(06)(15)', '김장김치(12~2월)(09)'],
             'special_food': []}}}
-    store_menu_firestore(test_menu)
+    store_menu_firestore(corps_menu=test_menu, start_date_interval=31 * 16)
