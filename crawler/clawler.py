@@ -2,20 +2,20 @@ from bs4 import BeautifulSoup
 import requests
 import time
 
-from data.api_key import *
-from write_log import *
+from data.mnd_api_key import corps, api_url
+from write_log import write_all_log
 
 
-def MenuClawler():
+def menu_crawler():
     # headers = {'cnotent-type': 'application/json;charset=utf-8'}
 
+    t = 5
     all_corps_menu = {}
 
-    for i in range(len(corps)):
-        t = 5
+    for _corps in corps:
 
         print()
-        write_all_log("corps: " + corps[i])
+        write_all_log("corps: " + _corps)
 
         requests.packages.urllib3.disable_warnings()
         requests.packages.urllib3.util.ssl_.DEFAULT_CIPHERS += ':HIGH:!DH:!aNULL'
@@ -26,111 +26,109 @@ def MenuClawler():
             # no pyopenssl support used / needed / available
             pass
 
-        response = requests.get(info_url[i], verify=False)
-        print("{}초 휴식.".format(t))
+        response = requests.get(api_url[_corps], verify=False)
+        print("{}초 휴식.".format(t), end="")
         time.sleep(t)
         print("/")
 
         soup = BeautifulSoup(response.content, 'html.parser')
 
-        print("{}초 휴식.".format(t))
+        print("{}초 휴식.".format(t), end="")
         time.sleep(t)
         print("/")
 
         menu = {}
-        date = "init"
-
-        breakfast = []
-        lunch = []
-        dinner = []
-        specialFood = []
+        date = None
 
         rows = soup.find_all('row')
 
-        if i == 0:  # 3급양대는 openapi의 제공 형식이 달라 따로 처리 필요
-
-            for row in rows:
+        for row in rows:
+            if not (row.find('dates').text == ""):
                 date = row.find('dates').text
 
-                if (not (date == "")) and (not (date in menu.keys())):
-                    menu[date] = {"breakfast": [], "lunch": [], "dinner": []}
-                    # menu = {날짜:{아침:[], 점심:[], 저녁:[], 부식[]}}
-                    print("-----", date, "-----")
+                if date is not None:
+                    print("날짜 있음")
+                    my_date_code = None
 
-                if not (row.find('brst').text == ""):
-                    print(date, "(아침):", row.find('brst').text)
-                    menu[date]["breakfast"].append(row.find('brst').text)
+                    try:
 
-                if not (row.find('lunc').text == ""):
-                    print(date, "(점심):", row.find('lunc').text)
-                    menu[date]["lunch"].append(row.find('lunc').text)
+                        if (len(date) == 10) and (date[4] == "-") and (date[7] == "-") and (
+                                int(date[0:4]) >= 2000) and (
+                                int(date[0:4]) <= 3000) and (int(date[5:7]) >= 1) and (
+                                int(date[5:7]) <= 12) and (int(date[8:10]) >= 1) and (int(date[8:10]) <= 31):
+                            print("YYYY-DD-MM 날짜 구조 (신 날짜 구조, 2020년 9월 이후)")
 
-                if not (row.find('dinr').text == ""):
-                    print(date, "(저녁):", row.find('dinr').text)
-                    menu[date]["dinner"].append(row.find('dinr').text)
+                            my_date_code = date[0:4] + date[5:7] + date[8:10]
 
 
 
 
-        else:
-            for row in rows:
-                if not (row.find('dates').text == ""):
 
-                    if not (date == "init"):
-                        print("날짜 있음")
+
+                        elif (len(str(date)) == 8) and (int(date[0:4]) >= 2000) and (
+                                int(date[0:4]) <= 3000) and (int(date[4:6]) >= 1) and (
+                                int(date[4:6]) <= 12) and (int(date[6:8]) >= 1) and (int(date[6:8]) <= 31):
+                            print("YYYYDDMM 날짜 구조 (구 날짜 구조, 2020년 9월 이전)")
+
+                            my_date_code = date
+
+
+                        else:
+                            print("날짜 해석 불가")
+
+
+                    except Exception as e:
+                        print('날짜 해석 중 에러가 발생 했습니다:', e)
+
+                    if my_date_code is not None:
+
+                        if my_date_code in menu:
+                            pass
+                        else:
+                            menu[my_date_code] = {"breakfast": [], "lunch": [], "dinner": [], "special_food": []}
+
+                        # menu = {날짜:{아침:[], 점심:[], 저녁:[], 부식[]}}
+
+                        print("-----", date, "-----")
+
+                        if row.find('brst') is not None:
+                            if not (row.find('brst').text == ""):
+                                print(date, "(아침):", row.find('brst').text)
+                                menu[my_date_code]["breakfast"].append(row.find('brst').text)
+
+                        if row.find('lunc') is not None:
+                            if not (row.find('lunc').text == ""):
+                                print(date, "(점심):", row.find('lunc').text)
+                                menu[my_date_code]["lunch"].append(row.find('lunc').text)
+
+                        if row.find('dinr') is not None:
+                            if not (row.find('dinr').text == ""):
+                                print(date, "(저녁):", row.find('dinr').text)
+                                menu[my_date_code]["dinner"].append(row.find('dinr').text)
 
                         try:
-                            if (len(date) == 10) and (date[4] == "-") and (date[7] == "-") and (
-                                    int(date[0:4]) >= 2000) and (
-                                    int(date[0:4]) <= 3000) and (int(date[5:7]) >= 1) and (
-                                    int(date[5:7]) <= 12) and (int(date[8:10]) >= 1) and (int(date[8:10]) <= 31):
-                                print("YYYY-DD-MM 날짜 구조 (신 날짜 구조, 2020년 9월 이후)")
-                                date = date[0:4] + date[5:7] + date[8:10]
-                                menu[date] = {"breakfast": breakfast, "lunch": lunch, "dinner": dinner,
-                                              "specialFood": specialFood}
+                            if row.find('adspcfd') is not None:
+                                if not (row.find('adspcfd').text == ""):
+                                    print(date, "(부식):", row.find('adspcfd').text)
+                                    menu[my_date_code]["special_food"].append(row.find('adspcfd').text)
 
-                            elif (len(str(date)) == 8) and (int(date[0:4]) >= 2000) and (
-                                    int(date[0:4]) <= 3000) and (int(date[4:6]) >= 1) and (
-                                    int(date[4:6]) <= 12) and (int(date[6:8]) >= 1) and (int(date[6:8]) <= 31):
-                                print("YYYYDDMM 날짜 구조 (구 날짜 구조, 2020년 9월 이전)")
-
-                            else:
-                                print("날짜 해석 불가")
                         except Exception as e:
-                            print('날짜 해석 중 에러가 발생 했습니다:', e)
-
-                    # menu = {날짜:{아침:[], 점심:[], 저녁:[], 부식[]}}
-
-                    date = row.find('dates').text
-                    print("-----", date, "-----")
-                    breakfast = []
-                    lunch = []
-                    dinner = []
-                    specialFood = []
-
-                if not (row.find('brst').text == ""):
-                    print(date, "(아침):", row.find('brst').text)
-                    breakfast.append(row.find('brst').text)
-
-                if not (row.find('lunc').text == ""):
-                    print(date, "(점심):", row.find('lunc').text)
-                    lunch.append(row.find('lunc').text)
-
-                if not (row.find('dinr').text == ""):
-                    print(date, "(저녁):", row.find('dinr').text)
-                    dinner.append(row.find('dinr').text)
-
-                if not (row.find('adspcfd').text == ""):
-                    print(date, "(부식):", row.find('adspcfd').text)
-                    specialFood.append(row.find('adspcfd').text)
+                            error = str(e)
+                            write_all_log("\n\n\t***부식 크롤링 중 에러 발생")
+                            write_all_log(error + "\n")
 
         print()
         print("menu:", menu)
 
-        all_corps_menu[corps[i]] = menu
+        all_corps_menu[_corps] = menu
 
     print()
     print("all_corps_menu:", all_corps_menu)
     return all_corps_menu
 
+
 # {'5322': {'20180712': {'breakfast': ['콩나물국 (5)', '생선묵볶음 (5)(6)', '배추김치(7~9월)', '감자밥'], 'lunch': ['북어채국 (1)(5)(9)', '두부김치 (5)(10)', '오징어야채무침 (5)(6)(17)', '총각김치', '밥'], 'dinner': ['감자양파찌개 (5)(6)(10)', '파닭(파채닭튀김) (1)(5)(6)(15)', '무초절이', '배추김치(7~9월)', '잡곡밥']}, '20180713': {'breakfast': ['밥1', ...
+
+
+if __name__ == "__main__":
+    menu_crawler()

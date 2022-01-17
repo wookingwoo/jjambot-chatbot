@@ -1,19 +1,15 @@
 import os
 
+from check_env import check_dir
+
 
 def writeAllCorpsMenu_TXT(dic_parsing_menu):
     import copy
     import datetime
 
     # 경로가 존재하지 않으면 새로 생성
-    if not os.path.isdir("./data"):
-        os.mkdir("./data")
-        print("./data" + "경로가 없어 새로 생성 했습니다.")
-
-    # 경로가 존재하지 않으면 새로 생성
-    if not os.path.isdir("./data/crawling_data"):
-        os.mkdir("./data/crawling_data")
-        print("./data/crawling_data" + "경로가 없어 새로 생성 했습니다.")
+    check_dir("./data")
+    check_dir("./data/crawling_data")
 
     # 파일이 존재하지 않을 경우 빈 파일 생성
     if not os.path.exists("./data/crawling_data/allCorpsMenu.txt"):
@@ -93,24 +89,10 @@ def writeMenuAsDate_TXT(dic):
                                                                                                                      4:6])
 
             # 경로가 존재하지 않으면 새로 생성
-            if not os.path.isdir(path_classify_dir):
-                os.mkdir(path_classify_dir)
-                print(path_classify_dir + "경로가 없어 새로 생성 했습니다.")
-
-                # 경로가 존재하지 않으면 새로 생성
-            if not os.path.isdir(path_classify_corps):
-                os.mkdir(path_classify_corps)
-                print(path_classify_corps + "경로가 없어 새로 생성 했습니다.")
-
-            # 경로가 존재하지 않으면 새로 생성
-            if not os.path.isdir(path_classify_dir_year):
-                os.mkdir(path_classify_dir_year)
-                print(path_classify_dir_year + "경로가 없어 새로 생성 했습니다.")
-
-            # 경로가 존재하지 않으면 새로 생성
-            if not os.path.isdir(path_classify_dir_month):
-                os.mkdir(path_classify_dir_month)
-                print(path_classify_dir_month + "경로가 없어 새로 생성 했습니다.")
+            check_dir(path_classify_dir)
+            check_dir(path_classify_corps)
+            check_dir(path_classify_dir_year)
+            check_dir(path_classify_dir_month)
 
             # 파일이 존재하지 않을 경우 빈 파일 생성
             if not os.path.exists(path_classify):
