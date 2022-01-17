@@ -1,9 +1,7 @@
 api_key.js
-crawler/api_key.py
-crawler/__pycache__/
-crawler/crawling_data/
-crawler/log_data/
+crawler/data
 crawler/nohup.out
 user_data/
 
+crawler/__pycache__/
 .idea
