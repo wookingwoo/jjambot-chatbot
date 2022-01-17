@@ -1,4 +1,5 @@
 import datetime
+from tqdm import tqdm
 
 import firebase_admin
 from firebase_admin import credentials
@@ -40,7 +41,7 @@ def store_menu_firestore(corps_menu, start_date_interval=31 * 1):
     try:
         write_all_log("firestore에 식단 데이터 저장을 시작합니다.")
 
-        for corps in corps_menu:
+        for corps in tqdm(corps_menu):
 
             for date_code in corps_menu[corps]:
                 date_code = date_code.replace(".", "")  # 혹시 .이 있으면 삭제
