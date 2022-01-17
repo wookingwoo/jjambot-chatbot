@@ -5,3 +5,5 @@ crawler/crawling_data/
 crawler/log_data/
 crawler/nohup.out
 user_data/
+
+.idea
