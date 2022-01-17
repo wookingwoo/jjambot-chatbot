@@ -26,7 +26,7 @@ fb_db = firestore.client()
 
 
 # firestore에 식단 저장
-def store_menu_firestore(corps_menu, start_date_interval=31 * 2):
+def store_menu_firestore(corps_menu, start_date_interval=31 * 1):
     now = datetime.datetime.now()
     # print("현재 :", now)  # 현재 : 2022-01-17 20:49:01.115544
 
@@ -38,19 +38,29 @@ def store_menu_firestore(corps_menu, start_date_interval=31 * 2):
     # print(type(str_start_date))
 
     try:
+        write_all_log("firestore에 식단 데이터 저장을 시작합니다.")
 
         for corps in corps_menu:
 
             for date_code in corps_menu[corps]:
+                date_code = date_code.replace(".", "")  # 혹시 .이 있으면 삭제
+                date_code = date_code.replace("-", "")  # 혹시 -이 있으면 삭제
 
-                if int(date_code) >= int(str_start_date):
-                    fb_ref_menu = fb_db.collection('menu').document(corps).collection(
-                        f'year_{date_code[0:4]}').document(f'month_{date_code[4:6]}')
-                    fb_ref_menu.set({date_code: corps_menu[corps][date_code]}, merge=True)
+                try:
+
+                    if int(date_code) >= int(str_start_date):
+                        fb_ref_menu = fb_db.collection('menu').document(corps).collection(
+                            f'year_{date_code[0:4]}').document(f'month_{date_code[4:6]}')
+                        fb_ref_menu.set({date_code: corps_menu[corps][date_code]}, merge=True)
+
+                except Exception as e:
+                    error = str(e)
+                    write_all_log(f"\n\n\t***firestore에 식단 저장 중 에러 발생(date_code: {date_code})")
+                    write_all_log(error + "\n")
 
     except Exception as e:
         error = str(e)
-        write_all_log("\n\n\t***firestore에 식단 저장 중 에러 발생")
+        write_all_log("\n\n\t***firestore에 저장하기 위한 분류중 에러 발생")
         write_all_log(error + "\n")
 
 

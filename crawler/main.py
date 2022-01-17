@@ -4,7 +4,7 @@ import clawler
 import unit_test
 import write_menu_data
 from write_log import write_all_log
-from firestore import *
+from firestore import store_menu_firestore
 
 
 def main():
@@ -23,6 +23,7 @@ def main():
     all_corps_menu = write_menu_data.writeAllCorpsMenu_TXT(
         all_corps_menu)  # 전부대 전메뉴를 allCorpsMenu.txt에 저장, 기존 메뉴에 크롤링한 메뉴를 추가한 dic을 all_corps_menu에 다시 담음.
     write_menu_data.writeMenuAsDate_TXT(all_corps_menu)  # 전부대 전메뉴를 부대별, 날짜별로 분류하여 각각 디렉토리별로 저장.
+    store_menu_firestore(corps_menu=all_corps_menu, start_date_interval=31 * 1)  # 1달 전부터의 식단 데이터를 firestore에 저장
     write_all_log("")
     write_all_log("WorkingTime: {} sec".format(time.time() - start_time))  # 크롤링 시간 계산 후 출력
     write_all_log("끝.")
