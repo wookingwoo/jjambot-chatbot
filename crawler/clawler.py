@@ -2,11 +2,11 @@ from bs4 import BeautifulSoup
 import requests
 import time
 
-from data.api_key import corps, api_url
-from write_log import *
+from data.mnd_api_key import corps, api_url
+from write_log import write_all_log
 
 
-def MenuClawler():
+def menu_crawler():
     # headers = {'cnotent-type': 'application/json;charset=utf-8'}
 
     t = 2
@@ -121,4 +121,4 @@ def MenuClawler():
 
 
 if __name__ == "__main__":
-    MenuClawler()
+    menu_crawler()
