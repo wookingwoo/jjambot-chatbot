@@ -310,16 +310,40 @@ apiRouter.post('/menu', function (req, res) {
                 }
 
                 try {
+                    console.log('response_menu:', response_menu);
                     var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
-                    var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
-                    var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
-                    var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
                 } catch (e) {
                     var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
+                    console.log(e); // pass exception object to error handler
+                }
+
+                try {
+                    var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
+                } catch (e) {
                     var menu_lunch = '[점심]\n' + '식단 정보가 등록되지 않았습니다.';
+                    console.log(e); // pass exception object to error handler
+                }
+
+                try {
+                    var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
+                } catch (e) {
                     var menu_dinner = '[저녁]\n' + '식단 정보가 등록되지 않았습니다.';
+                    console.log(e); // pass exception object to error handler
+                }
+
+                try {
+
+                    var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+                } catch (e) {
                     var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
                     console.log(e); // pass exception object to error handler
+                    try {
+                        // 이전 버전은 DB에 specialFood로 들어감.
+                        var menu_specialFood = '[부식]\n' + listToString(response_menu, 'special_food');
+                    } catch (e) {
+                        var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
+                        console.log(e); // pass exception object to error handler
+                    }
                 }
             } catch (e) {
                 var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
@@ -525,15 +549,39 @@ apiRouter.post('/all_corps_menu', function (req, res) {
 
             try {
                 var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
-                var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
-                var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
-                var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+
             } catch (e) {
                 var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
+                console.log(e); // pass exception object to error handler
+            }
+
+            try {
+                var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
+
+            } catch (e) {
                 var menu_lunch = '[점심]\n' + '식단 정보가 등록되지 않았습니다.';
+                console.log(e); // pass exception object to error handler
+            }
+
+            try {
+                var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
+            } catch (e) {
+
                 var menu_dinner = '[저녁]\n' + '식단 정보가 등록되지 않았습니다.';
+                console.log(e); // pass exception object to error handler
+            }
+
+            try {
+                var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+            } catch (e) {
                 var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
                 console.log(e); // pass exception object to error handler
+                try {
+                    var menu_specialFood = '[부식]\n' + listToString(response_menu, 'special_food');
+                } catch (e) {
+                    var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
+                    console.log(e); // pass exception object to error handler
+                }
             }
 
             var response_meal = menu_lunch;
