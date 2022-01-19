@@ -236,7 +236,7 @@ apiRouter.post('/menu', function (req, res) {
     console.log(`allergyInfo 타입 => ${typeof allergyInfo}`);
 
     var fileDi =
-        './crawler/crawling_data/sort_menuData/' +
+        './crawler/data/crawling_data/sort_menuData/' +
         request_corps +
         '/year_' +
         request_date.substring(0, 4) +
@@ -434,7 +434,7 @@ apiRouter.post('/all_corps_menu', function (req, res) {
     console.log('\n<req.body 출력> ');
     console.log(req.body);
 
-    fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function (err, menu_data) {
+    fs.readFile('./crawler/data/crawling_data/allCorpsMenu.txt', 'utf8', function (err, menu_data) {
         var today_date = moment().format('YYYY-MM-DD');
         console.log('today_date:', today_date);
         console.log(`today_date 타입 => ${typeof today_date}`);
