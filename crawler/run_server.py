@@ -1,7 +1,7 @@
 import random
 import main
 import time
-from write_log import *
+from write_log import write_all_log, slack_msg
 
 repeat_time = 0
 
@@ -11,7 +11,9 @@ while (True):
         repeat_time += 1
         write_all_log(str(repeat_time) + "회째 실행!")
 
-        main.main()  # main.py 실행
+        working_time = main.main()  # main.py 실행
+
+        slack_msg(f"[짬봇 크롤러] {repeat_time}회째 실행 완료. (working_time: {round(working_time, 3)}sec)")  # 슬랙 메시지 전송
 
         # write_all_log("테스트 위해 3초만 휴식..")
         # time.sleep(3)
@@ -58,6 +60,9 @@ while (True):
         error = str(e)
         write_all_log("\n\n\t***에러가 발생하였습니다ㅠㅠ")
         write_all_log(error + "\n")
+
+        slack_msg("\n\n\t***에러가 발생하였습니다ㅠㅠ")  # 슬랙 메시지 전송
+        slack_msg(error + "\n")  # 슬랙 메시지 전송
 
         random_time_sleep = random.randrange(60 * 60 * 15)
         if random_time_sleep < 60:

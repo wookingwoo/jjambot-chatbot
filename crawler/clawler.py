@@ -38,7 +38,6 @@ def menu_crawler():
         print("/")
 
         menu = {}
-        date = None
 
         rows = soup.find_all('row')
 

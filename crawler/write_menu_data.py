@@ -1,6 +1,7 @@
 import os
 
 from check_env import check_dir
+from write_log import write_all_log, slack_msg
 
 
 def writeAllCorpsMenu_TXT(dic_parsing_menu):
@@ -43,6 +44,7 @@ def writeAllCorpsMenu_TXT(dic_parsing_menu):
         keys = "(업데이트메뉴) 차집합 (기존메뉴) [keys]: >>" + str(set(dic_all_menu_file.keys()) - set(dic_all_menu_old.keys()))
         # values = "(업데이트메뉴) 차집합 (기존메뉴) [values]: >>" + str(set(dic_all_menu_file.values()) - set(dic_all_menu_old.values()))
         print(keys)
+        slack_msg(f"DB가 변동되었습니다. (keys: {keys})")  # 슬랙 알림
         # print(values)
         print("********************************************\n")
 

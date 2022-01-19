@@ -2,6 +2,7 @@ api_key.js
 crawler/data
 crawler/nohup.out
 user_data/
+test_code
 
 crawler/__pycache__/
 .idea
