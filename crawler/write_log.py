@@ -1,5 +1,14 @@
 import os
+import requests
 import datetime
+
+from data.slack_bot import token, channel
+
+
+def slack_msg(msg):
+    requests.post("https://slack.com/api/chat.postMessage",
+                  headers={"Authorization": "Bearer " + token},
+                  data={"channel": channel, "text": msg})
 
 
 def write_all_log(s):
@@ -48,3 +57,7 @@ def write_all_log(s):
     f.close()
 
     print(str(datetime.datetime.now()) + ": " + s)  # 콘솔에도 출력
+
+
+if __name__ == "__main__":
+    slack_msg("slack test")
