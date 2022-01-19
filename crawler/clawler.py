@@ -84,7 +84,7 @@ def menu_crawler():
                         if my_date_code in menu:
                             pass
                         else:
-                            menu[my_date_code] = {"breakfast": [], "lunch": [], "dinner": [], "special_food": []}
+                            menu[my_date_code] = {"breakfast": [], "lunch": [], "dinner": [], "specialFood": []}
 
                         # menu = {날짜:{아침:[], 점심:[], 저녁:[], 부식[]}}
 
@@ -109,7 +109,7 @@ def menu_crawler():
                             if row.find('adspcfd') is not None:
                                 if not (row.find('adspcfd').text == ""):
                                     print(date, "(부식):", row.find('adspcfd').text)
-                                    menu[my_date_code]["special_food"].append(row.find('adspcfd').text)
+                                    menu[my_date_code]["specialFood"].append(row.find('adspcfd').text)
 
                         except Exception as e:
                             error = str(e)

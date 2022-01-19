@@ -141,7 +141,7 @@ apiRouter.post('/crawling_test', function (req, res) {
 
                 // console.log(`body data => ${result}`)
 
-                xmlToJson = convert.xml2json(result, { compact: true, spaces: 4 }); // compact(데이터 간소화 여부), spaces(들여쓰기 포인트)
+                xmlToJson = convert.xml2json(result, {compact: true, spaces: 4}); // compact(데이터 간소화 여부), spaces(들여쓰기 포인트)
 
                 console.log(`xmlToJson 타입 => ${typeof xmlToJson}`);
 
@@ -236,7 +236,7 @@ apiRouter.post('/menu', function (req, res) {
     console.log(`allergyInfo 타입 => ${typeof allergyInfo}`);
 
     var fileDi =
-        './crawler/crawling_data/sort_menuData/' +
+        './crawler/data/crawling_data/sort_menuData/' +
         request_corps +
         '/year_' +
         request_date.substring(0, 4) +
@@ -310,16 +310,40 @@ apiRouter.post('/menu', function (req, res) {
                 }
 
                 try {
+                    console.log('response_menu:', response_menu);
                     var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
-                    var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
-                    var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
-                    var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
                 } catch (e) {
                     var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
+                    console.log(e); // pass exception object to error handler
+                }
+
+                try {
+                    var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
+                } catch (e) {
                     var menu_lunch = '[점심]\n' + '식단 정보가 등록되지 않았습니다.';
+                    console.log(e); // pass exception object to error handler
+                }
+
+                try {
+                    var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
+                } catch (e) {
                     var menu_dinner = '[저녁]\n' + '식단 정보가 등록되지 않았습니다.';
+                    console.log(e); // pass exception object to error handler
+                }
+
+                try {
+
+                    var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+                } catch (e) {
                     var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
                     console.log(e); // pass exception object to error handler
+                    try {
+                        // 이전 버전은 DB에 specialFood로 들어감.
+                        var menu_specialFood = '[부식]\n' + listToString(response_menu, 'special_food');
+                    } catch (e) {
+                        var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
+                        console.log(e); // pass exception object to error handler
+                    }
                 }
             } catch (e) {
                 var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
@@ -434,7 +458,7 @@ apiRouter.post('/all_corps_menu', function (req, res) {
     console.log('\n<req.body 출력> ');
     console.log(req.body);
 
-    fs.readFile('./crawler/crawling_data/allCorpsMenu.txt', 'utf8', function (err, menu_data) {
+    fs.readFile('./crawler/data/crawling_data/allCorpsMenu.txt', 'utf8', function (err, menu_data) {
         var today_date = moment().format('YYYY-MM-DD');
         console.log('today_date:', today_date);
         console.log(`today_date 타입 => ${typeof today_date}`);
@@ -525,15 +549,39 @@ apiRouter.post('/all_corps_menu', function (req, res) {
 
             try {
                 var menu_breakfast = '[아침]\n' + listToString(response_menu, 'breakfast');
-                var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
-                var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
-                var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+
             } catch (e) {
                 var menu_breakfast = '[아침]\n' + '식단 정보가 등록되지 않았습니다.';
+                console.log(e); // pass exception object to error handler
+            }
+
+            try {
+                var menu_lunch = '[점심]\n' + listToString(response_menu, 'lunch');
+
+            } catch (e) {
                 var menu_lunch = '[점심]\n' + '식단 정보가 등록되지 않았습니다.';
+                console.log(e); // pass exception object to error handler
+            }
+
+            try {
+                var menu_dinner = '[저녁]\n' + listToString(response_menu, 'dinner');
+            } catch (e) {
+
                 var menu_dinner = '[저녁]\n' + '식단 정보가 등록되지 않았습니다.';
+                console.log(e); // pass exception object to error handler
+            }
+
+            try {
+                var menu_specialFood = '[부식]\n' + listToString(response_menu, 'specialFood');
+            } catch (e) {
                 var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
                 console.log(e); // pass exception object to error handler
+                try {
+                    var menu_specialFood = '[부식]\n' + listToString(response_menu, 'special_food');
+                } catch (e) {
+                    var menu_specialFood = '[부식]\n' + '식단 정보가 등록되지 않았습니다.';
+                    console.log(e); // pass exception object to error handler
+                }
             }
 
             var response_meal = menu_lunch;
@@ -886,17 +934,17 @@ apiRouter.post('/calculate_date', function (req, res) {
             total_day = Math.floor(total_day / (1000 * 60 * 60 * 24));
 
             var calculate_date_simple =
-                sf('전역: D{d}일', { d: d_day }) +
-                sf('\n\n복무 비율: {per}%', { per: (p_day / total_day) * 100 }) +
-                sf('\n\n전역일: {d}', { d: user_discharge_date });
+                sf('전역: D{d}일', {d: d_day}) +
+                sf('\n\n복무 비율: {per}%', {per: (p_day / total_day) * 100}) +
+                sf('\n\n전역일: {d}', {d: user_discharge_date});
 
             var calculate_date_detail =
-                sf('전역: D{d}일', { d: d_day }) +
-                sf('\n현재 복무일수: D{p}일', { p: p_day }) +
-                sf('\n총 복무일수: {p}일', { p: total_day }) +
-                sf('\n복무 비율: {per}%', { per: ((p_day / total_day) * 100).toFixed(1) }) +
-                sf('\n입대일: {d}', { d: user_date_to_join_the_army }) +
-                sf('\n전역일: {d}', { d: user_discharge_date });
+                sf('전역: D{d}일', {d: d_day}) +
+                sf('\n현재 복무일수: D{p}일', {p: p_day}) +
+                sf('\n총 복무일수: {p}일', {p: total_day}) +
+                sf('\n복무 비율: {per}%', {per: ((p_day / total_day) * 100).toFixed(1)}) +
+                sf('\n입대일: {d}', {d: user_date_to_join_the_army}) +
+                sf('\n전역일: {d}', {d: user_discharge_date});
         }
     }
 
