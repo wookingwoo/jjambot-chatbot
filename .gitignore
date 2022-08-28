@@ -1,8 +1,9 @@
-api_key.js
-crawler/data
-crawler/nohup.out
-user_data/
-test_code
-
-crawler/__pycache__/
 .idea
+node_modules/
+crawler/nohup.out
+crawler/__pycache__/
+
+api_key.js
+user_data/
+crawler/data
+test_code/
