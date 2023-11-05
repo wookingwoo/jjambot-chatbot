@@ -11,11 +11,10 @@
 카카오톡 검색용 아이디: jjambot
 
 ## github
-
-jjambot-chatbot: https://github.com/wookingwoo/jjambot
-
-jjambot-crawler: https://github.com/wookingwoo/jjambot-crawler
-
+- jjambot-website: https://github.com/wookingwoo/jjambot-website
+- jjambot-chatbot: https://github.com/wookingwoo/jjambot
+- jjambot-crawler: https://github.com/wookingwoo/jjambot-crawler
+- jjambot-GiGAGenie: https://github.com/wookingwoo/jjambot-GiGAGenie
 
 ---
 
