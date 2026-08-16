@@ -1,338 +1,102 @@
 # jjambot (짬봇)
 
-짬봇은 군대 식단, 전역일 계산, 각종 군생활 정보등을 카카오톡 챗봇으로 알려주는 서비스입니다.
-
-## 서비스 안내
-
-짬봇 홈페이지: https://jjambot.wookingwoo.com
-
-짬봇 카카오톡 채널 링크: http://pf.kakao.com/_xlVKrxb
-
-카카오톡 검색용 아이디: jjambot
+짬봇 카카오톡 챗봇의 스킬 서버. 카카오 i 오픈빌더가 사용자 발화를 스킬 요청으로 전달하면, 이 서버가 응답 JSON을 만들어 돌려준다.
 
 ## github
+
 - jjambot-website: https://github.com/wookingwoo/jjambot-website
 - jjambot-chatbot: https://github.com/wookingwoo/jjambot
 - jjambot-crawler: https://github.com/wookingwoo/jjambot-crawler
 - jjambot-GiGAGenie: https://github.com/wookingwoo/jjambot-GiGAGenie
 
----
+## 스택
 
-# jjambot-api
+- Node.js + TypeScript
+- [Hono](https://hono.dev) — 웹 프레임워크
+- [Zod](https://zod.dev) — 카카오 스킬 요청/응답 스키마 검증
+- Supabase(Postgres) — [jjambot-crawler](https://github.com/wookingwoo/jjambot-crawler)가 채우는 `meals` 테이블을 그대로 조회하고, 사용자별 상태는 이 저장소가 관리하는 `users` 테이블에 저장한다 (같은 Supabase 프로젝트).
 
-## HTTP Response (POST)
-
-- index.js
-
-|번호|파라미터|호출 상황|
-|:----:|:-----|:-----:|
-|1|/menu|메뉴 질문 시 호출|
-|2|/all_corps_menu|부대 조회 시 호출|
-|3|/allergy/onoff|알러지 설정 시 호출|
-|4|/corps/change|부대 변경 시 호출|
-|5|/date_to_join_the_army/change|입대일 변경 시 호출|
-|6|/discharge_date/change|전역일 변경 시 호출|
-|7|/calculate_date|전역일 계산 시 호출|
-
----
-
-## Data
-
-### 형식
-
-- user_data.txt
-
-부대 정보, 알러지 정보, 전역일등 사용자 데이터를 저장하는 DB로 JSON형식의 파일로 저장됩니다.
+## 구조
 
 ```
-{
-"":{
-"alias":"sample",
-"corps":"5322",
-"allergy_show":"on",
-"date_to_join_the_army":"2018-12-17",
-"discharge_date":"2020-07-27",
-"jjambot_join_date":"2020-06-20 15:39:37",
-"usage_count":{"total":47,"menu_api":5,"all_corps_menu_api":1,"allergy_onoff_api":1,"change_corps_api":1,"change_join_army_date":6,"change_discharge_date":5,"calculate_date":28}},
-
-...
-
-}
-
+src/
+  kakao/
+    schema.ts     # 스킬 요청/응답 Zod 스키마
+    builders.ts    # simpleText, quickReply 등 응답 빌더
+  repo/
+    users.ts       # users 테이블 CRUD
+    meals.ts        # meals 테이블 조회
+  skills/
+    ping.ts             # 스킬 예시 (오픈빌더 스킬 URL 1개 = 파일 1개)
+    menu.ts             # 메뉴 조회
+    corpsList.ts         # 부대 코드 목록
+    corpsChange.ts        # 부대 변경
+    allergyToggle.ts       # 알러지 표시 on/off
+    dateChangeSkill.ts      # 입대일/전역일 변경 공통 로직
+    joinDateChange.ts        # 입대일 변경 (위 공통 로직 사용)
+    dischargeDateChange.ts    # 전역일 변경 (위 공통 로직 사용)
+    calculateDate.ts           # 전역일 D-day / 복무 진행률 계산
+  corps.ts         # 부대 코드 ↔ 국방부 API service 코드 매핑
+  dates.ts          # 날짜 파싱/계산 유틸
+  config.ts          # 환경변수
+  supabase.ts         # Supabase 클라이언트
+  app.ts               # Hono 앱, 라우트 등록
+  index.ts              # 서버 진입점
+migrations/
+  0001_create_users.sql
+tests/
 ```
 
-각 정보는 아래 표와 같이 이용됩니다.
+새 스킬을 추가하려면 `src/skills/`에 파일을 만들고 `src/app.ts`에 라우트로 등록한 뒤, 오픈빌더 관리자센터에서 해당 URL로 스킬을 등록한다.
 
-|번호|JSON key|설명|이용 목적|
-|:----:|:-----|:-----:|:-----:|
-|1|alias|별칭|사용자 구분에 이용|
-|2|corps|부대 정보|식단 알림에 이용|
-|3|allergy_show|알러지 정보|식단 내 알러지 표시에 이용|
-|4|date_to_join_the_army|입대일|전역일 계산에 이용|
-|5|discharge_date|전역일|전역일 계산에 이용|
-|6|jjambot_join_date|짬봇 가입일|AI 통계 분석|
-|7|usage_count|사용 통계|AI 통계 분석|
+## 스킬 목록
 
-- allCorpsMenu.txt
+| 스킬 | URL | 설명 | 파라미터 |
+|---|---|---|---|
+| 메뉴 조회 | `/skill/menu` | 저장된 부대의 식단 조회 | `date` (선택, `YYYY-MM-DD`, 기본값 오늘) |
+| 부대 목록 | `/skill/corps/list` | 설정 가능한 부대 코드 안내 | - |
+| 부대 변경 | `/skill/corps/change` | 부대 코드 저장 | `corps` (없으면 발화 텍스트에서 자동 인식) |
+| 알러지 표시 토글 | `/skill/allergy/toggle` | 식단의 알러지 표시 on/off | - |
+| 입대일 변경 | `/skill/join-date/change` | 입대일 저장 | `date` (없으면 발화 텍스트에서 자동 인식) |
+| 전역일 변경 | `/skill/discharge-date/change` | 전역일 저장 | `date` (없으면 발화 텍스트에서 자동 인식) |
+| 전역일 계산 | `/skill/calculate-date` | 전역일까지 D-day, 복무 진행률 안내 | - |
 
-크롤링된 데이터는 아래와같은 JSON형식의 txt로 저장됩니다.
+사용자 식별은 카카오가 요청마다 보내주는 `userRequest.user.id`(botUserKey) 기준이며, 첫 요청 시 `users` 테이블에 행이 자동 생성된다.
 
-```
-{
-'부대': {'날짜': {'breakfast': ['메뉴1', '메뉴2'], 'lunch': ['메뉴1', '메뉴2'], 'dinner':['메뉴1', '메뉴2'], 'specialFood': ['메뉴1', '메뉴2']},    ...   }
-
-...
-
-}
-
-```
-
----
-
-### POST TEST
-
-- curl
-
-curl 테스트 예시입니다.
+## 로컬 개발
 
 ```bash
-$ curl https://domain/api/menu \
--X POST \
--H "Content-type: application/json" \
--d '{"key1": "value1", "key2": "value2"}'
+npm install
+cp .env.example .env   # SUPABASE_SERVICE_ROLE_KEY 채우기
+npm run dev
 ```
 
----
-
-## 서버 실행 방법
-
-### chatbot server (node.js)
-
-index.js를 실행시키는 방법입니다.
+## 테스트 / 타입체크
 
 ```bash
-$ node index.js
+npm test
+npm run typecheck
 ```
 
-- forever
+테스트는 `src/repo/*`를 모킹해서 실제 DB 없이 동작한다.
 
-node.js는 한번 오류가 생기면 서버가 종료되어집니다. forever 명령어를 사용하게 되면 에러 발생 시 서버가 중지되지 않고 프로그램을 자동으로 다시 실행시켜줍니다.
+## DB
 
-forever 설치 방법입니다.
+Supabase SQL Editor(또는 `psql`)에서 `migrations/0001_create_users.sql`을 실행해 `users` 테이블을 만든다. `meals` 테이블은 crawler가 이미 만들어둔 것을 그대로 읽기만 한다.
+
+## Docker로 배포 (Raspberry Pi 등)
 
 ```bash
-$ npm install forever -g
+cp .env.example .env   # SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY 채우기 (필수)
+docker compose up -d --build
 ```
 
-forever 시작 방법입니다.
+Supabase 값을 채우지 않으면 컨테이너가 기동 시 바로 에러를 내고 종료한다 (fail fast). `node:22-alpine` 베이스 이미지는 공식 멀티 아키텍처 이미지라 Pi에서 그대로 `docker compose up --build`하면 Pi의 아키텍처(arm64 등)에 맞게 네이티브로 빌드된다 — 별도 크로스 빌드가 필요 없다.
 
--w란 watch의 약자이며, 소스코드의 변경이 감지되면 자동으로 node 서버를 재시작 해줍니다.
+스킬 서버는 카카오 요구사항상 **공인 도메인 + HTTPS**로 노출되어야 하므로, Pi 앞단에 리버스 프록시(Caddy, nginx 등)나 Cloudflare Tunnel 같은 걸 별도로 둬야 한다 (이 저장소 범위 밖).
 
-```bash
-$ forever start index.js
-```
+## 참고
 
-동작중인 forever 리스트 확인하는 방법입니다.
-
-```bash
-forever list
-```
-
-실시간 로그 확인 (tail -f log파일위치)
-
-```bash
-$ tail -f [로그파일 경로]
-```
-
-forever 중지 하는 방법입니다.
-
-```bash
-$ forever stop index.js
-```
-
-forever 재시작 하는 방법입니다.
-
-```bash
-$ forever restart index.js
-```
-
-forever --help를 통해 명령어들을 확인할 수 있습니다.
-
-```bash
-$ forever --help
-```
-
----
-
-## Linux Setting
-
-### TimeZone
-
-한국 표준시로 변경하는 2가지 방법입니다.
-
-- Timezone 변경하기 1
-
-현재 시간을 확인하는 명령어로 우분투 시스템에서 사용하는 표준 시간을 보여줍니다.
-
-```bash
-$ date
-```
-
-다음 명령어를 입력 후 원하는 시간대 국가를 선택하세요.
-
-```bash
-$ tzselect
-```
-
-아래와 같이 오류가 난다면 직접 추가해야합니다. (Timezone 변경하기 2 참고.)
-
-```
-You can make this change permanent for yourself by appending the line
-        TZ='Asia/Seoul'; export TZ
-to the file '.profile' in your home directory; then log out and log in again.
-
-Here is that TZ value again, this time on standard output so that you
-can use the /usr/bin/tzselect command in shell scripts:
-```
-
-- Timezone 변경하기 2
-
-아래는 Timezone을 직접 변경하는 법입니다.
-
-아래 나온 설정 지역 예시는 Asia/Seoul입니다.
-
-```bash
-$ sudo ln -sf /usr/share/zoneinfo/Asia/Seoul /etc/localtime
-```
-
----
-
-## 설치 안내 (Installation Process)
-
-### nvm 설치
-
-- 관련 패키지 설치하기
-
-npm 및 nodejs 관련 모듈을 설치하기 위해 apt로 다음과 같은 모듈을 먼저 설치합니다.
-
-```bash
-$ sudo apt-get install build-essential libssl-dev
-```
-
-- nvm 설치
-
-curl을 이용하여 nvm을 설치합니다. (0.35.3 버전 기준)
-
-```bash
-curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash
-```
-
-Information.
-
-	[리눅스] https://github.com/creationix/nvm#installation
-	[윈도우] https://github.com/coreybutler/nvm-windows
-
-- bashrc를 통해 적용
-
-bashrc를 업데이트 합니다.
-
-```bash
-$ source ~/.bashrc
-```
-
-- nvm 설치 확인
-
-nvm이 정상적으로 설치되었는지를 확인해보기 위해서, nvm version을 확인해 봅니다.
-
-```bash
-$ nvm --version
-```
-
-	예시: 0.35.3
-
----
-
-### nodejs 설치
-
-- nodejs 설치
-
-nvm 설치 후 nodejs를 설치 할 수 있습니다.
-
-lts(long term support) 버전으로 설치하겠습니다.
-
-```bash
-$ nvm install --lts
-```
-
-- node의 설치 확인
-
-node가 정상적으로 설치되었는지 node 버전을 확인해봅니다.
-
-```bash
-$ node -v
-```
-
-	예시: v10.13.0
-
----
-
-### expressjs 설치
-
-- expressjs 설치
-
-nodejs에서 가장 많이 사용되는 웹 프레임워크이며. 간단한 코드로 높은 성능을 낼 수 있으며 다양한 기능을 가진 웹 서버를 생성할 수 있습니다.
-
-```bash
-$ npm i --save express
-```
-
-- morgan, body-parser 라이브러리를 추가
-
-morgan은 로깅을 담당하고 body-parser는 http 요청의 body를 추출합니다.
-
-```bash
-$ npm i --save morgan body-parser
-```
-
----
-
-### JS 추가 모듈 설치
-
-- xml-js
-
-XML to JSON converters
-
-```bash
-$ npm install --save xml-js
-```
-
-- request
-
-```bash
-$ npm install request
-```
-
-- moment
-
-해외 서버를 구축하는 경우, new date()로 시간 설정 시 한국 시간이 표시되지 않는 현상이 있습니다. 이를 대비해 moment를 이용하였습니다.
-
-```bash
-$ npm install moment
-```
-
-```bash
-$ npm install moment-timezone
-```
-
-- sf
-
-String formatting library for node.js. [개발문서](https://www.npmjs.com/package/sf)
-
-```bash
-$ npm install sf
-```
-
-## 참고자료
-
-https://i.kakao.com/docs/skill-build#%EC%98%88%EC%A0%9C-%EC%8A%A4%ED%82%AC-%EC%84%9C%EB%B2%84-%EB%A7%8C%EB%93%A4%EA%B8%B0
-
+- [카카오 i 오픈빌더 스킬 가이드](https://kakaobusiness.gitbook.io/main/tool/chatbot/skill_guide)
+- [응답 타입별 JSON 포맷](https://kakaobusiness.gitbook.io/main/tool/chatbot/skill_guide/answer_json_format)
+- [콜백 개발 가이드](https://kakaobusiness.gitbook.io/main/tool/chatbot/skill_guide/ai_chatbot_callback_guide)
