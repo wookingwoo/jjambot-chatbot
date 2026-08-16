@@ -17,6 +17,7 @@ RUN npm ci --omit=dev
 
 COPY --from=builder /app/dist ./dist
 
+USER node
 EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:8000/health || exit 1
 

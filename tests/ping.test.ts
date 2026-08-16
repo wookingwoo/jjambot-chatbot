@@ -1,17 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { app } from "../src/app.js";
-
-function makeSkillRequest(utterance: string) {
-  return {
-    intent: { id: "intent-1", name: "ping" },
-    userRequest: {
-      utterance,
-      user: { id: "test-user", type: "botUserKey" },
-    },
-    bot: { id: "bot-1" },
-    action: { id: "action-1", name: "ping", params: {}, detailParams: {} },
-  };
-}
+import { makeSkillRequest } from "./helpers.js";
 
 describe("GET /health", () => {
   it("returns ok", async () => {
