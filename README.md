@@ -92,6 +92,14 @@ npm run typecheck
 
 Supabase SQL Editor(또는 `psql`)에서 `migrations/0001_create_users.sql`을 실행해 `users` 테이블을 만든다. `meals` 테이블은 crawler가 이미 만들어둔 것을 그대로 읽기만 한다.
 
+## Postman으로 테스트
+
+`postman/jjambot.postman_collection.json`을 Postman에 Import하면 위 스킬 전부(+ 헬스체크)가 요청으로 등록된다.
+
+1. Postman → Import → 해당 파일 선택
+2. 컬렉션 → Variables 탭에서 `baseUrl`(기본 `http://localhost:8000`), `skillToken`(`.env`의 `SKILL_SECRET` 값) 채우기
+3. `testUserId`는 모든 요청이 공유하는 테스트용 유저 id (기본값 그대로 써도 됨, 테스트 끝나면 Supabase `users` 테이블에서 해당 행 지우면 됨)
+
 ## Docker로 배포 (Raspberry Pi 등)
 
 ```bash
