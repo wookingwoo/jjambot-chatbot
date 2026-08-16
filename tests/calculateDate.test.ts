@@ -10,9 +10,8 @@ vi.mock("../src/dates.js", async (importOriginal) => {
   return { ...actual, todayInSeoul: () => "2026-08-16" };
 });
 
-import { app } from "../src/app.js";
 import { getOrCreateUser } from "../src/repo/users.js";
-import { baseUser, makeSkillRequest } from "./helpers.js";
+import { baseUser, makeSkillRequest, skillRequest } from "./helpers.js";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -22,11 +21,7 @@ describe("POST /skill/calculate-date", () => {
   it("prompts to set a discharge date when missing", async () => {
     vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, discharge_date: null });
 
-    const res = await app.request("/skill/calculate-date", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("전역일 계산")),
-    });
+    const res = await skillRequest("/skill/calculate-date", makeSkillRequest("전역일 계산"));
 
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("설정되지 않았어요");
@@ -36,11 +31,7 @@ describe("POST /skill/calculate-date", () => {
   it("reports days remaining for a future discharge date", async () => {
     vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, discharge_date: "2026-08-26" });
 
-    const res = await app.request("/skill/calculate-date", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("전역일 계산")),
-    });
+    const res = await skillRequest("/skill/calculate-date", makeSkillRequest("전역일 계산"));
 
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("D-10");
@@ -53,11 +44,7 @@ describe("POST /skill/calculate-date", () => {
       discharge_date: "2026-09-15",
     });
 
-    const res = await app.request("/skill/calculate-date", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("전역일 계산")),
-    });
+    const res = await skillRequest("/skill/calculate-date", makeSkillRequest("전역일 계산"));
 
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("복무 진행률");
@@ -66,11 +53,7 @@ describe("POST /skill/calculate-date", () => {
   it("congratulates the user once the discharge date has passed", async () => {
     vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, discharge_date: "2026-08-06" });
 
-    const res = await app.request("/skill/calculate-date", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("전역일 계산")),
-    });
+    const res = await skillRequest("/skill/calculate-date", makeSkillRequest("전역일 계산"));
 
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("지났어요");
