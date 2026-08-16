@@ -8,4 +8,5 @@ export const config = {
   port: Number(process.env.PORT ?? 8000),
   supabaseUrl: requireEnv("SUPABASE_URL"),
   supabaseServiceRoleKey: requireEnv("SUPABASE_SERVICE_ROLE_KEY"),
+  skillSecret: requireEnv("SKILL_SECRET"),
 };

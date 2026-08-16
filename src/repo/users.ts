@@ -13,23 +13,18 @@ export interface UserRow {
 }
 
 export async function getOrCreateUser(kakaoUserId: string): Promise<UserRow> {
-  const { data: existing, error: selectError } = await supabase
+  // Atomic upsert rather than select-then-insert, so two near-simultaneous
+  // first messages from the same new user can't race into a unique-constraint
+  // error. Only kakao_user_id is in the payload, so on conflict this is a
+  // no-op update that just returns the existing row untouched.
+  const { data, error } = await supabase
     .from("users")
-    .select("*")
-    .eq("kakao_user_id", kakaoUserId)
-    .maybeSingle();
-
-  if (selectError) throw selectError;
-  if (existing) return existing as UserRow;
-
-  const { data: created, error: insertError } = await supabase
-    .from("users")
-    .insert({ kakao_user_id: kakaoUserId })
+    .upsert({ kakao_user_id: kakaoUserId }, { onConflict: "kakao_user_id", ignoreDuplicates: false })
     .select("*")
     .single();
 
-  if (insertError) throw insertError;
-  return created as UserRow;
+  if (error) throw error;
+  return data as UserRow;
 }
 
 export async function updateUser(

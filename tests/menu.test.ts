@@ -9,10 +9,9 @@ vi.mock("../src/repo/meals.js", () => ({
   getMeal: vi.fn(),
 }));
 
-import { app } from "../src/app.js";
 import { getMeal } from "../src/repo/meals.js";
 import { getOrCreateUser } from "../src/repo/users.js";
-import { baseUser, makeSkillRequest } from "./helpers.js";
+import { baseUser, makeSkillRequest, skillRequest } from "./helpers.js";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -22,11 +21,7 @@ describe("POST /skill/menu", () => {
   it("asks the user to set a corps first when none is stored", async () => {
     vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: null });
 
-    const res = await app.request("/skill/menu", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("오늘 메뉴")),
-    });
+    const res = await skillRequest("/skill/menu", makeSkillRequest("오늘 메뉴"));
 
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -46,11 +41,7 @@ describe("POST /skill/menu", () => {
       special_dish: null,
     });
 
-    const res = await app.request("/skill/menu", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("오늘 메뉴")),
-    });
+    const res = await skillRequest("/skill/menu", makeSkillRequest("오늘 메뉴"));
 
     const body = await res.json();
     const text = body.template.outputs[0].simpleText.text as string;
@@ -63,11 +54,7 @@ describe("POST /skill/menu", () => {
     vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
     vi.mocked(getMeal).mockResolvedValue(null);
 
-    const res = await app.request("/skill/menu", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("오늘 메뉴")),
-    });
+    const res = await skillRequest("/skill/menu", makeSkillRequest("오늘 메뉴"));
 
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("아직 없어요");

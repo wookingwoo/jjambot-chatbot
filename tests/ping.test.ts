@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { app } from "../src/app.js";
-import { makeSkillRequest } from "./helpers.js";
+import { makeSkillRequest, skillRequest } from "./helpers.js";
 
 describe("GET /health", () => {
   it("returns ok", async () => {
@@ -12,11 +12,7 @@ describe("GET /health", () => {
 
 describe("POST /skill/ping", () => {
   it("echoes the utterance as a simpleText output", async () => {
-    const res = await app.request("/skill/ping", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("ping")),
-    });
+    const res = await skillRequest("/skill/ping", makeSkillRequest("ping"));
 
     expect(res.status).toBe(200);
     const body = await res.json();
@@ -25,11 +21,7 @@ describe("POST /skill/ping", () => {
   });
 
   it("rejects a payload missing required fields", async () => {
-    const res = await app.request("/skill/ping", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ foo: "bar" }),
-    });
+    const res = await skillRequest("/skill/ping", { foo: "bar" });
 
     expect(res.status).toBe(400);
   });

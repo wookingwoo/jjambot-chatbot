@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { requireSkillSecret } from "./middleware/skillAuth.js";
 import { pingSkill } from "./skills/ping.js";
 import { menuSkill } from "./skills/menu.js";
 import { corpsListSkill } from "./skills/corpsList.js";
@@ -11,6 +12,8 @@ import { calculateDateSkill } from "./skills/calculateDate.js";
 export const app = new Hono();
 
 app.get("/health", (c) => c.json({ status: "ok" }));
+
+app.use("/skill/*", requireSkillSecret);
 
 app.route("/skill/ping", pingSkill);
 app.route("/skill/menu", menuSkill);
