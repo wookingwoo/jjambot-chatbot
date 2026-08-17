@@ -7,3 +7,9 @@ services:
       - path: .env
         required: false
     restart: unless-stopped
+    networks:
+      - wookingwoo-op-bridge
+
+networks:
+  wookingwoo-op-bridge:
+    external: true
