@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { skillRequestSchema } from "../kakao/schema.js";
-import { simpleText, skillResponse } from "../kakao/builders.js";
+import { quickReply, simpleText, skillResponse } from "../kakao/builders.js";
 import { getOrCreateUser, incrementUsage } from "../repo/users.js";
 import { getMeal } from "../repo/meals.js";
 import { isValidCorps } from "../corps.js";
@@ -55,9 +55,9 @@ menuSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
   const corps = user.corps;
   if (!corps || !isValidCorps(corps)) {
     return c.json(
-      skillResponse([
-        simpleText("먼저 부대를 설정해주세요. '부대 조회'로 코드를 확인한 뒤 '부대 변경'으로 설정할 수 있어요."),
-      ]),
+      skillResponse([simpleText("먼저 부대를 설정해주세요. '부대 조회'로 코드를 확인한 뒤 '부대 변경'으로 설정할 수 있어요.")], {
+        quickReplies: [quickReply({ label: "부대 조회", action: "message", messageText: "부대 조회" })],
+      }),
     );
   }
 

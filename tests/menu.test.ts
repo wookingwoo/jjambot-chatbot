@@ -26,6 +26,9 @@ describe("POST /skill/menu", () => {
     expect(res.status).toBe(200);
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("부대");
+    expect(body.template.quickReplies).toEqual([
+      { label: "부대 조회", action: "message", messageText: "부대 조회" },
+    ]);
     expect(getMeal).not.toHaveBeenCalled();
   });
 
