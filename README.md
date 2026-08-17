@@ -36,6 +36,7 @@ src/
     allergyToggle.ts       # 알러지 표시 on/off
     dateChangeSkill.ts      # 입대일/전역일 변경 공통 로직
     joinDateChange.ts        # 입대일 변경 (위 공통 로직 사용)
+    joinDateShow.ts           # 입대일 조회
     dischargeDateChange.ts    # 전역일 변경 (위 공통 로직 사용)
     calculateDate.ts           # 전역일 D-day / 복무 진행률 계산
   corps.ts         # 부대 코드 ↔ 국방부 API service 코드 매핑
@@ -62,6 +63,7 @@ tests/
 | 부대 변경 | `/skill/corps/change` | 부대 코드 저장 | `corps` (없으면 발화 텍스트에서 자동 인식) |
 | 알러지 표시 토글 | `/skill/allergy/toggle` | 식단의 알러지 표시 on/off | `toggle_state` (`toggle_state` 엔티티, 대표값 `off`/`on`, 없으면 발화 텍스트에서 켜기/끄기 의도 인식, 그마저 없으면 현재 상태 반전) |
 | 입대일 변경 | `/skill/join-date/change` | 입대일 저장 | `sys_date` (`sys.date` 엔티티, 없으면 발화 텍스트에서 자동 인식) |
+| 입대일 조회 | `/skill/join-date/show` | 저장된 입대일 안내 | - |
 | 전역일 변경 | `/skill/discharge-date/change` | 전역일 저장 | `sys_date` (`sys.date` 엔티티, 없으면 발화 텍스트에서 자동 인식) |
 | 전역일 계산 | `/skill/calculate-date` | 전역일까지 D-day, 복무 진행률 안내 | - |
 

@@ -146,6 +146,26 @@
       }
     },
     {
+      "name": "입대일 조회",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Skill-Secret", "value": "{{skillToken}}" }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"join_date_show\" },\n  \"userRequest\": {\n    \"utterance\": \"입대일 조회\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"join_date_show\", \"params\": {}, \"detailParams\": {} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/skill/join-date/show",
+          "host": ["{{baseUrl}}"],
+          "path": ["skill", "join-date", "show"]
+        }
+      }
+    },
+    {
       "name": "전역일 변경",
       "request": {
         "method": "POST",
