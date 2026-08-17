@@ -11,7 +11,6 @@ pipeline {
     }
 
     stage('Write env') {
-      when { branch 'main' }
       steps {
         withCredentials([file(credentialsId: 'jjambot-chatbot-env', variable: 'ENV_FILE')]) {
           sh 'cp "$ENV_FILE" .env'
@@ -20,7 +19,6 @@ pipeline {
     }
 
     stage('Deploy') {
-      when { branch 'main' }
       steps {
         sh 'docker compose up -d --build'
       }
