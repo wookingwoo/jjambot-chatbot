@@ -28,14 +28,14 @@ describe("/skill/* auth", () => {
     expect(res.status).toBe(200);
   });
 
-  it("still accepts the legacy ?token= query param as a fallback", async () => {
+  it("rejects the legacy ?token= query param now that the header fallback is gone", async () => {
     const res = await app.request(`/skill/ping?token=${process.env.SKILL_SECRET}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(makeSkillRequest("ping")),
     });
 
-    expect(res.status).toBe(200);
+    expect(res.status).toBe(401);
   });
 
   it("does not gate /health behind the token", async () => {

@@ -11,12 +11,10 @@ function safeEqual(a: string, b: string): boolean {
 
 /**
  * OpenBuilder's skill registration screen has separate "헤더 이름"/"헤더 값"
- * fields, so the shared secret travels as the `X-Skill-Secret` header. The
- * `?token=` query param is still accepted as a fallback while existing
- * skills are migrated to the header in the admin console.
+ * fields, so the shared secret travels as the `X-Skill-Secret` header.
  */
 export const requireSkillSecret: MiddlewareHandler = async (c, next) => {
-  const token = c.req.header("X-Skill-Secret") ?? c.req.query("token") ?? "";
+  const token = c.req.header("X-Skill-Secret") ?? "";
   if (!safeEqual(token, config.skillSecret)) {
     return c.json({ error: "unauthorized" }, 401);
   }
