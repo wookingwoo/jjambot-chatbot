@@ -10,6 +10,15 @@ pipeline {
       steps { checkout scm }
     }
 
+    stage('Write env') {
+      when { branch 'main' }
+      steps {
+        withCredentials([file(credentialsId: 'jjambot-chatbot-env', variable: 'ENV_FILE')]) {
+          sh 'cp "$ENV_FILE" .env'
+        }
+      }
+    }
+
     stage('Deploy') {
       when { branch 'main' }
       steps {
