@@ -1,12 +1,11 @@
 import { app } from "../src/app.js";
 import type { UserRow } from "../src/repo/users.js";
 
-/** POSTs to a /skill/* route with the auth token every route now requires. */
+/** POSTs to a /skill/* route with the X-Skill-Secret header every route now requires. */
 export function skillRequest(path: string, body: unknown) {
-  const url = `${path}?token=${process.env.SKILL_SECRET}`;
-  return app.request(url, {
+  return app.request(path, {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: { "Content-Type": "application/json", "X-Skill-Secret": process.env.SKILL_SECRET ?? "" },
     body: JSON.stringify(body),
   });
 }

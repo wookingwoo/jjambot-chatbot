@@ -7,7 +7,7 @@
   },
   "variable": [
     { "key": "baseUrl", "value": "http://localhost:8000" },
-    { "key": "skillToken", "value": "", "description": ".env의 SKILL_SECRET 값" },
+    { "key": "skillToken", "value": "", "description": ".env의 SKILL_SECRET 값 (X-Skill-Secret 헤더로 전송됨)" },
     { "key": "testUserId", "value": "postman-test-user" }
   ],
   "item": [
@@ -27,17 +27,19 @@
       "name": "Ping (예시)",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Skill-Secret", "value": "{{skillToken}}" }
+        ],
         "body": {
           "mode": "raw",
           "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"postman\" },\n  \"userRequest\": {\n    \"utterance\": \"ping\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"postman\", \"params\": {}, \"detailParams\": {} }\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
-          "raw": "{{baseUrl}}/skill/ping?token={{skillToken}}",
+          "raw": "{{baseUrl}}/skill/ping",
           "host": ["{{baseUrl}}"],
-          "path": ["skill", "ping"],
-          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+          "path": ["skill", "ping"]
         }
       }
     },
@@ -45,18 +47,20 @@
       "name": "메뉴 조회",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Skill-Secret", "value": "{{skillToken}}" }
+        ],
         "body": {
           "mode": "raw",
           "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"menu\" },\n  \"userRequest\": {\n    \"utterance\": \"오늘 메뉴\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"menu\", \"params\": {}, \"detailParams\": {} }\n}",
           "options": { "raw": { "language": "json" } }
         },
-        "description": "params.date를 YYYY-MM-DD로 주면 해당 날짜 조회, 없으면 오늘",
+        "description": "params.sys_date를 YYYY-MM-DD 또는 {\"date\": \"YYYY-MM-DD\", ...} JSON으로 주면 해당 날짜 조회, 없으면 오늘. params.meal_type0~3으로 조식/중식/석식/부식 중 원하는 끼니만 필터링 가능.",
         "url": {
-          "raw": "{{baseUrl}}/skill/menu?token={{skillToken}}",
+          "raw": "{{baseUrl}}/skill/menu",
           "host": ["{{baseUrl}}"],
-          "path": ["skill", "menu"],
-          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+          "path": ["skill", "menu"]
         }
       }
     },
@@ -64,17 +68,19 @@
       "name": "부대 목록",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Skill-Secret", "value": "{{skillToken}}" }
+        ],
         "body": {
           "mode": "raw",
           "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"corps_list\" },\n  \"userRequest\": {\n    \"utterance\": \"부대 조회\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"corps_list\", \"params\": {}, \"detailParams\": {} }\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
-          "raw": "{{baseUrl}}/skill/corps/list?token={{skillToken}}",
+          "raw": "{{baseUrl}}/skill/corps/list",
           "host": ["{{baseUrl}}"],
-          "path": ["skill", "corps", "list"],
-          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+          "path": ["skill", "corps", "list"]
         }
       }
     },
@@ -82,7 +88,10 @@
       "name": "부대 변경",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Skill-Secret", "value": "{{skillToken}}" }
+        ],
         "body": {
           "mode": "raw",
           "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"corps_change\" },\n  \"userRequest\": {\n    \"utterance\": \"부대 변경 1570\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"corps_change\", \"params\": { \"corps\": \"1570\" }, \"detailParams\": {} }\n}",
@@ -90,10 +99,9 @@
         },
         "description": "params.corps를 빼고 utterance만 보내도 발화에서 코드를 자동 인식함 (예: \"부대 atc로 바꿔줘\")",
         "url": {
-          "raw": "{{baseUrl}}/skill/corps/change?token={{skillToken}}",
+          "raw": "{{baseUrl}}/skill/corps/change",
           "host": ["{{baseUrl}}"],
-          "path": ["skill", "corps", "change"],
-          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+          "path": ["skill", "corps", "change"]
         }
       }
     },
@@ -101,17 +109,19 @@
       "name": "알러지 표시 토글",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Skill-Secret", "value": "{{skillToken}}" }
+        ],
         "body": {
           "mode": "raw",
           "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"allergy_toggle\" },\n  \"userRequest\": {\n    \"utterance\": \"알러지 설정\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"allergy_toggle\", \"params\": {}, \"detailParams\": {} }\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
-          "raw": "{{baseUrl}}/skill/allergy/toggle?token={{skillToken}}",
+          "raw": "{{baseUrl}}/skill/allergy/toggle",
           "host": ["{{baseUrl}}"],
-          "path": ["skill", "allergy", "toggle"],
-          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+          "path": ["skill", "allergy", "toggle"]
         }
       }
     },
@@ -119,17 +129,19 @@
       "name": "입대일 변경",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Skill-Secret", "value": "{{skillToken}}" }
+        ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"join_date_change\" },\n  \"userRequest\": {\n    \"utterance\": \"입대일 변경\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"join_date_change\", \"params\": { \"date\": \"2025-06-15\" }, \"detailParams\": {} }\n}",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"join_date_change\" },\n  \"userRequest\": {\n    \"utterance\": \"입대일 변경\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"join_date_change\", \"params\": { \"sys_date\": \"2025-06-15\" }, \"detailParams\": {} }\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
-          "raw": "{{baseUrl}}/skill/join-date/change?token={{skillToken}}",
+          "raw": "{{baseUrl}}/skill/join-date/change",
           "host": ["{{baseUrl}}"],
-          "path": ["skill", "join-date", "change"],
-          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+          "path": ["skill", "join-date", "change"]
         }
       }
     },
@@ -137,17 +149,19 @@
       "name": "전역일 변경",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Skill-Secret", "value": "{{skillToken}}" }
+        ],
         "body": {
           "mode": "raw",
-          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"discharge_date_change\" },\n  \"userRequest\": {\n    \"utterance\": \"전역일 변경\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"discharge_date_change\", \"params\": { \"date\": \"2027-05-15\" }, \"detailParams\": {} }\n}",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"discharge_date_change\" },\n  \"userRequest\": {\n    \"utterance\": \"전역일 변경\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"discharge_date_change\", \"params\": { \"sys_date\": \"2027-05-15\" }, \"detailParams\": {} }\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
-          "raw": "{{baseUrl}}/skill/discharge-date/change?token={{skillToken}}",
+          "raw": "{{baseUrl}}/skill/discharge-date/change",
           "host": ["{{baseUrl}}"],
-          "path": ["skill", "discharge-date", "change"],
-          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+          "path": ["skill", "discharge-date", "change"]
         }
       }
     },
@@ -155,17 +169,19 @@
       "name": "전역일 계산",
       "request": {
         "method": "POST",
-        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-Skill-Secret", "value": "{{skillToken}}" }
+        ],
         "body": {
           "mode": "raw",
           "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"calculate_date\" },\n  \"userRequest\": {\n    \"utterance\": \"전역일 계산\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"calculate_date\", \"params\": {}, \"detailParams\": {} }\n}",
           "options": { "raw": { "language": "json" } }
         },
         "url": {
-          "raw": "{{baseUrl}}/skill/calculate-date?token={{skillToken}}",
+          "raw": "{{baseUrl}}/skill/calculate-date",
           "host": ["{{baseUrl}}"],
-          "path": ["skill", "calculate-date"],
-          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+          "path": ["skill", "calculate-date"]
         }
       }
     }
