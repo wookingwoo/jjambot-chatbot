@@ -90,7 +90,7 @@ npm run typecheck
 
 ## DB
 
-Supabase SQL Editor(또는 `psql`)에서 `migrations/0001_create_users.sql`을 실행해 `users` 테이블을 만든다. `meals` 테이블은 crawler가 이미 만들어둔 것을 그대로 읽기만 한다.
+Supabase SQL Editor(또는 `psql`)에서 `migrations/` 아래 파일을 번호 순서대로 실행해 `users` 테이블을 만들고 갱신한다. `meals` 테이블은 crawler가 이미 만들어둔 것을 그대로 읽기만 한다.
 
 ## Postman으로 테스트
 
