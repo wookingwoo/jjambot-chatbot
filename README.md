@@ -4,8 +4,8 @@
 
 ## github
 
-- jjambot-website: https://github.com/wookingwoo/jjambot-website
-- jjambot-chatbot: https://github.com/wookingwoo/jjambot
+- jjambot: https://github.com/wookingwoo/jjambot
+- jjambot-chatbot: https://github.com/wookingwoo/jjambot-chatbot
 - jjambot-crawler: https://github.com/wookingwoo/jjambot-crawler
 - jjambot-GiGAGenie: https://github.com/wookingwoo/jjambot-GiGAGenie
 
