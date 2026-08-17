@@ -60,6 +60,27 @@ describe("POST /skill/corps/list", () => {
     expect(texts).toContain("STANDARD: 비빔밥");
     expect(body.template.outputs.length).toBeLessThanOrEqual(3);
   });
+
+  it("always strips allergy codes from the lunch snippet", async () => {
+    vi.mocked(getMealsByDate).mockResolvedValue([
+      {
+        service: "DS_TB_MNDT_DATEBYMLSVC_1570",
+        meal_date: "2026-08-17",
+        weekday: "월",
+        breakfast: "죽",
+        lunch: "떡국(5.6.13), 잡곡밥(5,6)",
+        dinner: "카레",
+        special_dish: null,
+      },
+    ]);
+
+    const res = await skillRequest("/skill/corps/list", makeSkillRequest("부대 조회"));
+
+    const body = await res.json();
+    const texts = body.template.outputs.map((o: { simpleText: { text: string } }) => o.simpleText.text).join("\n");
+    expect(texts).not.toMatch(/\d\.\d|\d,\d/);
+    expect(texts).toContain("1570");
+  });
 });
 
 describe("POST /skill/corps/change", () => {

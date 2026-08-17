@@ -12,6 +12,11 @@ export const corpsListSkill = new Hono();
 const LUNCH_SNIPPET_LEN = 16;
 const CORPS_ORDER = new Map(CORPS_LABELS.map((label, index) => [label, index]));
 
+/** MND API dish names carry allergy codes like "떡국(5.6.13)"; always strip them here — too noisy for a quick scan. */
+function stripAllergyCodes(text: string): string {
+  return text.replace(/\([\d.,\s]+\)/g, "").trim();
+}
+
 corpsListSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
   const req = c.req.valid("json");
   const user = await getOrCreateUser(req.userRequest.user.id);
@@ -24,7 +29,8 @@ corpsListSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
   for (const meal of meals) {
     const corps = corpsForService(meal.service);
     if (!corps || !meal.lunch) continue;
-    const snippet = meal.lunch.length > LUNCH_SNIPPET_LEN ? `${meal.lunch.slice(0, LUNCH_SNIPPET_LEN)}…` : meal.lunch;
+    const lunch = stripAllergyCodes(meal.lunch);
+    const snippet = lunch.length > LUNCH_SNIPPET_LEN ? `${lunch.slice(0, LUNCH_SNIPPET_LEN)}…` : lunch;
     entries.push({ corps, text: `${corps}: ${snippet}` });
   }
   entries.sort((a, b) => (CORPS_ORDER.get(a.corps) ?? 0) - (CORPS_ORDER.get(b.corps) ?? 0));
