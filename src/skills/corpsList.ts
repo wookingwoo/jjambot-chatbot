@@ -6,16 +6,12 @@ import { getOrCreateUser, incrementUsage } from "../repo/users.js";
 import { getMealsByDate } from "../repo/meals.js";
 import { CORPS_LABELS, corpsForService, type CorpsLabel } from "../corps.js";
 import { todayInSeoul } from "../dates.js";
+import { stripAllergyCodes } from "../allergy.js";
 
 export const corpsListSkill = new Hono();
 
 const LUNCH_SNIPPET_LEN = 16;
 const CORPS_ORDER = new Map(CORPS_LABELS.map((label, index) => [label, index]));
-
-/** MND API dish names carry allergy codes like "떡국(5.6.13)"; always strip them here — too noisy for a quick scan. */
-function stripAllergyCodes(text: string): string {
-  return text.replace(/\([\d.,\s]+\)/g, "").trim();
-}
 
 corpsListSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
   const req = c.req.valid("json");

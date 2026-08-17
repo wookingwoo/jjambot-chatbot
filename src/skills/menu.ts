@@ -6,6 +6,7 @@ import { getOrCreateUser, incrementUsage } from "../repo/users.js";
 import { getMeal } from "../repo/meals.js";
 import { isValidCorps } from "../corps.js";
 import { parseDateToISO, todayInSeoul } from "../dates.js";
+import { stripAllergyCodes } from "../allergy.js";
 
 export const menuSkill = new Hono();
 
@@ -73,12 +74,17 @@ menuSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
   const fieldsToShow =
     requested.size > 0 ? MEAL_FIELD_ORDER.filter((f) => requested.has(f)) : DEFAULT_MEAL_FIELDS;
 
+  const formatDish = (dish: string | null) => {
+    if (!dish) return null;
+    return user.allergy_show ? dish : stripAllergyCodes(dish);
+  };
+
   const lines = [`${meal.meal_date} (${meal.weekday ?? "?"}) ${corps} 식단`];
   for (const field of fieldsToShow) {
-    lines.push(`${MEAL_LABELS[field]}: ${meal[field] ?? "정보 없음"}`);
+    lines.push(`${MEAL_LABELS[field]}: ${formatDish(meal[field]) ?? "정보 없음"}`);
   }
   // Special dish is a bonus, not a regular meal: only mention it unprompted when present.
-  if (requested.size === 0 && meal.special_dish) lines.push(`특식: ${meal.special_dish}`);
+  if (requested.size === 0 && meal.special_dish) lines.push(`특식: ${formatDish(meal.special_dish)}`);
 
   return c.json(skillResponse([simpleText(lines.join("\n"))]));
 });

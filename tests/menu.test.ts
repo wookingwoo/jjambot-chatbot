@@ -32,6 +32,48 @@ describe("POST /skill/menu", () => {
     expect(getMeal).not.toHaveBeenCalled();
   });
 
+  it("strips allergy codes from dish names when allergy_show is off", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570", allergy_show: false });
+    vi.mocked(getMeal).mockResolvedValue({
+      service: "DS_TB_MNDT_DATEBYMLSVC_1570",
+      meal_date: "2026-08-17",
+      weekday: "월",
+      breakfast: "마파두부덮밥(05)(06)(10),매운어묵탕(05)(06)(09)",
+      lunch: "콩나물국(02)(05)(06)(09)(16)",
+      dinner: "참치비빔밥(05)(06)",
+      special_dish: "떠먹는발효유(딸기)(02)",
+    });
+
+    const res = await skillRequest("/skill/menu", makeSkillRequest("오늘 메뉴"));
+
+    const body = await res.json();
+    const text = body.template.outputs[0].simpleText.text as string;
+    expect(text).toContain("조식: 마파두부덮밥,매운어묵탕");
+    expect(text).toContain("중식: 콩나물국");
+    expect(text).toContain("석식: 참치비빔밥");
+    expect(text).toContain("특식: 떠먹는발효유(딸기)");
+    expect(text).not.toMatch(/\(\d\d\)/);
+  });
+
+  it("keeps allergy codes in dish names when allergy_show is on", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570", allergy_show: true });
+    vi.mocked(getMeal).mockResolvedValue({
+      service: "DS_TB_MNDT_DATEBYMLSVC_1570",
+      meal_date: "2026-08-17",
+      weekday: "월",
+      breakfast: "마파두부덮밥(05)(06)(10)",
+      lunch: "국수",
+      dinner: "찌개",
+      special_dish: null,
+    });
+
+    const res = await skillRequest("/skill/menu", makeSkillRequest("오늘 메뉴"));
+
+    const body = await res.json();
+    const text = body.template.outputs[0].simpleText.text as string;
+    expect(text).toContain("조식: 마파두부덮밥(05)(06)(10)");
+  });
+
   it("returns the stored meal for the user's corps", async () => {
     vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
     vi.mocked(getMeal).mockResolvedValue({
