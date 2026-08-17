@@ -90,6 +90,7 @@ describe("POST /skill/corps/change", () => {
     expect(updateUser).toHaveBeenCalledWith("test-user", { corps: "1570" });
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("1570");
+    expect(body.template.quickReplies).toEqual([{ label: "오늘 메뉴", action: "message", messageText: "오늘 메뉴" }]);
   });
 
   it("falls back to parsing the utterance when no param is given", async () => {

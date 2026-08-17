@@ -36,5 +36,9 @@ corpsChangeSkill.post("/", zValidator("json", skillRequestSchema), async (c) => 
   }
 
   await updateUser(user.kakao_user_id, { corps });
-  return c.json(skillResponse([simpleText(`부대를 ${corps}(으)로 설정했어요.`)]));
+  return c.json(
+    skillResponse([simpleText(`부대를 ${corps}(으)로 설정했어요.`)], {
+      quickReplies: [quickReply({ label: "오늘 메뉴", action: "message", messageText: "오늘 메뉴" })],
+    }),
+  );
 });
