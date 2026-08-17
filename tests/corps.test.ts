@@ -104,5 +104,8 @@ describe("POST /skill/corps/change", () => {
     expect(updateUser).not.toHaveBeenCalled();
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("찾지 못했어요");
+    expect(body.template.quickReplies).toEqual([
+      { label: "부대 조회", action: "message", messageText: "부대 조회" },
+    ]);
   });
 });

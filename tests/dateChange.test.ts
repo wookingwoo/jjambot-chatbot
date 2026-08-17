@@ -45,6 +45,9 @@ describe("POST /skill/join-date/change", () => {
     expect(updateUser).not.toHaveBeenCalled();
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("이해하지 못했어요");
+    expect(body.template.quickReplies).toEqual([
+      { label: "오늘로 설정", action: "message", messageText: "오늘 입대" },
+    ]);
   });
 });
 

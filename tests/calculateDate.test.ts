@@ -48,6 +48,23 @@ describe("POST /skill/calculate-date", () => {
 
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("복무 진행률");
+    expect(body.template.quickReplies).toBeUndefined();
+  });
+
+  it("suggests setting a join date when discharge date is known but join date isn't", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({
+      ...baseUser,
+      date_to_join_the_army: null,
+      discharge_date: "2026-09-15",
+    });
+
+    const res = await skillRequest("/skill/calculate-date", makeSkillRequest("전역일 계산"));
+
+    const body = await res.json();
+    expect(body.template.outputs[0].simpleText.text).not.toContain("복무 진행률");
+    expect(body.template.quickReplies).toEqual([
+      { label: "입대일 설정", action: "message", messageText: "입대일 변경" },
+    ]);
   });
 
   it("congratulates the user once the discharge date has passed", async () => {

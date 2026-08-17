@@ -39,7 +39,10 @@ calculateDateSkill.post("/", zValidator("json", skillRequestSchema), async (c) =
       const percent = Math.min(100, Math.max(0, Math.round((elapsed / total) * 1000) / 10));
       lines.push(`복무 진행률: ${percent}% (${elapsed}/${total}일)`);
     }
+    return c.json(skillResponse([simpleText(lines.join("\n"))]));
   }
 
-  return c.json(skillResponse([simpleText(lines.join("\n"))]));
+  return c.json(skillResponse([simpleText(lines.join("\n"))], {
+    quickReplies: [quickReply({ label: "입대일 설정", action: "message", messageText: "입대일 변경" })],
+  }));
 });

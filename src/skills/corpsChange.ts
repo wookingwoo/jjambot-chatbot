@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { skillRequestSchema } from "../kakao/schema.js";
-import { simpleText, skillResponse } from "../kakao/builders.js";
+import { quickReply, simpleText, skillResponse } from "../kakao/builders.js";
 import { getOrCreateUser, incrementUsage, updateUser } from "../repo/users.js";
 import { CORPS_LABELS, isValidCorps, type CorpsLabel } from "../corps.js";
 
@@ -29,7 +29,9 @@ corpsChangeSkill.post("/", zValidator("json", skillRequestSchema), async (c) => 
   const corps = extractCorps(req.action.params.corps, req.userRequest.utterance);
   if (!corps) {
     return c.json(
-      skillResponse([simpleText(`부대 코드를 찾지 못했어요. 사용 가능한 코드: ${CORPS_LABELS.join(", ")}`)]),
+      skillResponse([simpleText(`부대 코드를 찾지 못했어요. 사용 가능한 코드: ${CORPS_LABELS.join(", ")}`)], {
+        quickReplies: [quickReply({ label: "부대 조회", action: "message", messageText: "부대 조회" })],
+      }),
     );
   }
 
