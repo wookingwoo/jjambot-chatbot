@@ -100,6 +100,10 @@ Supabase SQL Editor(또는 `psql`)에서 `migrations/0001_create_users.sql`을 �
 2. 컬렉션 → Variables 탭에서 `baseUrl`(기본 `http://localhost:8000`), `skillToken`(`.env`의 `SKILL_SECRET` 값) 채우기
 3. `testUserId`는 모든 요청이 공유하는 테스트용 유저 id (기본값 그대로 써도 됨, 테스트 끝나면 Supabase `users` 테이블에서 해당 행 지우면 됨)
 
+## 오픈빌더 엔티티
+
+`kakao-entities/`에 오픈빌더 사용자 정의 엔티티 등록용 CSV를 보관한다. `corps.csv`는 `src/corps.ts`의 `CORPS_LABELS`와 동기화된 부대 코드 목록(+ `ATC`의 동의어인 "육훈소" 등)이며, 오픈빌더 → 엔티티 관리 → CSV/Excel 업로드에 그대로 올리면 된다. `CORPS_LABELS`가 바뀌면 이 파일도 같이 갱신한다.
+
 ## Docker로 배포 (Raspberry Pi 등)
 
 ```bash
