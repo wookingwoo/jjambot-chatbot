@@ -1,7 +1,21 @@
 const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$|^(\d{4})\.(\d{2})\.(\d{2})$|^(\d{4})(\d{2})(\d{2})$/;
 
+/**
+ * Kakao's sys.date entity value arrives as a JSON string, e.g.
+ * `{"date": "2026-08-19", "dateTag": "afterTomorrow", ...}`, not a bare date.
+ */
+function unwrapEntityDate(raw: string): string {
+  if (!raw.startsWith("{")) return raw;
+  try {
+    const parsed = JSON.parse(raw) as { date?: unknown };
+    return typeof parsed.date === "string" ? parsed.date : raw;
+  } catch {
+    return raw;
+  }
+}
+
 export function parseDateToISO(raw: string): string | null {
-  const m = DATE_RE.exec(raw.trim());
+  const m = DATE_RE.exec(unwrapEntityDate(raw.trim()));
   if (!m) return null;
   const [y, mo, d] = m[1] ? [m[1], m[2], m[3]] : m[4] ? [m[4], m[5], m[6]] : [m[7], m[8], m[9]];
   return `${y}-${mo}-${d}`;

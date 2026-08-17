@@ -15,13 +15,26 @@ beforeEach(() => {
 });
 
 describe("POST /skill/join-date/change", () => {
-  it("parses a YYYY-MM-DD param and stores it", async () => {
+  it("parses a YYYY-MM-DD sys_date param and stores it", async () => {
     const res = await skillRequest(
       "/skill/join-date/change",
-      makeSkillRequest("입대일 변경", { date: "2025-06-15" }),
+      makeSkillRequest("입대일 변경", { sys_date: "2025-06-15" }),
     );
 
     expect(updateUser).toHaveBeenCalledWith("test-user", { date_to_join_the_army: "2025-06-15" });
+    const body = await res.json();
+    expect(body.template.outputs[0].simpleText.text).toContain("입대일");
+  });
+
+  it("unwraps the JSON-encoded sys.date entity value Kakao actually sends", async () => {
+    const res = await skillRequest(
+      "/skill/join-date/change",
+      makeSkillRequest("모레 입대", {
+        sys_date: '{"date": "2026-08-19", "dateTag": "afterTomorrow", "dateHeadword": null, "year": null, "month": null, "day": null}',
+      }),
+    );
+
+    expect(updateUser).toHaveBeenCalledWith("test-user", { date_to_join_the_army: "2026-08-19" });
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("입대일");
   });
@@ -37,7 +50,7 @@ describe("POST /skill/join-date/change", () => {
 
 describe("POST /skill/discharge-date/change", () => {
   it("parses a dotted date and stores it on the discharge_date column", async () => {
-    await skillRequest("/skill/discharge-date/change", makeSkillRequest("전역일 변경", { date: "2026.12.31" }));
+    await skillRequest("/skill/discharge-date/change", makeSkillRequest("전역일 변경", { sys_date: "2026.12.31" }));
 
     expect(updateUser).toHaveBeenCalledWith("test-user", { discharge_date: "2026-12-31" });
   });

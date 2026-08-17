@@ -59,4 +59,18 @@ describe("POST /skill/menu", () => {
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("아직 없어요");
   });
+
+  it("looks up the date from the JSON-encoded sys_date entity param", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
+    vi.mocked(getMeal).mockResolvedValue(null);
+
+    await skillRequest(
+      "/skill/menu",
+      makeSkillRequest("테스트로 모레 메뉴", {
+        sys_date: '{"date": "2026-08-19", "dateTag": "afterTomorrow", "dateHeadword": null, "year": null, "month": null, "day": null}',
+      }),
+    );
+
+    expect(getMeal).toHaveBeenCalledWith("1570", "2026-08-19");
+  });
 });

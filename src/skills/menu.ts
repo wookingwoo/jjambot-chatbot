@@ -23,7 +23,7 @@ menuSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
     );
   }
 
-  const requestedDate = req.action.params.date ? parseDateToISO(req.action.params.date) : null;
+  const requestedDate = req.action.params.sys_date ? parseDateToISO(req.action.params.sys_date) : null;
   const date = requestedDate ?? todayInSeoul();
 
   const meal = await getMeal(corps, date);
