@@ -73,4 +73,25 @@ describe("POST /skill/allergy/toggle", () => {
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("켰어요");
   });
+
+  it("prefers the toggle_state param over the utterance (real OpenBuilder payload)", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, allergy_show: true });
+
+    const res = await skillRequest(
+      "/skill/allergy/toggle",
+      makeSkillRequest("알러지 정보 비활성화", { toggle_state: "off" }),
+    );
+
+    expect(updateUser).toHaveBeenCalledWith("test-user", { allergy_show: false });
+    const body = await res.json();
+    expect(body.template.outputs[0].simpleText.text).toContain("껐어요");
+  });
+
+  it("falls back to utterance matching when toggle_state is absent", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, allergy_show: false });
+
+    const res = await skillRequest("/skill/allergy/toggle", makeSkillRequest("알러지 활성화", {}));
+
+    expect(updateUser).toHaveBeenCalledWith("test-user", { allergy_show: true });
+  });
 });

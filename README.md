@@ -60,7 +60,7 @@ tests/
 | 메뉴 조회 | `/skill/menu` | 저장된 부대의 식단 조회 | `sys_date` (`sys.date` 엔티티, 선택, 기본값 오늘), `meal_type0`~`meal_type3` (`meal_type` 엔티티 그룹, 선택, "아침"/"점심"/"저녁"/"부식"(특식·간식 동의어) 중 없으면 조식·중식·석식 전체) |
 | 부대 목록 | `/skill/corps/list` | 오늘 부대별 점심 메뉴를 보여줘서 본인 부대를 찾게 도와줌 (그날 식단이 없으면 코드 목록만 안내) | - |
 | 부대 변경 | `/skill/corps/change` | 부대 코드 저장 | `corps` (없으면 발화 텍스트에서 자동 인식) |
-| 알러지 표시 토글 | `/skill/allergy/toggle` | 식단의 알러지 표시 on/off | - |
+| 알러지 표시 토글 | `/skill/allergy/toggle` | 식단의 알러지 표시 on/off | `toggle_state` (`toggle_state` 엔티티, 대표값 `off`/`on`, 없으면 발화 텍스트에서 켜기/끄기 의도 인식, 그마저 없으면 현재 상태 반전) |
 | 입대일 변경 | `/skill/join-date/change` | 입대일 저장 | `sys_date` (`sys.date` 엔티티, 없으면 발화 텍스트에서 자동 인식) |
 | 전역일 변경 | `/skill/discharge-date/change` | 전역일 저장 | `sys_date` (`sys.date` 엔티티, 없으면 발화 텍스트에서 자동 인식) |
 | 전역일 계산 | `/skill/calculate-date` | 전역일까지 D-day, 복무 진행률 안내 | - |
