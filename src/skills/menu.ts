@@ -9,6 +9,34 @@ import { parseDateToISO, todayInSeoul } from "../dates.js";
 
 export const menuSkill = new Hono();
 
+type MealField = "breakfast" | "lunch" | "dinner";
+
+const MEAL_TYPE_ENTITY_MAP: Record<string, MealField> = {
+  아침: "breakfast",
+  조식: "breakfast",
+  점심: "lunch",
+  중식: "lunch",
+  저녁: "dinner",
+  석식: "dinner",
+};
+
+const MEAL_TYPE_ORDER: Array<{ field: MealField; label: string }> = [
+  { field: "breakfast", label: "조식" },
+  { field: "lunch", label: "중식" },
+  { field: "dinner", label: "석식" },
+];
+
+/** Kakao sends a `meal_type<N>` group param per selected 끼니 (e.g. "아침과 저녁"), or none for "전체". */
+function requestedMealFields(params: Record<string, string>): Set<MealField> {
+  const fields = new Set<MealField>();
+  for (const [key, value] of Object.entries(params)) {
+    if (!key.startsWith("meal_type")) continue;
+    const field = MEAL_TYPE_ENTITY_MAP[value];
+    if (field) fields.add(field);
+  }
+  return fields;
+}
+
 menuSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
   const req = c.req.valid("json");
   const user = await getOrCreateUser(req.userRequest.user.id);
@@ -31,12 +59,13 @@ menuSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
     return c.json(skillResponse([simpleText(`${date} (${corps}) 식단 정보가 아직 없어요.`)]));
   }
 
-  const lines = [
-    `${meal.meal_date} (${meal.weekday ?? "?"}) ${corps} 식단`,
-    `조식: ${meal.breakfast ?? "정보 없음"}`,
-    `중식: ${meal.lunch ?? "정보 없음"}`,
-    `석식: ${meal.dinner ?? "정보 없음"}`,
-  ];
+  const requested = requestedMealFields(req.action.params);
+  const mealTypesToShow = requested.size > 0 ? MEAL_TYPE_ORDER.filter((t) => requested.has(t.field)) : MEAL_TYPE_ORDER;
+
+  const lines = [`${meal.meal_date} (${meal.weekday ?? "?"}) ${corps} 식단`];
+  for (const { field, label } of mealTypesToShow) {
+    lines.push(`${label}: ${meal[field] ?? "정보 없음"}`);
+  }
   if (meal.special_dish) lines.push(`특식: ${meal.special_dish}`);
 
   return c.json(skillResponse([simpleText(lines.join("\n"))]));

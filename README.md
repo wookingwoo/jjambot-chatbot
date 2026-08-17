@@ -57,12 +57,12 @@ tests/
 
 | 스킬 | URL | 설명 | 파라미터 |
 |---|---|---|---|
-| 메뉴 조회 | `/skill/menu` | 저장된 부대의 식단 조회 | `date` (선택, `YYYY-MM-DD`, 기본값 오늘) |
+| 메뉴 조회 | `/skill/menu` | 저장된 부대의 식단 조회 | `sys_date` (`sys.date` 엔티티, 선택, 기본값 오늘), `meal_type0`~`meal_type3` (`meal_type` 엔티티 그룹, 선택, "아침"/"점심"/"저녁" 중 없으면 전체) |
 | 부대 목록 | `/skill/corps/list` | 설정 가능한 부대 코드 안내 | - |
 | 부대 변경 | `/skill/corps/change` | 부대 코드 저장 | `corps` (없으면 발화 텍스트에서 자동 인식) |
 | 알러지 표시 토글 | `/skill/allergy/toggle` | 식단의 알러지 표시 on/off | - |
-| 입대일 변경 | `/skill/join-date/change` | 입대일 저장 | `date` (없으면 발화 텍스트에서 자동 인식) |
-| 전역일 변경 | `/skill/discharge-date/change` | 전역일 저장 | `date` (없으면 발화 텍스트에서 자동 인식) |
+| 입대일 변경 | `/skill/join-date/change` | 입대일 저장 | `sys_date` (`sys.date` 엔티티, 없으면 발화 텍스트에서 자동 인식) |
+| 전역일 변경 | `/skill/discharge-date/change` | 전역일 저장 | `sys_date` (`sys.date` 엔티티, 없으면 발화 텍스트에서 자동 인식) |
 | 전역일 계산 | `/skill/calculate-date` | 전역일까지 D-day, 복무 진행률 안내 | - |
 
 사용자 식별은 카카오가 요청마다 보내주는 `userRequest.user.id`(botUserKey) 기준이며, 첫 요청 시 `users` 테이블에 행이 자동 생성된다.
