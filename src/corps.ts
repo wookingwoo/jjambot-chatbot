@@ -24,3 +24,11 @@ export function serviceForCorps(label: CorpsLabel): string {
   const suffix = SERVICE_OVERRIDES[label] ?? label;
   return `DS_TB_MNDT_DATEBYMLSVC_${suffix}`;
 }
+
+const SERVICE_TO_CORPS: Record<string, CorpsLabel> = Object.fromEntries(
+  CORPS_LABELS.map((label) => [serviceForCorps(label), label]),
+);
+
+export function corpsForService(service: string): CorpsLabel | null {
+  return SERVICE_TO_CORPS[service] ?? null;
+}

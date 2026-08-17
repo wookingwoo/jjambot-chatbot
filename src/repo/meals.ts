@@ -22,3 +22,14 @@ export async function getMeal(corps: CorpsLabel, date: string): Promise<MealRow 
   if (error) throw error;
   return data as MealRow | null;
 }
+
+/** All corps' meals for one date, so a user can spot their own unit by comparing today's lunch. */
+export async function getMealsByDate(date: string): Promise<MealRow[]> {
+  const { data, error } = await supabase
+    .from("meals")
+    .select("service, meal_date, weekday, breakfast, lunch, dinner, special_dish")
+    .eq("meal_date", date);
+
+  if (error) throw error;
+  return (data ?? []) as MealRow[];
+}

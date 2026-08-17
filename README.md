@@ -58,7 +58,7 @@ tests/
 | 스킬 | URL | 설명 | 파라미터 |
 |---|---|---|---|
 | 메뉴 조회 | `/skill/menu` | 저장된 부대의 식단 조회 | `sys_date` (`sys.date` 엔티티, 선택, 기본값 오늘), `meal_type0`~`meal_type3` (`meal_type` 엔티티 그룹, 선택, "아침"/"점심"/"저녁"/"부식"(특식·간식 동의어) 중 없으면 조식·중식·석식 전체) |
-| 부대 목록 | `/skill/corps/list` | 설정 가능한 부대 코드 안내 | - |
+| 부대 목록 | `/skill/corps/list` | 오늘 부대별 점심 메뉴를 보여줘서 본인 부대를 찾게 도와줌 (그날 식단이 없으면 코드 목록만 안내) | - |
 | 부대 변경 | `/skill/corps/change` | 부대 코드 저장 | `corps` (없으면 발화 텍스트에서 자동 인식) |
 | 알러지 표시 토글 | `/skill/allergy/toggle` | 식단의 알러지 표시 on/off | - |
 | 입대일 변경 | `/skill/join-date/change` | 입대일 저장 | `sys_date` (`sys.date` 엔티티, 없으면 발화 텍스트에서 자동 인식) |

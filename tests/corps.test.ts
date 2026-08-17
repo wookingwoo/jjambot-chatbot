@@ -7,8 +7,10 @@ vi.mock("../src/repo/users.js", () => ({
 }));
 vi.mock("../src/repo/meals.js", () => ({
   getMeal: vi.fn(),
+  getMealsByDate: vi.fn(),
 }));
 
+import { getMealsByDate } from "../src/repo/meals.js";
 import { getOrCreateUser, updateUser } from "../src/repo/users.js";
 import { baseUser, makeSkillRequest, skillRequest } from "./helpers.js";
 
@@ -18,12 +20,45 @@ beforeEach(() => {
 });
 
 describe("POST /skill/corps/list", () => {
-  it("lists known corps codes", async () => {
+  it("falls back to the plain code list when no meal data exists yet", async () => {
+    vi.mocked(getMealsByDate).mockResolvedValue([]);
+
     const res = await skillRequest("/skill/corps/list", makeSkillRequest("부대 조회"));
 
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("1570");
     expect(body.template.outputs[0].simpleText.text).toContain("STANDARD");
+  });
+
+  it("shows each corps' lunch so the user can spot their own unit", async () => {
+    vi.mocked(getMealsByDate).mockResolvedValue([
+      {
+        service: "DS_TB_MNDT_DATEBYMLSVC_1570",
+        meal_date: "2026-08-17",
+        weekday: "월",
+        breakfast: "죽",
+        lunch: "쌀밥, 김치찌개, 제육볶음",
+        dinner: "카레",
+        special_dish: null,
+      },
+      {
+        service: "DS_TB_MNDT_DATEBYMLSVC",
+        meal_date: "2026-08-17",
+        weekday: "월",
+        breakfast: "빵",
+        lunch: "비빔밥",
+        dinner: "국수",
+        special_dish: null,
+      },
+    ]);
+
+    const res = await skillRequest("/skill/corps/list", makeSkillRequest("부대 조회"));
+
+    const body = await res.json();
+    const texts = body.template.outputs.map((o: { simpleText: { text: string } }) => o.simpleText.text).join("\n");
+    expect(texts).toContain("1570: 쌀밥, 김치찌개, 제육볶음");
+    expect(texts).toContain("STANDARD: 비빔밥");
+    expect(body.template.outputs.length).toBeLessThanOrEqual(3);
   });
 });
 
