@@ -1,0 +1,173 @@
+{
+  "info": {
+    "_postman_id": "b6f2a1e0-6b9a-4e9b-9b0a-2b7c1f6a9d10",
+    "name": "jjambot skill server",
+    "description": "카카오톡 챗봇 짬봇 스킬 서버 테스트용 컬렉션. baseUrl/skillToken 변수만 채우면 바로 호출 가능.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "http://localhost:8000" },
+    { "key": "skillToken", "value": "", "description": ".env의 SKILL_SECRET 값" },
+    { "key": "testUserId", "value": "postman-test-user" }
+  ],
+  "item": [
+    {
+      "name": "Health",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/health",
+          "host": ["{{baseUrl}}"],
+          "path": ["health"]
+        }
+      }
+    },
+    {
+      "name": "Ping (예시)",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"postman\" },\n  \"userRequest\": {\n    \"utterance\": \"ping\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"postman\", \"params\": {}, \"detailParams\": {} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/skill/ping?token={{skillToken}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["skill", "ping"],
+          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+        }
+      }
+    },
+    {
+      "name": "메뉴 조회",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"menu\" },\n  \"userRequest\": {\n    \"utterance\": \"오늘 메뉴\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"menu\", \"params\": {}, \"detailParams\": {} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "params.date를 YYYY-MM-DD로 주면 해당 날짜 조회, 없으면 오늘",
+        "url": {
+          "raw": "{{baseUrl}}/skill/menu?token={{skillToken}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["skill", "menu"],
+          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+        }
+      }
+    },
+    {
+      "name": "부대 목록",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"corps_list\" },\n  \"userRequest\": {\n    \"utterance\": \"부대 조회\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"corps_list\", \"params\": {}, \"detailParams\": {} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/skill/corps/list?token={{skillToken}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["skill", "corps", "list"],
+          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+        }
+      }
+    },
+    {
+      "name": "부대 변경",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"corps_change\" },\n  \"userRequest\": {\n    \"utterance\": \"부대 변경 1570\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"corps_change\", \"params\": { \"corps\": \"1570\" }, \"detailParams\": {} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "description": "params.corps를 빼고 utterance만 보내도 발화에서 코드를 자동 인식함 (예: \"부대 atc로 바꿔줘\")",
+        "url": {
+          "raw": "{{baseUrl}}/skill/corps/change?token={{skillToken}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["skill", "corps", "change"],
+          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+        }
+      }
+    },
+    {
+      "name": "알러지 표시 토글",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"allergy_toggle\" },\n  \"userRequest\": {\n    \"utterance\": \"알러지 설정\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"allergy_toggle\", \"params\": {}, \"detailParams\": {} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/skill/allergy/toggle?token={{skillToken}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["skill", "allergy", "toggle"],
+          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+        }
+      }
+    },
+    {
+      "name": "입대일 변경",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"join_date_change\" },\n  \"userRequest\": {\n    \"utterance\": \"입대일 변경\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"join_date_change\", \"params\": { \"date\": \"2025-06-15\" }, \"detailParams\": {} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/skill/join-date/change?token={{skillToken}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["skill", "join-date", "change"],
+          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+        }
+      }
+    },
+    {
+      "name": "전역일 변경",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"discharge_date_change\" },\n  \"userRequest\": {\n    \"utterance\": \"전역일 변경\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"discharge_date_change\", \"params\": { \"date\": \"2027-05-15\" }, \"detailParams\": {} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/skill/discharge-date/change?token={{skillToken}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["skill", "discharge-date", "change"],
+          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+        }
+      }
+    },
+    {
+      "name": "전역일 계산",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"intent\": { \"id\": \"postman-intent\", \"name\": \"calculate_date\" },\n  \"userRequest\": {\n    \"utterance\": \"전역일 계산\",\n    \"user\": { \"id\": \"{{testUserId}}\", \"type\": \"botUserKey\" }\n  },\n  \"bot\": { \"id\": \"postman-bot\" },\n  \"action\": { \"id\": \"postman-action\", \"name\": \"calculate_date\", \"params\": {}, \"detailParams\": {} }\n}",
+          "options": { "raw": { "language": "json" } }
+        },
+        "url": {
+          "raw": "{{baseUrl}}/skill/calculate-date?token={{skillToken}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["skill", "calculate-date"],
+          "query": [{ "key": "token", "value": "{{skillToken}}" }]
+        }
+      }
+    }
+  ]
+}

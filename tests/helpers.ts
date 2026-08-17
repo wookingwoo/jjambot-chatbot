@@ -1,4 +1,15 @@
+import { app } from "../src/app.js";
 import type { UserRow } from "../src/repo/users.js";
+
+/** POSTs to a /skill/* route with the auth token every route now requires. */
+export function skillRequest(path: string, body: unknown) {
+  const url = `${path}?token=${process.env.SKILL_SECRET}`;
+  return app.request(url, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(body),
+  });
+}
 
 export function makeSkillRequest(utterance: string, params: Record<string, string> = {}, userId = "test-user") {
   return {

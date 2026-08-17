@@ -4,8 +4,8 @@
 
 ## github
 
-- jjambot-website: https://github.com/wookingwoo/jjambot-website
-- jjambot-chatbot: https://github.com/wookingwoo/jjambot
+- jjambot: https://github.com/wookingwoo/jjambot
+- jjambot-chatbot: https://github.com/wookingwoo/jjambot-chatbot
 - jjambot-crawler: https://github.com/wookingwoo/jjambot-crawler
 - jjambot-GiGAGenie: https://github.com/wookingwoo/jjambot-GiGAGenie
 
@@ -26,6 +26,8 @@ src/
   repo/
     users.ts       # users 테이블 CRUD
     meals.ts        # meals 테이블 조회
+  middleware/
+    skillAuth.ts     # /skill/* 토큰 검증
   skills/
     ping.ts             # 스킬 예시 (오픈빌더 스킬 URL 1개 = 파일 1개)
     menu.ts             # 메뉴 조회
@@ -51,6 +53,8 @@ tests/
 
 ## 스킬 목록
 
+모든 `/skill/*` URL은 `SKILL_SECRET` 값을 `?token=` 쿼리 파라미터로 요구한다 (아래 "인증" 참고). 오픈빌더에 스킬을 등록할 때 URL 끝에 `?token=<SKILL_SECRET 값>`을 붙여야 한다.
+
 | 스킬 | URL | 설명 | 파라미터 |
 |---|---|---|---|
 | 메뉴 조회 | `/skill/menu` | 저장된 부대의 식단 조회 | `date` (선택, `YYYY-MM-DD`, 기본값 오늘) |
@@ -63,11 +67,15 @@ tests/
 
 사용자 식별은 카카오가 요청마다 보내주는 `userRequest.user.id`(botUserKey) 기준이며, 첫 요청 시 `users` 테이블에 행이 자동 생성된다.
 
+## 인증
+
+카카오 오픈빌더는 스킬 URL에 커스텀 헤더를 붙일 방법이 없어서, `SKILL_SECRET` 값을 URL 쿼리 파라미터(`?token=...`)로 검증한다. `/health`는 예외 (Docker 헬스체크용, 토큰 없이 접근 가능). 토큰이 없거나 틀리면 `401`을 반환한다.
+
 ## 로컬 개발
 
 ```bash
 npm install
-cp .env.example .env   # SUPABASE_SERVICE_ROLE_KEY 채우기
+cp .env.example .env   # SUPABASE_SERVICE_ROLE_KEY, SKILL_SECRET 채우기
 npm run dev
 ```
 
@@ -84,10 +92,18 @@ npm run typecheck
 
 Supabase SQL Editor(또는 `psql`)에서 `migrations/0001_create_users.sql`을 실행해 `users` 테이블을 만든다. `meals` 테이블은 crawler가 이미 만들어둔 것을 그대로 읽기만 한다.
 
+## Postman으로 테스트
+
+`postman/jjambot.postman_collection.json`을 Postman에 Import하면 위 스킬 전부(+ 헬스체크)가 요청으로 등록된다.
+
+1. Postman → Import → 해당 파일 선택
+2. 컬렉션 → Variables 탭에서 `baseUrl`(기본 `http://localhost:8000`), `skillToken`(`.env`의 `SKILL_SECRET` 값) 채우기
+3. `testUserId`는 모든 요청이 공유하는 테스트용 유저 id (기본값 그대로 써도 됨, 테스트 끝나면 Supabase `users` 테이블에서 해당 행 지우면 됨)
+
 ## Docker로 배포 (Raspberry Pi 등)
 
 ```bash
-cp .env.example .env   # SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY 채우기 (필수)
+cp .env.example .env   # SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY, SKILL_SECRET 채우기 (전부 필수)
 docker compose up -d --build
 ```
 

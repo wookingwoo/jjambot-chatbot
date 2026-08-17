@@ -6,9 +6,8 @@ vi.mock("../src/repo/users.js", () => ({
   updateUser: vi.fn(),
 }));
 
-import { app } from "../src/app.js";
 import { getOrCreateUser, updateUser } from "../src/repo/users.js";
-import { baseUser, makeSkillRequest } from "./helpers.js";
+import { baseUser, makeSkillRequest, skillRequest } from "./helpers.js";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -18,11 +17,7 @@ describe("POST /skill/allergy/toggle", () => {
   it("turns allergy display off when currently on", async () => {
     vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, allergy_show: true });
 
-    const res = await app.request("/skill/allergy/toggle", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("알러지 설정")),
-    });
+    const res = await skillRequest("/skill/allergy/toggle", makeSkillRequest("알러지 설정"));
 
     expect(updateUser).toHaveBeenCalledWith("test-user", { allergy_show: false });
     const body = await res.json();
@@ -32,11 +27,7 @@ describe("POST /skill/allergy/toggle", () => {
   it("turns allergy display on when currently off", async () => {
     vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, allergy_show: false });
 
-    const res = await app.request("/skill/allergy/toggle", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(makeSkillRequest("알러지 설정")),
-    });
+    const res = await skillRequest("/skill/allergy/toggle", makeSkillRequest("알러지 설정"));
 
     expect(updateUser).toHaveBeenCalledWith("test-user", { allergy_show: true });
     const body = await res.json();
