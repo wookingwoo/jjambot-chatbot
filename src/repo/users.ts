@@ -3,6 +3,8 @@ import { supabase } from "../supabase.js";
 export interface UserRow {
   id: number;
   kakao_user_id: string;
+  /** 운영자가 DB에 직접 넣어두는 식별용 별칭. 어떤 스킬도 읽거나 쓰지 않는다. */
+  alias: string | null;
   corps: string | null;
   allergy_show: boolean;
   date_to_join_the_army: string | null;

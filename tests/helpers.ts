@@ -25,6 +25,7 @@ export function makeSkillRequest(utterance: string, params: Record<string, strin
 export const baseUser: UserRow = {
   id: 1,
   kakao_user_id: "test-user",
+  alias: null,
   corps: null,
   allergy_show: true,
   date_to_join_the_army: null,
