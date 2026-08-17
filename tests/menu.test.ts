@@ -98,6 +98,76 @@ describe("POST /skill/menu", () => {
     expect(text).not.toContain("중식");
   });
 
+  it("handles a combined sys_date + meal_type request (real OpenBuilder payload)", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
+    vi.mocked(getMeal).mockResolvedValue({
+      service: "DS_TB_MNDT_DATEBYMLSVC_1570",
+      meal_date: "2026-08-18",
+      weekday: "화",
+      breakfast: "죽",
+      lunch: "국수",
+      dinner: "카레",
+      special_dish: null,
+    });
+
+    const res = await skillRequest(
+      "/skill/menu",
+      makeSkillRequest("내일 아침과 석식 메뉴 알려줘", {
+        sys_date: '{"date": "2026-08-18", "dateTag": "tomorrow", "dateHeadword": null, "year": null, "month": null, "day": null}',
+        meal_type0: "아침",
+        meal_type1: "저녁",
+      }),
+    );
+
+    expect(getMeal).toHaveBeenCalledWith("1570", "2026-08-18");
+    const body = await res.json();
+    const text = body.template.outputs[0].simpleText.text as string;
+    expect(text).toContain("조식: 죽");
+    expect(text).toContain("석식: 카레");
+    expect(text).not.toContain("중식");
+  });
+
+  it("shows the special dish when meal_type resolves to 부식 (synonym for 특식/간식)", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
+    vi.mocked(getMeal).mockResolvedValue({
+      service: "DS_TB_MNDT_DATEBYMLSVC_1570",
+      meal_date: "2026-08-17",
+      weekday: "월",
+      breakfast: "밥",
+      lunch: "국수",
+      dinner: "찌개",
+      special_dish: "라면",
+    });
+
+    const res = await skillRequest("/skill/menu", makeSkillRequest("부식 메뉴 알려줘", { meal_type0: "부식" }));
+
+    const body = await res.json();
+    const text = body.template.outputs[0].simpleText.text as string;
+    expect(text).toContain("특식: 라면");
+    expect(text).not.toContain("조식");
+    expect(text).not.toContain("중식");
+    expect(text).not.toContain("석식");
+  });
+
+  it("reports no special dish rather than staying silent when explicitly requested", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
+    vi.mocked(getMeal).mockResolvedValue({
+      service: "DS_TB_MNDT_DATEBYMLSVC_1570",
+      meal_date: "2026-08-17",
+      weekday: "월",
+      breakfast: "밥",
+      lunch: "국수",
+      dinner: "찌개",
+      special_dish: null,
+    });
+
+    const res = await skillRequest("/skill/menu", makeSkillRequest("부식 메뉴 알려줘", { meal_type0: "부식" }));
+
+    const body = await res.json();
+    const text = body.template.outputs[0].simpleText.text as string;
+    expect(text).toContain("특식: 정보 없음");
+  });
+
   it("shows all meals when no meal_type param is given", async () => {
     vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
     vi.mocked(getMeal).mockResolvedValue({
