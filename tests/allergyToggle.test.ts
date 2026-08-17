@@ -53,4 +53,24 @@ describe("POST /skill/allergy/toggle", () => {
     const body = await res.json();
     expect(body.template.outputs[0].simpleText.text).toContain("켰어요");
   });
+
+  it('recognizes "비활성화" as off, not a partial match on "활성화" (on)', async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, allergy_show: true });
+
+    const res = await skillRequest("/skill/allergy/toggle", makeSkillRequest("알러지 비활성화 해줘"));
+
+    expect(updateUser).toHaveBeenCalledWith("test-user", { allergy_show: false });
+    const body = await res.json();
+    expect(body.template.outputs[0].simpleText.text).toContain("껐어요");
+  });
+
+  it('recognizes "활성화" as on', async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, allergy_show: false });
+
+    const res = await skillRequest("/skill/allergy/toggle", makeSkillRequest("알러지 활성화 해줘"));
+
+    expect(updateUser).toHaveBeenCalledWith("test-user", { allergy_show: true });
+    const body = await res.json();
+    expect(body.template.outputs[0].simpleText.text).toContain("켰어요");
+  });
 });
