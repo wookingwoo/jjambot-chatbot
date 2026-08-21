@@ -7,7 +7,8 @@ export const CORPS_LABELS = [
   "1570", "5861", "1691", "3182", "8623", "7296", "1862", "2171",
   "7021", "9030", "ATC", "5397", "3296", "8902", "2621", "3389",
   "5021", "6176", "3007", "5322", "5067", "7162", "1575", "6335",
-  "7369", "2136", "1968", "6685", "2291", "7652", "7461", "STANDARD",
+  "7369", "2136", "1968", "6685", "2291", "7652", "7461", "7017",
+  "1975", "KIDA", "STANDARD",
 ] as const;
 
 export type CorpsLabel = (typeof CORPS_LABELS)[number];
@@ -15,12 +16,17 @@ export type CorpsLabel = (typeof CORPS_LABELS)[number];
 // 7461은 실제 SERVICE 코드가 6282로 부여되어 있음(정부 스펙 OA-9555 확인).
 const SERVICE_OVERRIDES: Record<string, string> = { "7461": "6282" };
 
+// KIDA는 SERVICE 명 자체가 표준 패턴(DS_TB_MNDT_DATEBYMLSVC_*)을 따르지 않음(정부 스펙 OA-9651 확인).
+const FULL_SERVICE_OVERRIDES: Record<string, string> = { KIDA: "DS_MNDT_DATEBYMLSVC_KIDA" };
+
 export function isValidCorps(label: string): label is CorpsLabel {
   return (CORPS_LABELS as readonly string[]).includes(label);
 }
 
 export function serviceForCorps(label: CorpsLabel): string {
   if (label === "STANDARD") return "DS_TB_MNDT_DATEBYMLSVC";
+  const fullOverride = FULL_SERVICE_OVERRIDES[label];
+  if (fullOverride) return fullOverride;
   const suffix = SERVICE_OVERRIDES[label] ?? label;
   return `DS_TB_MNDT_DATEBYMLSVC_${suffix}`;
 }
