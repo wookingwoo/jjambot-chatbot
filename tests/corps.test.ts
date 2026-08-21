@@ -10,6 +10,7 @@ vi.mock("../src/repo/meals.js", () => ({
   getMealsByDate: vi.fn(),
 }));
 
+import { corpsForService, serviceForCorps } from "../src/corps.js";
 import { getMealsByDate } from "../src/repo/meals.js";
 import { getOrCreateUser, updateUser } from "../src/repo/users.js";
 import { baseUser, makeSkillRequest, skillRequest } from "./helpers.js";
@@ -17,6 +18,26 @@ import { baseUser, makeSkillRequest, skillRequest } from "./helpers.js";
 beforeEach(() => {
   vi.clearAllMocks();
   vi.mocked(getOrCreateUser).mockResolvedValue(baseUser);
+});
+
+describe("serviceForCorps / corpsForService", () => {
+  it("maps a plain corps label to the standard service pattern", () => {
+    expect(serviceForCorps("1570")).toBe("DS_TB_MNDT_DATEBYMLSVC_1570");
+  });
+
+  it("applies the 7461 -> 6282 service-code override", () => {
+    expect(serviceForCorps("7461")).toBe("DS_TB_MNDT_DATEBYMLSVC_6282");
+  });
+
+  it("applies KIDA's irregular full service-code override", () => {
+    expect(serviceForCorps("KIDA")).toBe("DS_MNDT_DATEBYMLSVC_KIDA");
+  });
+
+  it("round-trips every corps label through its service code", () => {
+    for (const label of ["1570", "7461", "7017", "1975", "KIDA", "STANDARD"] as const) {
+      expect(corpsForService(serviceForCorps(label))).toBe(label);
+    }
+  });
 });
 
 describe("POST /skill/corps/list", () => {
