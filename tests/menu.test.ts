@@ -11,11 +11,19 @@ vi.mock("../src/repo/meals.js", () => ({
 
 import { getMeal } from "../src/repo/meals.js";
 import { getOrCreateUser } from "../src/repo/users.js";
+import { todayInSeoul } from "../src/dates.js";
 import { baseUser, makeSkillRequest, skillRequest } from "./helpers.js";
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
+
+/** `days` before today (Asia/Seoul), as YYYY-MM-DD. */
+function isoDaysAgo(days: number): string {
+  const d = new Date(`${todayInSeoul()}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - days);
+  return d.toISOString().slice(0, 10);
+}
 
 describe("POST /skill/menu", () => {
   it("asks the user to set a corps first when none is stored", async () => {
@@ -232,5 +240,28 @@ describe("POST /skill/menu", () => {
     expect(text).toContain("조식: 밥");
     expect(text).toContain("중식: 국수");
     expect(text).toContain("석식: 찌개");
+  });
+
+  it("rejects a date more than 6 months in the past", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
+
+    const res = await skillRequest(
+      "/skill/menu",
+      makeSkillRequest("작년 메뉴", { sys_date: JSON.stringify({ date: isoDaysAgo(200) }) }),
+    );
+
+    const body = await res.json();
+    expect(body.template.outputs[0].simpleText.text).toContain("6개월");
+    expect(getMeal).not.toHaveBeenCalled();
+  });
+
+  it("allows a date within the last 6 months", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
+    vi.mocked(getMeal).mockResolvedValue(null);
+    const date = isoDaysAgo(150);
+
+    await skillRequest("/skill/menu", makeSkillRequest("5개월 전 메뉴", { sys_date: JSON.stringify({ date }) }));
+
+    expect(getMeal).toHaveBeenCalledWith("1570", date);
   });
 });

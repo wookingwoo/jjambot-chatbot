@@ -5,7 +5,7 @@ import { quickReply, simpleText, skillResponse } from "../kakao/builders.js";
 import { getOrCreateUser, incrementUsage } from "../repo/users.js";
 import { getMeal } from "../repo/meals.js";
 import { isValidCorps } from "../corps.js";
-import { parseDateToISO, todayInSeoul } from "../dates.js";
+import { daysBetween, parseDateToISO, todayInSeoul } from "../dates.js";
 import { stripAllergyCodes } from "../allergy.js";
 
 export const menuSkill = new Hono();
@@ -37,6 +37,9 @@ const MEAL_LABELS: Record<MealField, string> = {
 const DEFAULT_MEAL_FIELDS: MealField[] = ["breakfast", "lunch", "dinner"];
 const MEAL_FIELD_ORDER: MealField[] = ["breakfast", "lunch", "dinner", "special_dish"];
 
+/** Meal data is only queryable for the trailing 6 months (~183 days). */
+const MEAL_LOOKBACK_DAYS = 183;
+
 /** Kakao sends a `meal_type<N>` group param per selected 끼니 (e.g. "아침과 저녁"), or none for "전체". */
 function requestedMealFields(params: Record<string, string>): Set<MealField> {
   const fields = new Set<MealField>();
@@ -62,8 +65,17 @@ menuSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
     );
   }
 
+  const today = todayInSeoul();
   const requestedDate = req.action.params.sys_date ? parseDateToISO(req.action.params.sys_date) : null;
-  const date = requestedDate ?? todayInSeoul();
+  const date = requestedDate ?? today;
+
+  if (daysBetween(date, today) > MEAL_LOOKBACK_DAYS) {
+    return c.json(
+      skillResponse([simpleText("식단은 최근 6개월 데이터만 조회할 수 있어요.")], {
+        quickReplies: [quickReply({ label: "오늘 메뉴", action: "message", messageText: "오늘 메뉴" })],
+      }),
+    );
+  }
 
   const meal = await getMeal(corps, date);
   if (!meal) {
