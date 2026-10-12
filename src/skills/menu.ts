@@ -1,7 +1,7 @@
 import { Hono } from "hono";
 import { zValidator } from "@hono/zod-validator";
 import { skillRequestSchema } from "../kakao/schema.js";
-import { quickReply, simpleText, skillResponse } from "../kakao/builders.js";
+import { quickReply, simpleText, simpleTextOutputs, skillResponse } from "../kakao/builders.js";
 import { getOrCreateUser, incrementUsage } from "../repo/users.js";
 import { getMeal } from "../repo/meals.js";
 import { isValidCorps } from "../corps.js";
@@ -86,6 +86,11 @@ menuSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
 
   const today = todayInSeoul();
   const requestedDate = req.action.params.sys_date ? parseDateToISO(req.action.params.sys_date) : null;
+  if (req.action.params.sys_date && !requestedDate) {
+    return c.json(skillResponse([simpleText("날짜를 이해하지 못했어요. YYYY-MM-DD 형식으로 다시 말씀해주세요.")], {
+      quickReplies: [quickReply({ label: "오늘 메뉴", action: "message", messageText: "오늘 메뉴" })],
+    }));
+  }
   const date = requestedDate ?? today;
 
   if (daysBetween(date, today) > MEAL_LOOKBACK_DAYS) {
@@ -117,5 +122,5 @@ menuSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
   // Special dish is a bonus, not a regular meal: only mention it unprompted when present.
   if (requested.size === 0 && meal.special_dish) sections.push(`[특식]\n${formatDish(meal.special_dish) ?? "정보 없음"}`);
 
-  return c.json(skillResponse([simpleText(sections.join("\n\n"))]));
+  return c.json(skillResponse(simpleTextOutputs(sections.join("\n\n"), "내용이 길어 일부를 생략했어요. 아침·점심·저녁을 끼니별로 조회해주세요.")));
 });

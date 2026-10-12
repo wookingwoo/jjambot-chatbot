@@ -9,6 +9,7 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "vitest run",
+    "test:release": "node tests/production-smoke.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {

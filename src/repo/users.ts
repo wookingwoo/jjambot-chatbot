@@ -25,7 +25,7 @@ export async function getOrCreateUser(kakaoUserId: string): Promise<UserRow> {
     .select("*")
     .single();
 
-  if (error) throw error;
+  if (error) throw new Error(error.message, { cause: error });
   return data as UserRow;
 }
 
@@ -40,12 +40,12 @@ export async function updateUser(
     .select("*")
     .single();
 
-  if (error) throw error;
+  if (error) throw new Error(error.message, { cause: error });
   return data as UserRow;
 }
 
 export async function incrementUsage(user: UserRow, skill: string): Promise<void> {
   const usageCount = { ...user.usage_count, [skill]: (user.usage_count[skill] ?? 0) + 1 };
   const { error } = await supabase.from("users").update({ usage_count: usageCount }).eq("kakao_user_id", user.kakao_user_id);
-  if (error) throw error;
+  if (error) throw new Error(error.message, { cause: error });
 }

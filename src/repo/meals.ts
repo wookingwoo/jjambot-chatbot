@@ -19,7 +19,7 @@ export async function getMeal(corps: CorpsLabel, date: string): Promise<MealRow 
     .eq("meal_date", date)
     .maybeSingle();
 
-  if (error) throw error;
+  if (error) throw new Error(error.message, { cause: error });
   return data as MealRow | null;
 }
 
@@ -30,6 +30,6 @@ export async function getMealsByDate(date: string): Promise<MealRow[]> {
     .select("service, meal_date, weekday, breakfast, lunch, dinner, special_dish")
     .eq("meal_date", date);
 
-  if (error) throw error;
+  if (error) throw new Error(error.message, { cause: error });
   return (data ?? []) as MealRow[];
 }
