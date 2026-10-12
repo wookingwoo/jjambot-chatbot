@@ -40,6 +40,25 @@ const MEAL_FIELD_ORDER: MealField[] = ["breakfast", "lunch", "dinner", "special_
 /** Meal data is only queryable for the trailing 6 months (~183 days). */
 const MEAL_LOOKBACK_DAYS = 183;
 
+/** Space menu separators while keeping commas inside nested dish descriptions intact. */
+function spaceDishSeparators(text: string): string {
+  const dishes: string[] = [];
+  let depth = 0;
+  let start = 0;
+
+  for (let i = 0; i < text.length; i++) {
+    const char = text[i];
+    if (char === "(") depth++;
+    else if (char === ")") depth = Math.max(0, depth - 1);
+    else if (char === "," && depth === 0) {
+      dishes.push(text.slice(start, i).trim());
+      start = i + 1;
+    }
+  }
+  dishes.push(text.slice(start).trim());
+  return dishes.filter(Boolean).join(", ");
+}
+
 /** Kakao sends a `meal_type<N>` group param per selected 끼니 (e.g. "아침과 저녁"), or none for "전체". */
 function requestedMealFields(params: Record<string, string>): Set<MealField> {
   const fields = new Set<MealField>();
@@ -88,15 +107,15 @@ menuSkill.post("/", zValidator("json", skillRequestSchema), async (c) => {
 
   const formatDish = (dish: string | null) => {
     if (!dish) return null;
-    return user.allergy_show ? dish : stripAllergyCodes(dish);
+    return spaceDishSeparators(user.allergy_show ? dish : stripAllergyCodes(dish)) || null;
   };
 
-  const lines = [`${meal.meal_date} (${meal.weekday ?? "?"}) ${corps} 식단`];
+  const sections = [`${meal.meal_date} (${meal.weekday ?? "?"}) ${corps} 식단`];
   for (const field of fieldsToShow) {
-    lines.push(`${MEAL_LABELS[field]}: ${formatDish(meal[field]) ?? "정보 없음"}`);
+    sections.push(`[${MEAL_LABELS[field]}]\n${formatDish(meal[field]) ?? "정보 없음"}`);
   }
   // Special dish is a bonus, not a regular meal: only mention it unprompted when present.
-  if (requested.size === 0 && meal.special_dish) lines.push(`특식: ${formatDish(meal.special_dish)}`);
+  if (requested.size === 0 && meal.special_dish) sections.push(`[특식]\n${formatDish(meal.special_dish) ?? "정보 없음"}`);
 
-  return c.json(skillResponse([simpleText(lines.join("\n"))]));
+  return c.json(skillResponse([simpleText(sections.join("\n\n"))]));
 });
