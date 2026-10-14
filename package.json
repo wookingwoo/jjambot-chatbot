@@ -1,6 +1,6 @@
 {
   "name": "jjambot",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "jjambot kakaotalk chatbot skill server",
   "type": "module",
   "private": true,
@@ -9,19 +9,20 @@
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "vitest run",
+    "test:release": "node tests/production-smoke.mjs",
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@hono/node-server": "^1.13.7",
     "@hono/zod-validator": "^0.4.1",
     "@supabase/supabase-js": "^2.112.3",
-    "hono": "^4.6.13",
+    "hono": "^4.13.7",
     "zod": "^3.24.1"
   },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
-    "vitest": "^4.1.10"
+    "vitest": "^4.1.11"
   }
 }

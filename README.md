@@ -86,9 +86,13 @@ npm run dev
 ```bash
 npm test
 npm run typecheck
+npm run build
+npm run test:release
 ```
 
 테스트는 `src/repo/*`를 모킹해서 실제 DB 없이 동작한다.
+
+`test:release`는 빌드 산출물을 실제 HTTP 서버로 실행하고 Supabase 클라이언트를 로컬 테스트용 PostgREST API에 연결한다. 신규 부대·식단·인증·DB 장애 및 타임아웃·동시 요청을 검증하며, 운영 DB 인증 대신 테스트 전용 값을 사용한다. 로컬 포트 8000과 54321이 비어 있어야 한다. CI에서도 빌드 후 이 검사를 실행한다.
 
 ## DB
 

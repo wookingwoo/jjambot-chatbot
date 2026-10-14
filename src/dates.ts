@@ -18,6 +18,10 @@ export function parseDateToISO(raw: string): string | null {
   const m = DATE_RE.exec(unwrapEntityDate(raw.trim()));
   if (!m) return null;
   const [y, mo, d] = m[1] ? [m[1], m[2], m[3]] : m[4] ? [m[4], m[5], m[6]] : [m[7], m[8], m[9]];
+  const year = Number(y), month = Number(mo), day = Number(d);
+  const date = new Date(0);
+  date.setUTCFullYear(year, month - 1, day);
+  if (year < 1 || date.getUTCFullYear() !== year || date.getUTCMonth() !== month - 1 || date.getUTCDate() !== day) return null;
   return `${y}-${mo}-${d}`;
 }
 

@@ -11,11 +11,19 @@ vi.mock("../src/repo/meals.js", () => ({
 
 import { getMeal } from "../src/repo/meals.js";
 import { getOrCreateUser } from "../src/repo/users.js";
+import { todayInSeoul } from "../src/dates.js";
 import { baseUser, makeSkillRequest, skillRequest } from "./helpers.js";
 
 beforeEach(() => {
   vi.clearAllMocks();
 });
+
+/** `days` before today (Asia/Seoul), as YYYY-MM-DD. */
+function isoDaysAgo(days: number): string {
+  const d = new Date(`${todayInSeoul()}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() - days);
+  return d.toISOString().slice(0, 10);
+}
 
 describe("POST /skill/menu", () => {
   it("asks the user to set a corps first when none is stored", async () => {
@@ -38,7 +46,7 @@ describe("POST /skill/menu", () => {
       service: "DS_TB_MNDT_DATEBYMLSVC_1570",
       meal_date: "2026-08-17",
       weekday: "월",
-      breakfast: "마파두부덮밥(05)(06)(10),매운어묵탕(05)(06)(09)",
+      breakfast: "마파두부덮밥(05)(06)(10) ,매운어묵탕(05)(06)(09), 우유(백색우유(200ML,연간))",
       lunch: "콩나물국(02)(05)(06)(09)(16)",
       dinner: "참치비빔밥(05)(06)",
       special_dish: "떠먹는발효유(딸기)(02)",
@@ -48,10 +56,10 @@ describe("POST /skill/menu", () => {
 
     const body = await res.json();
     const text = body.template.outputs[0].simpleText.text as string;
-    expect(text).toContain("조식: 마파두부덮밥,매운어묵탕");
-    expect(text).toContain("중식: 콩나물국");
-    expect(text).toContain("석식: 참치비빔밥");
-    expect(text).toContain("특식: 떠먹는발효유(딸기)");
+    expect(text).toContain("[조식]\n마파두부덮밥, 매운어묵탕, 우유(백색우유(200ML,연간))");
+    expect(text).toContain("[중식]\n콩나물국");
+    expect(text).toContain("[석식]\n참치비빔밥");
+    expect(text).toContain("[특식]\n떠먹는발효유(딸기)");
     expect(text).not.toMatch(/\(\d\d\)/);
   });
 
@@ -71,7 +79,7 @@ describe("POST /skill/menu", () => {
 
     const body = await res.json();
     const text = body.template.outputs[0].simpleText.text as string;
-    expect(text).toContain("조식: 마파두부덮밥(05)(06)(10)");
+    expect(text).toContain("[조식]\n마파두부덮밥(05)(06)(10)");
   });
 
   it("returns the stored meal for the user's corps", async () => {
@@ -90,9 +98,7 @@ describe("POST /skill/menu", () => {
 
     const body = await res.json();
     const text = body.template.outputs[0].simpleText.text as string;
-    expect(text).toContain("조식: 밥");
-    expect(text).toContain("중식: 국수");
-    expect(text).toContain("석식: 찌개");
+    expect(text).toBe("2026-08-16 (일) 1570 식단\n\n[조식]\n밥\n\n[중식]\n국수\n\n[석식]\n찌개");
   });
 
   it("reports when there is no meal data for the date", async () => {
@@ -138,8 +144,8 @@ describe("POST /skill/menu", () => {
 
     const body = await res.json();
     const text = body.template.outputs[0].simpleText.text as string;
-    expect(text).toContain("조식: 밥");
-    expect(text).toContain("석식: 찌개");
+    expect(text).toContain("[조식]\n밥");
+    expect(text).toContain("[석식]\n찌개");
     expect(text).not.toContain("중식");
   });
 
@@ -167,8 +173,8 @@ describe("POST /skill/menu", () => {
     expect(getMeal).toHaveBeenCalledWith("1570", "2026-08-18");
     const body = await res.json();
     const text = body.template.outputs[0].simpleText.text as string;
-    expect(text).toContain("조식: 죽");
-    expect(text).toContain("석식: 카레");
+    expect(text).toContain("[조식]\n죽");
+    expect(text).toContain("[석식]\n카레");
     expect(text).not.toContain("중식");
   });
 
@@ -188,7 +194,7 @@ describe("POST /skill/menu", () => {
 
     const body = await res.json();
     const text = body.template.outputs[0].simpleText.text as string;
-    expect(text).toContain("특식: 라면");
+    expect(text).toContain("[특식]\n라면");
     expect(text).not.toContain("조식");
     expect(text).not.toContain("중식");
     expect(text).not.toContain("석식");
@@ -210,7 +216,7 @@ describe("POST /skill/menu", () => {
 
     const body = await res.json();
     const text = body.template.outputs[0].simpleText.text as string;
-    expect(text).toContain("특식: 정보 없음");
+    expect(text).toContain("[특식]\n정보 없음");
   });
 
   it("shows all meals when no meal_type param is given", async () => {
@@ -229,8 +235,31 @@ describe("POST /skill/menu", () => {
 
     const body = await res.json();
     const text = body.template.outputs[0].simpleText.text as string;
-    expect(text).toContain("조식: 밥");
-    expect(text).toContain("중식: 국수");
-    expect(text).toContain("석식: 찌개");
+    expect(text).toContain("[조식]\n밥");
+    expect(text).toContain("[중식]\n국수");
+    expect(text).toContain("[석식]\n찌개");
+  });
+
+  it("rejects a date more than 6 months in the past", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
+
+    const res = await skillRequest(
+      "/skill/menu",
+      makeSkillRequest("작년 메뉴", { sys_date: JSON.stringify({ date: isoDaysAgo(200) }) }),
+    );
+
+    const body = await res.json();
+    expect(body.template.outputs[0].simpleText.text).toContain("6개월");
+    expect(getMeal).not.toHaveBeenCalled();
+  });
+
+  it("allows a date within the last 6 months", async () => {
+    vi.mocked(getOrCreateUser).mockResolvedValue({ ...baseUser, corps: "1570" });
+    vi.mocked(getMeal).mockResolvedValue(null);
+    const date = isoDaysAgo(150);
+
+    await skillRequest("/skill/menu", makeSkillRequest("5개월 전 메뉴", { sys_date: JSON.stringify({ date }) }));
+
+    expect(getMeal).toHaveBeenCalledWith("1570", date);
   });
 });

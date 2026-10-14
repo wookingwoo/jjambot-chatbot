@@ -4,6 +4,34 @@ export function simpleText(text: string) {
   return { simpleText: { text } };
 }
 
+/** Keep text within Kakao's 1,000-character and three-output limits, preserving Unicode pairs. */
+export function simpleTextOutputs(text: string, overflowMessage = "내용이 길어 일부를 생략했어요. 요청을 나눠서 조회해주세요.") {
+  const outputs: ReturnType<typeof simpleText>[] = [];
+  let remaining = text;
+  for (let index = 0; index < 3; index++) {
+    if (remaining.length <= 1000) {
+      outputs.push(simpleText(remaining));
+      break;
+    }
+    const notice = index === 2 ? `\n\n${overflowMessage}` : "";
+    let boundary = 1000 - notice.length;
+    if (!notice) {
+      // Avoid wasting capacity when the complete text can fit in the remaining outputs.
+      const minimum = Math.max(500, Math.min(1000, remaining.length - (2 - index) * 1000));
+      const prefix = remaining.slice(0, boundary);
+      const newline = prefix.lastIndexOf("\n") + 1;
+      const comma = prefix.lastIndexOf(", ") + 2;
+      if (newline >= minimum) boundary = newline;
+      else if (comma >= minimum) boundary = comma;
+    }
+    const last = remaining.charCodeAt(boundary - 1);
+    if (last >= 0xd800 && last <= 0xdbff) boundary--;
+    outputs.push(simpleText(remaining.slice(0, boundary) + notice));
+    remaining = remaining.slice(boundary);
+  }
+  return outputs;
+}
+
 export function simpleImage(imageUrl: string, altText: string) {
   return { simpleImage: { imageUrl, altText } };
 }
