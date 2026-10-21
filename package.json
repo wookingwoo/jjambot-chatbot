@@ -16,7 +16,7 @@
     "@hono/node-server": "^1.13.7",
     "@hono/zod-validator": "^0.4.1",
     "@supabase/supabase-js": "^2.112.3",
-    "hono": "^4.13.7",
+    "hono": "^4.13.13",
     "zod": "^3.24.1"
   },
   "devDependencies": {
