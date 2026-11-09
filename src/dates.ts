@@ -5,17 +5,22 @@ const DATE_RE = /^(\d{4})-(\d{2})-(\d{2})$|^(\d{4})\.(\d{2})\.(\d{2})$|^(\d{4})(
  * `{"date": "2026-08-19", "dateTag": "afterTomorrow", ...}`, not a bare date.
  */
 function unwrapEntityDate(raw: string): string {
-  if (!raw.startsWith("{")) return raw;
+  if (typeof raw !== "string") return "";
+  const trimmed = raw.trim();
+  if (!trimmed.startsWith("{")) return trimmed;
   try {
-    const parsed = JSON.parse(raw) as { date?: unknown };
-    return typeof parsed.date === "string" ? parsed.date : raw;
+    const parsed = JSON.parse(trimmed) as { date?: unknown };
+    return typeof parsed.date === "string" ? parsed.date : trimmed;
   } catch {
-    return raw;
+    return trimmed;
   }
 }
 
-export function parseDateToISO(raw: string): string | null {
-  const m = DATE_RE.exec(unwrapEntityDate(raw.trim()));
+export function parseDateToISO(raw: string | null | undefined): string | null {
+  if (typeof raw !== "string") return null;
+  const unwrapped = unwrapEntityDate(raw);
+  if (!unwrapped) return null;
+  const m = DATE_RE.exec(unwrapped.trim());
   if (!m) return null;
   const [y, mo, d] = m[1] ? [m[1], m[2], m[3]] : m[4] ? [m[4], m[5], m[6]] : [m[7], m[8], m[9]];
   const year = Number(y), month = Number(mo), day = Number(d);
@@ -32,6 +37,7 @@ export function todayInSeoul(): string {
 
 /** Whole days from one YYYY-MM-DD date to another, treating both as UTC midnight so DST can't skew the count. */
 export function daysBetween(fromISO: string, toISO: string): number {
+  if (typeof fromISO !== "string" || typeof toISO !== "string") return 0;
   const [fy, fm, fd] = fromISO.split("-").map(Number);
   const [ty, tm, td] = toISO.split("-").map(Number);
   const fromUTC = Date.UTC(fy ?? 0, (fm ?? 1) - 1, fd ?? 1);
